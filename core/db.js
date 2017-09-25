@@ -1,6 +1,8 @@
 var Sequelize = require("sequelize");
 var crypto = require('crypto');
 
+/* ---------------- DATABASE DEFINITION ---------------- */
+
 var sequelize = new Sequelize('database', 'root', 'pass', {
 	host : 'localhost',
 	dialect : 'sqlite',
@@ -15,6 +17,8 @@ var sequelize = new Sequelize('database', 'root', 'pass', {
 	storage : '../database.sqlite',
 	logging: false
 });
+
+/* ---------------- MODEL DEFINITIONS ---------------- */
 
 //  User model.
 var User = sequelize.define('user', {
@@ -113,15 +117,79 @@ var Comment = sequelize.define('comment', {
 	freezeTableName : true
 });
 
+//  Post-Comment model.
+var PostComment = sequelize.define('postComment', {
+    postId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    commentId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    }
+}, {
+    //	Model table name will be the same as the model name
+	freezeTableName : true
+});
+
 //  Post-Image model.
 var PostImage = sequelize.define('postImage', {
     postId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: false
     },
     imagePath: {
         type: Sequelize.STRING,
-        defaultValue: ""
+        allowNull: false
+    }
+}, {
+    //	Model table name will be the same as the model name
+	freezeTableName : true
+});
+
+//  Post-Like model.
+var PostLike = sequelize.define('postLike', {
+    postId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    }
+}, {
+    //	Model table name will be the same as the model name
+	freezeTableName : true
+});
+
+//  Comment-Like model.
+var CommentLike = sequelize.define('commentLike', {
+    commentId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    }
+}, {
+    //	Model table name will be the same as the model name
+	freezeTableName : true
+});
+
+//  Friends model.
+var Friends = sequelize.define('friends', {
+    user1Id: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    user2Id: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    date: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
     }
 }, {
     //	Model table name will be the same as the model name
