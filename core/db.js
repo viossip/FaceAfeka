@@ -20,54 +20,52 @@ var sequelize = new Sequelize('database', 'root', 'pass', {
 
 /* ---------------- MODEL DEFINITIONS ---------------- */
 
-//  User model.
-var User = sequelize.define('user', {
-    id: {
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-        allowNull: false
-    },
-	firstName: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-	lastName: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-	login: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-	randomString: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    hash: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    profileImgPath: {
+
+//  Image model.
+const Image = sequelize.define('image', {
+    imagePath: {
         type: Sequelize.STRING,
         defaultValue: ""
+    },
+    date: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
     }
 }, {
     //	Model table name will be the same as the model name
 	freezeTableName : true
-
 });
 
-//  Post model.
-var Post = sequelize.define('post', {
+//  Comment model.
+const Comment = sequelize.define('comment', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false
     },
-	userId:  {
+    text: {
+        type: Sequelize.STRING,
+        defaultValue: ""
+    },
+    date: {
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
+    }
+}, {
+    //	Model table name will be the same as the model name
+	freezeTableName : true
+});
+
+//  Adds the attribute commentId to images.
+Comment.hasMany(Image, { as: 'CommentImages' });
+
+//  Post model.
+const Post = sequelize.define('post', {
+    id: {
         type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
         allowNull: false
     },
     text: {
@@ -88,110 +86,248 @@ var Post = sequelize.define('post', {
 	freezeTableName : true
 });
 
-//  Comment model.
-var Comment = sequelize.define('comment', {
+//  Adds the attribute postId to images.
+Post.hasMany(Image, { as: 'PostImages' });
+
+//  Adds the attribute postId to comments.
+Post.hasMany(Comment, { as: 'PostComments' });
+
+//  User model.
+const User = sequelize.define('user', {
     id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
-        allowNull: false
     },
-	userId:  {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    text: {
+	firstName: {
         type: Sequelize.STRING,
-        defaultValue: ""
+        allowNull: false
     },
-    imagePath: {
+	lastName: {
         type: Sequelize.STRING,
-        defaultValue: ""
-    },
-    date: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
-    }
-}, {
-    //	Model table name will be the same as the model name
-	freezeTableName : true
-});
-
-//  Post-Comment model.
-var PostComment = sequelize.define('postComment', {
-    postId: {
-        type: Sequelize.INTEGER,
         allowNull: false
     },
-    commentId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    }
-}, {
-    //	Model table name will be the same as the model name
-	freezeTableName : true
-});
-
-//  Post-Image model.
-var PostImage = sequelize.define('postImage', {
-    postId: {
-        type: Sequelize.INTEGER,
+	login: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
+    },
+	randomString: {
+        type: Sequelize.STRING,
         allowNull: false
     },
-    imagePath: {
+    hash: {
         type: Sequelize.STRING,
         allowNull: false
     }
 }, {
     //	Model table name will be the same as the model name
 	freezeTableName : true
+
 });
 
-//  Post-Like model.
-var PostLike = sequelize.define('postLike', {
-    postId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    userId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    }
-}, {
-    //	Model table name will be the same as the model name
-	freezeTableName : true
-});
+//  Creates a new table called UserFriends which stores the ids of the two users who are friends.
+User.belongsToMany(User, { as: 'Friends', through: 'UserFriends' } );
 
-//  Comment-Like model.
-var CommentLike = sequelize.define('commentLike', {
-    commentId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    userId: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    }
-}, {
-    //	Model table name will be the same as the model name
-	freezeTableName : true
-});
+//  Creates a new table called UserPostLikes which stores the ids of users and posts.
+User.belongsToMany(Post, { as: 'PostLikes', through: 'UserPostLikes' });
 
-//  Friends model.
-var Friends = sequelize.define('friends', {
-    user1Id: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    user2Id: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-    },
-    date: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
+//  Creates a new table called UserCommentLikes which stores the ids of users and comments.
+User.belongsToMany(Comment, { as: 'CommentLikes', through: 'UserCommentLikes' });
+
+//  Adds the attribute ProfileImageId to users.
+User.hasOne(Image, { as: 'ProfileImage' } );
+
+//  Adds the attribute userId to posts.
+User.hasMany(Post, { as: 'Posts' });
+
+//  Adds the attribute userId to comments.
+User.hasMany(Comment, { as: 'Comments' } );
+
+//  Converts Object to JSON object (when saving elements in the DB).
+function convertJSONtoOBJ(jsonObj) {
+  try {
+    for (var field in jsonObj) {
+      if (jsonObj.hasOwnProperty(field))
+        jsonObj.field = JSON.parse(jsonObj.field);
     }
-}, {
-    //	Model table name will be the same as the model name
-	freezeTableName : true
-});
+  } catch (e) {
+    console.log(e.stack);
+  }
+};
+
+//  Converts JSON object to Object (when retrieving elements from the DB).
+function convertOBJtoJSON(obj) {
+  try {
+    for (var field in obj) {
+      if (obj.hasOwnProperty(field))
+        obj.field = JSON.stringify(obj.field);
+    }
+  } catch (e) {
+    console.log(e.stack);
+  }
+}
+
+User.beforeValidate(convertOBJtoJSON);
+User.afterFind(convertJSONtoOBJ);
+
+Post.beforeValidate(convertOBJtoJSON);
+Post.afterFind(convertJSONtoOBJ);
+
+Comment.beforeValidate(convertOBJtoJSON);
+Comment.afterFind(convertJSONtoOBJ);
+
+Image.beforeValidate(convertOBJtoJSON);
+Image.afterFind(convertJSONtoOBJ);
+
+//  Creates the models in the DB.
+User.sync({});
+Post.sync({});
+Comment.sync({});
+Image.sync({});
+
+/* ---------------- DATABASE FUNCTIONS ---------------- */
+
+//  Resets the database and destroys all tables.
+module.exports.reset = function() {
+    User.destroy();
+    Post.destroy();
+    Comment.destroy();
+    Image.destroy();
+};
+
+//  Adds a user to the DB.
+module.exports.addUser = function(user, password, onResult) {
+    generateSHA512Pass(password, null, function(passObj) {
+        user.randomString = passObj.randomString;
+        user.hash = passObj.hash;
+        User.create(user).then(function(userDB) {
+            onResult(userDB);
+        }, function(error) {
+            onResult(null, error);
+        });
+    });
+};
+
+//  Generates a random string and an encrypted sha512 string as a password, given a password string.
+function generateSHA512Pass(password, randomString, onResult) {
+    var passObj;
+    passObj.randomString = randomString;
+    if (!randomString)
+        passObj.randomString = crypto.randomBytes(16).toString('hex');
+    passObj.hash = crypto.pbkdf2Sync(password, passObj.randomString, 100000, 512, 'sha512').toString('hex');        
+    onResult(passObj);
+}
+
+//  Retrieve a user given it's id.
+module.exports.getUserById = function(userId, onResult) {
+    User.find({
+        where: {
+            id: userId
+        }
+    }).then(onResult(user));
+};
+
+//  Retrieves a user given it's login.
+module.exports.getUserByLogin = function(userLogin, onResult) {
+    User.find({
+        where: {
+            login: userLogin
+        }
+    }).then(onResult(user));
+};
+
+//  Checks a user's login.
+module.exports.checkUserLogin = function(login, password, onResult) {
+  getUserByLogin(login, function(user) {
+    generateSHA512Pass(password, user.randomString, function(passObj) {
+      onResult(user, passObj);
+    });
+  });
+};
+
+//  Remove a user given it's id.
+module.exports.removeUser = function(userId, onResult) {
+    User.destroy({
+        where: {
+            id: userId
+        }
+    }).then(onResult);
+};
+
+//  Retrieves all users from the DB.
+module.exports.getAllUsers = function(onResult) {
+    User.findAll().then(onResult);
+};
+
+//  Retrieves a given user's posts.
+module.exports.getUserPosts = function(user, onResult) {
+    user.getPosts().then(onResult(posts));
+};
+
+//  Retrieves a given user's comments.
+module.exports.getUserComments = function(user, onResult) {
+    user.getComments().then(onResult(comments));
+};
+
+//  Retrieves a given user's friends.
+module.exports.getUserFriends = function(user, onResult) {
+    user.getUsers().then(onResult(friends));
+};
+
+//  Returns the users count.
+module.exports.countUsers = function(onResult) {
+    User.count().then(onResult(count));
+};
+
+//  Adds a post to the DB.
+module.exports.addPost = function(post, onResult) {
+	Post.create(post).then(function(postDB) {
+		onResult(postDB);
+	}, function(error) {
+		onResult(null, error);
+	});
+};
+
+//  Retrieves a given post's comments.
+module.exports.getPostComments = function(post, onResult) {
+    post.getComments().then(onResult(comments));
+};
+
+//  Retrieves a given post's images.
+module.exports.getPostImages = function(post, onResult) {
+    post.getImages().then(onResult(images));
+};
+
+//  Retrieves a given post's likes.
+module.exports.getPostLikes = function(post, onResult) {
+    post.getUsers().then(onResult(users));
+};
+
+//  Adds a comment to the DB.
+module.exports.addComment = function(comment, onResult) {
+	Comment.create(comment).then(function(commentDB) {
+		onResult(commentDB);
+	}, function(error) {
+		onResult(null, error);
+	});
+};
+
+//  Retrieves a given comment's images.
+module.exports.getCommentImages = function(comment, onResult) {
+    comment.getImages().then(onResult(images));
+};
+
+//  Retrieves a given comment's likes.
+module.exports.getCommentLikes = function(comment, onResult) {
+    comment.getUsers().then(onResult(users));
+};
+
+//  Adds an image to the DB.
+module.exports.addImage = function(image, onResult) {
+	Image.create(image).then(function(imageDB) {
+		onResult(imageDB);
+	}, function(error) {
+		onResult(null, error);
+	});
+};

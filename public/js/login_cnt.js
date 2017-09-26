@@ -7,14 +7,15 @@ function loginClicked(event){
 	//	errorLbl.hide();
 	//}
 	
-	var userTxt = $('form input[name=email]');
-	var pswTxt = $('form input[name=password]');
+	var userTxt = $('form input[id=email]');
+	var pswTxt = $('form input[id=password]');
 
 	var user = userTxt.val();
 
 	var psw = pswTxt.val();
 
-	event.preventDefault();
+    event.preventDefault();
+    event.stopPropagation();
 
 	if(!user || user.length === 0){
 		userTxt.attr('placeholder', "Required Field").focus();
@@ -41,7 +42,13 @@ function loginClicked(event){
 }
 
 $(document).ready(function() {
-    $('form').submit(loginClicked);	
+    $('.btn.btn-primary.btn-signin').submit(loginClicked);
+    $('.btn.btn-primary.btn-register').submit(function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        console.log(window.location);
+        //window.location = "/register.html";
+    });
 });
 
 var getUrlParameter = function(sParam) {

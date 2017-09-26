@@ -198,8 +198,8 @@ function reconnectRelay(){
 reconnectRelay();
 */
 
-function login(user, psw, onSuccess, onFailure) {
-	get("/auth/login?user=" + user + "&psw=" + psw, function(user){
+function login(user, pass, onSuccess, onFailure) {
+	get("/auth/login?user=" + user + "&pass=" + pass, function(user){
 		//contId = user.controllers[0];
 		//clientId = user.login;
 		//currUser = user;
@@ -236,8 +236,8 @@ function checkLoginExists(user, onSuccess, onFailure) {
 	get("/auth/checkLoginExists?user=" + user, onSuccess, onFailure);
 }
 
-function register(user, accessCode, onSuccess, onFailure){
-	post("/auth/register?code="+encodeURIComponent(accessCode), user, onSuccess, onFailure);
+function register(userObj, passwordStr, onSuccess, onFailure){
+	post("/auth/register", { user: userObj, password: passwordStr }, onSuccess, onFailure);
 }
 
 //energy config
