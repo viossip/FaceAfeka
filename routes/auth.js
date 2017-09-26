@@ -20,16 +20,16 @@ router.get('/login', function (req, res) {
 	console.log("Route: login: " + req.query.user + " pass: " + req.query.pass);
 
 	if (req.session.user) {
-		res.send(req.session.user);
+		res.send({login: req.query.user});
 		return;
 	}
-	
+
 	if (req.query.user && req.query.pass) {
-		db.checkUserLogin(req.query.user, req.query.pass, function(user, passObj) {
-			console.log("user.hash: " + user.hash + ", passObj.hash: " + passObj.hash);
-			if (user.hash === passObj.hash) {
-				req.session.user = user.login;
-				res.send(user);
+		db.checkUserLogin(req.query.user, req.query.pass, function(loginOk) {
+			console.log(loginOk);
+			if (loginOk) {
+				req.session.user = req.query.user;
+				res.send({login: req.query.user});
 			}
 			else 
 				res.sendStatus(401);

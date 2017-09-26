@@ -77,8 +77,8 @@ function checkLogin(req, res, next) {
         || req.path.indexOf("/login.html") === 0
         || req.path.indexOf("/register.html") === 0
         || req.path.indexOf("/forgotten-password.html") === 0)
-        {
-      next(); // call next() here to move on to next middleware/router
+        { 
+        next(); // call next() here to move on to next middleware/router
     } else {
       res.redirect("/login.html?path=" + encodeURI(req.path));
     }

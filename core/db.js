@@ -256,7 +256,7 @@ module.exports.getUserByLogin = function(userLogin, onResult) {
 module.exports.checkUserLogin = function(login, password, onResult) {
     module.exports.getUserByLogin(login, function(user) {
         generateSHA512Pass(password, user.randomString, function(passObj) {
-            onResult(user, passObj);
+            onResult(user.hash === passObj.hash);
         });
     });
 };
