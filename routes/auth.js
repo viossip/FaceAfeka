@@ -26,8 +26,9 @@ router.get('/login', function (req, res) {
 	
 	if (req.query.user && req.query.pass) {
 		db.checkUserLogin(req.query.user, req.query.pass, function(user, passObj) {
+			console.log("user.hash: " + user.hash + ", passObj.hash: " + passObj.hash);
 			if (user.hash === passObj.hash) {
-				req.session.user = user;
+				req.session.user = user.login;
 				res.send(user);
 			}
 			else 

@@ -15,7 +15,7 @@ function loginClicked(event){
 	var psw = pswTxt.val();
 
     event.preventDefault();
-    event.stopPropagation();
+    //event.stopPropagation();
 
 	if(!user || user.length === 0){
 		userTxt.attr('placeholder', "Required Field").focus();
@@ -42,12 +42,14 @@ function loginClicked(event){
 }
 
 $(document).ready(function() {
-    $('.btn.btn-primary.btn-signin').submit(loginClicked);
-    $('.btn.btn-primary.btn-register').submit(function(event) {
-        event.preventDefault();
-        event.stopPropagation();
+    //  Attach event handler to the form (sign in button)
+    $('form').submit(loginClicked);
+
+    //  Attach event handler to the register button.
+    $('.btn-register').click(function(event) {
+        //event.stopPropagation();
+        window.location = "http://" + window.location.host + "/register.html";
         console.log(window.location);
-        //window.location = "/register.html";
     });
 });
 

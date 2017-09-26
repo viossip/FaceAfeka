@@ -13,20 +13,20 @@ function registerClicked(event){
     var passTxt = $('form input[id=password]');
     var passTxt2 = $('form input[id=password2]');
 
-    var firstName = fNameTxt.val();
-    var lastName = lNameTxt.val();
+    var firstname = fNameTxt.val();
+    var lastname = lNameTxt.val();
 	var userLogin = loginTxt.val();
     var password = passTxt.val();
     var password2 = passTxt2.val();
 
 	event.preventDefault();
 
-    if (!firstName || firstname.length === 0) {
+    if (!firstname || firstname.length === 0) {
         fNameTxt.attr('placeholder', "Required Field").focus();
 		return;
     }
 
-    if (!lastName || lastName.length === 0) {
+    if (!lastname || lastname.length === 0) {
         lNameTxt.attr('placeholder', "Required Field").focus();
 		return;
     }
@@ -47,14 +47,18 @@ function registerClicked(event){
 	}
     
     if (password !== password2) {
+        passTxt.val("");
+        passTxt2.val("");
         passTxt.attr('placeholder', "Passwords don't match").focus();
         passTxt2.attr('placeholder', "Passwords don't match").focus();
         return;
     }
 
     var user = { firstName: firstname, lastName: lastname, login: userLogin };
-    
-	login(user, psw, function(cUser){
+    console.log(firstname);
+    console.log(JSON.stringify(user));
+
+	register(user, password, function(cUser){
 		console.log("Register success!!!");
 		window.location = getUrlParameter("path") || "/";
 		

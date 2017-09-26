@@ -14,7 +14,7 @@ var sequelize = new Sequelize('database', 'root', 'pass', {
 	},
 
 	// SQLite only
-	storage : '../database.sqlite',
+	storage : './database.sqlite',
 	logging: false
 });
 
@@ -96,8 +96,8 @@ Post.hasMany(Comment, { as: 'PostComments' });
 const User = sequelize.define('user', {
     id: {
         type: Sequelize.INTEGER,
-        autoIncrement: true,
         primaryKey: true,
+        autoIncrement: true
     },
 	firstName: {
         type: Sequelize.STRING,
@@ -146,26 +146,36 @@ User.hasMany(Comment, { as: 'Comments' } );
 
 //  Converts Object to JSON object (when saving elements in the DB).
 function convertJSONtoOBJ(jsonObj) {
-  try {
+    jsonObj = jsonObj.get({ plain: true });
+    /*
     for (var field in jsonObj) {
-      if (jsonObj.hasOwnProperty(field))
-        jsonObj.field = JSON.parse(jsonObj.field);
-    }
-  } catch (e) {
-    console.log(e.stack);
-  }
-};
+        if (field && jsonObj.hasOwnProperty(field)) {
+            try {
+                console.log("before: " + field);
+                jsonObj.field = JSON.parse(jsonObj.field);
+                console.log("after: " + field);
+            }
+            catch (e) {
+                console.log(e.stack);
+            }
+        }
+    }*/
+}
 
 //  Converts JSON object to Object (when retrieving elements from the DB).
 function convertOBJtoJSON(obj) {
-  try {
     for (var field in obj) {
-      if (obj.hasOwnProperty(field))
-        obj.field = JSON.stringify(obj.field);
+        if (field && obj.hasOwnProperty(field)) {
+            try {
+                console.log("before: " + obj.field);
+                obj.field = JSON.stringify(obj.field);
+                console.log("after: " + obj.field);
+            }
+            catch (e) {
+                console.log(e.stack);
+            }
+        }
     }
-  } catch (e) {
-    console.log(e.stack);
-  }
 }
 
 User.beforeValidate(convertOBJtoJSON);
@@ -196,6 +206,11 @@ module.exports.reset = function() {
     Image.destroy();
 };
 
+//  Returns the users count.
+module.exports.countUsers = function(onResult) {
+    User.count().then(onResult(count));
+};
+
 //  Adds a user to the DB.
 module.exports.addUser = function(user, password, onResult) {
     generateSHA512Pass(password, null, function(passObj) {
@@ -211,7 +226,7 @@ module.exports.addUser = function(user, password, onResult) {
 
 //  Generates a random string and an encrypted sha512 string as a password, given a password string.
 function generateSHA512Pass(password, randomString, onResult) {
-    var passObj;
+    var passObj = {};
     passObj.randomString = randomString;
     if (!randomString)
         passObj.randomString = crypto.randomBytes(16).toString('hex');
@@ -221,29 +236,29 @@ function generateSHA512Pass(password, randomString, onResult) {
 
 //  Retrieve a user given it's id.
 module.exports.getUserById = function(userId, onResult) {
-    User.find({
+    User.findOne({
         where: {
             id: userId
         }
-    }).then(onResult(user));
+    }).then(onResult);
 };
 
 //  Retrieves a user given it's login.
 module.exports.getUserByLogin = function(userLogin, onResult) {
-    User.find({
+    User.findOne({
         where: {
             login: userLogin
         }
-    }).then(onResult(user));
+    }).then(onResult);
 };
 
 //  Checks a user's login.
 module.exports.checkUserLogin = function(login, password, onResult) {
-  getUserByLogin(login, function(user) {
-    generateSHA512Pass(password, user.randomString, function(passObj) {
-      onResult(user, passObj);
+    module.exports.getUserByLogin(login, function(user) {
+        generateSHA512Pass(password, user.randomString, function(passObj) {
+            onResult(user, passObj);
+        });
     });
-  });
 };
 
 //  Remove a user given it's id.
@@ -273,11 +288,6 @@ module.exports.getUserComments = function(user, onResult) {
 //  Retrieves a given user's friends.
 module.exports.getUserFriends = function(user, onResult) {
     user.getUsers().then(onResult(friends));
-};
-
-//  Returns the users count.
-module.exports.countUsers = function(onResult) {
-    User.count().then(onResult(count));
 };
 
 //  Adds a post to the DB.
