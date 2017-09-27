@@ -4,19 +4,14 @@ function postClicked(event){
 	var postText = postTextElement.val();
 
 
-    //event.preventDefault();
+    event.preventDefault();
 
 	if(!postText || postText.length === 0){
 		userTxt.attr('placeholder', "Write something here...").focus();
 		return;
     }
     
-    addPost({}, {}, function name(params) {
-        
-    },
-    function name(params) {
-        
-    });
+    addPost({}, {}, function name(params) { }, function name(params) { });
 }//
 
 $(document).ready(function() {
