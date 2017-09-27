@@ -12,6 +12,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var auth = require('./routes/auth');
 var posts = require("./routes/posts");
+var members = require("./routes/members");
 
 var oldLog = console.log;
 
@@ -112,6 +113,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/auth', auth);
 app.use("/posts", checkLogin, posts);
 
+app.use("/members", checkLogin, members);
 //app.use('/', index);
 app.use('/users', checkLogin, users);
 

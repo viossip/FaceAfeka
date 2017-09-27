@@ -3,9 +3,9 @@ var router = express.Router();
 var db = require("../core/db");
 var utils = require("../core/utils");
 
-//  Get a specific user profile, given his id.
+//  Adds a given post to DB.
 router.post("/addPost", function(req, res) {
-    console.log("posts: fuck");
+    console.log("posts: Adding post " + JSON.stringify(req.body.post));
 /*   console.log("Retrieving user " + JSON.stringify(req.params.id));
   var userId = parseInt(req.params.id);
   
