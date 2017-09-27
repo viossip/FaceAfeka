@@ -246,7 +246,7 @@ function register(userObj, passwordStr, onSuccess, onFailure){
 
 //	Posts
 
-function addPost(post, image, onSuccess, onFailure) {
+function addPost(postObj, image, onSuccess, onFailure) {
 	post("/posts/addPost", {}, onSuccess, onFailure);
 }
 
