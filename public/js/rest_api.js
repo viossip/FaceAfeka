@@ -221,7 +221,7 @@ function login(user, pass, onSuccess, onFailure) {
 }
  */
 function editUser(user, onSuccess, onFailure) {
-	post("/auth/updateUser", user, onSuccess, onFailure);
+	post("/users/updateUser", user, onSuccess, onFailure);
 }
 
 function authLogout(onSuccess, onFailure) {

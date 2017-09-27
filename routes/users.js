@@ -45,4 +45,21 @@ router.get("/getUsers", function(req, res) {
 	
 });
 
+//	Update user in DB.
+router.post('/updateUser', function (req, res) {
+	console.log("Updating user " + req.body.user);
+	
+	var user = req.body;
+
+	if(!user.id){
+		res.sendStatus(403);
+		return;
+	}
+	
+	db.updateUser(user, function(){
+		res.sendStatus(200);
+	});
+	
+});
+
 module.exports = router;

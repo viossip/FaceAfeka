@@ -50,23 +50,6 @@ router.get('/checkLoginExists', function (req, res) {
 	
 });
 
-//	Update user in DB.
-router.post('/updateUser', function (req, res) {
-	console.log("Updating user " + req.body.user);
-	
-	var user = req.body;
-
-	if(!user.id){
-		res.sendStatus(403);
-		return;
-	}
-	
-	db.updateUser(user, function(){
-		res.sendStatus(200);
-	});
-	
-});
-
 //	Register user to DB.
 router.post('/register', function (req, res) {
 	console.log("Registering user " + JSON.stringify(req.body.user));
