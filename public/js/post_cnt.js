@@ -17,7 +17,7 @@ function postClicked(event){
     function name(params) {
         
     });
-}
+}//
 
 $(document).ready(function() {
     //  Attach event handler to the form (sign in button)
