@@ -32,6 +32,12 @@ function loginClicked(event){
 		
 	}, function(error){
 		console.log("Login error!!!");
+		var signInStatus = $('.signin-result');
+		signInStatus.html("<h4 style='color: red; text-align: center; font-weight: bold;'>" + error.status + " " + error.statusText + "</h4>");
+		signInStatus.fadeOut(2000, function() {
+			signInStatus.html("");
+			signInStatus.fadeIn();
+		});
 		//if(errorLbl){
 		//	errorLbl.show();
 		//	return;

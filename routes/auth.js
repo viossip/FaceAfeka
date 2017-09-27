@@ -9,6 +9,7 @@ var fs = require('fs');
 var contId = null;
 
 
+//	Logout route.
 router.get('/logout', function (req, res) {
 	delete req.session.user;
 	res.send({res:"success"});
@@ -26,7 +27,6 @@ router.get('/login', function (req, res) {
 
 	if (req.query.user && req.query.pass) {
 		db.checkUserLogin(req.query.user, req.query.pass, function(loginOk) {
-			console.log(loginOk);
 			if (loginOk) {
 				req.session.user = req.query.user;
 				res.send({login: req.query.user});
@@ -35,48 +35,27 @@ router.get('/login', function (req, res) {
 				res.sendStatus(401);
 		});
 	}
-	/*
-	db.getUserByLogin(req.param('user'), function(user){
-		
-		user = JSON.parse(JSON.stringify(user));
-		
-		if(user && user.password === req.param('psw')){
-			req.session.user = user;
-			
-			console.log("User found "+JSON.stringify(user));
-			res.send(user);
-		}else{
-			res.sendStatus(401);
-		}
-	});
-	*/
 });
 
-//check if login exists in db
+//	Check if login exists in DB.
 router.get('/checkLoginExists', function (req, res) {
 	
-	db.getUserByLogin(req.param('user'), function(user){
-		
-		if(user){
+	db.getUserByLogin(req.query.user, function(user){
+		user ? res.send({res: true}) : res.send({res: false});
+/* 		if(user)
 			res.send({res:true});
-		}else{
-			res.send({res:false});
-		}
-		
+		else
+			res.send({res:false}); */
 	});
 	
 });
 
-//update user in db
+//	Update user in DB.
 router.post('/updateUser', function (req, res) {
-	console.log("Update user "+JSON.stringify(req.body));
+	console.log("Updating user " + req.body.user);
 	
 	var user = req.body;
-	
-	if(user.controllers){
-		delete user.controllers;
-	}
-	
+
 	if(!user.id){
 		res.sendStatus(403);
 		return;
@@ -88,41 +67,47 @@ router.post('/updateUser', function (req, res) {
 	
 });
 
-//add user to db
+//	Register user to DB.
 router.post('/register', function (req, res) {
-	console.log("Register user " + JSON.stringify(req.body));
+	console.log("Registering user " + JSON.stringify(req.body.user));
 
-	var user = req.body.user;
+	var userLogin = req.body.user;
 	
 	var password = req.body.password;
-	
-	console.log("Saving user " + JSON.stringify(user));
 
-	db.addUser(user, password, function(userDB, error) {
-		if (error)
-			res.status(400).send(error);
-		else 
-			res.send(userDB);
+	db.getUserByLogin(userLogin.login, function(user) {
+		if (!user) {
+			db.addUser(userLogin, password, function(userDB, error) {
+				if (error)
+					res.status(400).send(error);
+				else 
+					res.send(userDB);
+			});
+		}
+		else {
+			console.log("User " + userLogin.login + " already exists!");
+			res.sendStatus(400);
+		}
 	});
-	
 });
 
-//list users
-router.get("/getUsers",  function (req, res) {
+//	Get a specific user.
+router.get("/getUser", function(req, res) {
+	console.log("Retrieving user " + JSON.stringify(req.body.id));
+
+	db.getUserById(req.body.id, function(user) {
+		res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: ProfileImageId});
+	});
+
+});
+
+//	Get all users.
+router.get("/getUsers", function(req, res) {
 	
-	db.getUsers(function(users){
+	db.getAllUsers(function(users){
 		res.send(users);
 	});
 	
 });
 		
-//controller id
-module.exports.setContId = function(newContId){
-	contId = newContId;
-};
-
-module.exports.getContId = function(){
-	return contId;
-};
-
 module.exports.router = router;

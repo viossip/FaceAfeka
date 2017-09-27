@@ -1,11 +1,6 @@
 
-//var errorLbl = null;
-
 //  Runs when the user clicks the sign in button.
 function registerClicked(event){
-	//if(errorLbl){
-	//	errorLbl.hide();
-	//}
     
     var fNameTxt = $('form input[id=firstname]');
     var lNameTxt = $('form input[id=lastname]');
@@ -64,11 +59,12 @@ function registerClicked(event){
 		
 	}, function(error){
 		console.log("Register error!!!");
-		//if(errorLbl){
-		//	errorLbl.show();
-		//	return;
-		//}
-		//errorLbl = $("<div>Login failure</div>").insertAfter(".separator").css('color','red').css('text-align','center').css('font-weight', 'bold');
+		var registerStatus = $('.register-result');
+		registerStatus.html("<h4 style='color: red; text-align: center; font-weight: bold;'>" + error.status + " " + error.statusText + "</h4>");
+		registerStatus.fadeOut(2000, function() {
+			registerStatus.html("");
+			registerStatus.fadeIn();
+		});
 	});
 
 }

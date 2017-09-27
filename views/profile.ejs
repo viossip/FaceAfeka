@@ -10,13 +10,13 @@
     <title>Profile: Dobble Social Network</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="../../css/bootstrap.css" rel="stylesheet">
 
     <!-- Import font-awesome -->
-    <link href="css/font-awesome.css" rel = "stylesheet">
+    <link href="../../css/font-awesome.css" rel = "stylesheet">
 
     <!-- Own CSS -->
-    <link href="css/style.css" rel = "stylesheet">
+    <link href="../../css/style.css" rel = "stylesheet">
 
   </head>
 
@@ -25,7 +25,7 @@
     <header>
         <div class="container">
             <div class="col-sm-2">
-                    <img src="img/logo.png">
+                    <img src="../../img/logo.png">
             </div>
             <div class="col-sm-8">
 
@@ -64,16 +64,16 @@
               <div class = "row">
                   <div class = "col-md-8">
                       <div class="profile">
-                          <h1 class="page-header">FULLNAME</h1>
+                          <h1 class="page-header"><%= userFullname %></h1>
                           <div class="row">
                               <div class="col-md-4 user-profile-image">
-                                  <img src="img/user.png" class="img-thumbnail">
+                                  <img src="<%= userImage %>" class="img-thumbnail">
                               </div>
 
                               <div class="col-md-8 user-details">
                                   <ul>
-                                      <li><strong>Name: </strong><span class="user-fullname">FULLNAME</span></li>
-                                      <li><strong>Email Address: </strong><span class="user-email">EMAIL</span></li>
+                                      <li><strong>Name: </strong><%= userFullname %></li>
+                                      <li><strong>Email Address: </strong><%= userEmail %></li>
                                   </ul>
 
 
@@ -124,21 +124,21 @@
                       </div>
                       <div class="panel-body">
                         <ul>
-                            <li><a class = "thumbnail" href = "profile.html"><img src = "img/user.png"></a>
+                            <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
                             </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "img/user.png"></a>
+                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
                             </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "img/user.png"></a>
+                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
                             </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "img/user.png"></a>
+                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
                             </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "img/user.png"></a>
+                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
                             </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "img/user.png"></a>
+                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
                             </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "img/user.png"></a>
+                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
                             </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "img/user.png"></a>
+                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
                             </li>
                         </ul>
                         <div class = "clearfix"></div>
@@ -153,19 +153,19 @@
                       </div>
                       <div class="panel-body">
                         <div class = "group-item">
-                            <img src = "img/group.png">
+                            <img src = "../../img/group.png">
                             <h4><a href = "#">Sample Group One</a></h4>
                             <p>This is a Dobble Social Network sample groups</p>
                         </div>
                         <div class = "clearfix"></div>
                         <div class = "group-item">
-                            <img src = "img/group.png">
+                            <img src = "../../img/group.png">
                             <h4><a href = "#">Sample Group One</a></h4>
                             <p>This is a Dobble Social Network sample groups</p>
                         </div>
                         <div class = "clearfix"></div>
                         <div class = "group-item">
-                            <img src = "img/group.png">
+                            <img src = "../../img/group.png">
                             <h4><a href = "#">Sample Group One</a></h4>
                             <p>This is a Dobble Social Network sample groups</p>
                         </div>
@@ -193,11 +193,11 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/libs/jquery-3.2.1.js"></script>
-    <script src="js/libs/bootstrap.js"></script>
+    <script src="../../js/libs/jquery-3.2.1.js"></script>
+    <script src="../../js/libs/bootstrap.js"></script>
 
-    <script src="js/rest_api.js"></script>
-    <script src="js/main_cnt.js"></script>
+    <script src="../../js/rest_api.js"></script>
+    <script src="../../js/main_cnt.js"></script>
 
   </body>
 </html>

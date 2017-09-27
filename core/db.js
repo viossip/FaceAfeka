@@ -23,6 +23,12 @@ var sequelize = new Sequelize('database', 'root', 'pass', {
 
 //  Image model.
 const Image = sequelize.define('image', {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false
+    },
     imagePath: {
         type: Sequelize.STRING,
         defaultValue: ""
@@ -136,7 +142,7 @@ User.belongsToMany(Post, { as: 'PostLikes', through: 'UserPostLikes' });
 User.belongsToMany(Comment, { as: 'CommentLikes', through: 'UserCommentLikes' });
 
 //  Adds the attribute ProfileImageId to users.
-User.hasOne(Image, { as: 'ProfileImage' } );
+User.hasOne(Image, { as: 'ProfileImage'} );
 
 //  Adds the attribute userId to posts.
 User.hasMany(Post, { as: 'Posts' });
@@ -146,7 +152,8 @@ User.hasMany(Comment, { as: 'Comments' } );
 
 //  Converts Object to JSON object (when saving elements in the DB).
 function convertJSONtoOBJ(jsonObj) {
-    jsonObj = jsonObj.get({ plain: true });
+    if (jsonObj)
+        jsonObj = jsonObj.get({ plain: true });
     /*
     for (var field in jsonObj) {
         if (field && jsonObj.hasOwnProperty(field)) {
@@ -167,9 +174,7 @@ function convertOBJtoJSON(obj) {
     for (var field in obj) {
         if (field && obj.hasOwnProperty(field)) {
             try {
-                console.log("before: " + obj.field);
                 obj.field = JSON.stringify(obj.field);
-                console.log("after: " + obj.field);
             }
             catch (e) {
                 console.log(e.stack);
@@ -191,10 +196,10 @@ Image.beforeValidate(convertOBJtoJSON);
 Image.afterFind(convertJSONtoOBJ);
 
 //  Creates the models in the DB.
-User.sync({});
-Post.sync({});
-Comment.sync({});
-Image.sync({});
+User.sync();
+Post.sync();
+Comment.sync();
+Image.sync();
 
 /* ---------------- DATABASE FUNCTIONS ---------------- */
 

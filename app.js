@@ -80,7 +80,7 @@ function checkLogin(req, res, next) {
         { 
         next(); // call next() here to move on to next middleware/router
     } else {
-      res.redirect("/login.html?path=" + encodeURI(req.path));
+      res.redirect("/login.html?path=" + encodeURI(req.originalUrl));
     }
   
 }
@@ -111,7 +111,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/auth', auth);
 
 //app.use('/', index);
-//app.use('/users', users);
+app.use('/users', checkLogin, users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

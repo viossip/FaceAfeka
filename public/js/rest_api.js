@@ -228,6 +228,10 @@ function authLogout(onSuccess, onFailure) {
 	get("/auth/logout", onSuccess, onFailure);
 }
 
+function getUser(id, onSuccess, onFailure) {
+	get("/auth/getUser?id=" + id, onSuccess, onFailure);
+}
+
 function getUsers(onSuccess, onFailure) {
 	get("/auth/getUsers", onSuccess, onFailure);
 }
