@@ -8,7 +8,6 @@ var fs = require('fs');
 
 var contId = null;
 
-
 //	Logout route.
 router.get('/logout', function (req, res) {
 	delete req.session.user;
@@ -51,7 +50,7 @@ router.get('/checkLoginExists', function (req, res) {
 });
 
 //	Register user to DB.
-router.post('/register', function (req, res) {
+router.post('/registerUser', function (req, res) {
 	console.log("Registering user " + JSON.stringify(req.body.user));
 
 	var userLogin = req.body.user;

@@ -241,7 +241,7 @@ function checkLoginExists(user, onSuccess, onFailure) {
 }
 
 function register(userObj, passwordStr, onSuccess, onFailure){
-	post("/auth/register", { user: userObj, password: passwordStr }, onSuccess, onFailure);
+	post("/auth/registerUser", { user: userObj, password: passwordStr }, onSuccess, onFailure);
 }
 
 //	Posts

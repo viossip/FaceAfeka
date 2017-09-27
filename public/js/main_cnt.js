@@ -13,8 +13,9 @@ var deleteCookie = function(name) {
 };
 
 function navbarRelPath() {
-    $(".navbar-nav").find("li").each(function(liElem) {
-        var path = liElem.attr("href");
-        liElem.attr("href", window.location.origin + path);
+    $(".navbar-nav").find("a").each(function() {
+        var elem = $(this);
+        var path = elem.attr("href");
+        elem.attr("href", window.location.origin + "/" + path);
     });
 }

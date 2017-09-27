@@ -54,7 +54,7 @@ $(document).ready(function() {
     //  Attach event handler to the register button.
     $('.btn-register').click(function(event) {
         //event.stopPropagation();
-        window.location = "http://" + window.location.host + "/register.html";
+        window.location = "http://" + window.location.host + "/register";
         console.log(window.location);
     });
 });

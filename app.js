@@ -76,13 +76,13 @@ function checkLogin(req, res, next) {
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     if (req.session.user || ip == "localhost" || ip.indexOf("127.0.0.1") >= 0
         || req.path.indexOf("/auth") === 0
-        || req.path.indexOf("/login.html") === 0
-        || req.path.indexOf("/register.html") === 0
+        || req.path.indexOf("/login") === 0
+        || req.path.indexOf("/register") === 0
         || req.path.indexOf("/forgotten-password.html") === 0)
         { 
         next(); // call next() here to move on to next middleware/router
     } else {
-      res.redirect("/login.html?path=" + encodeURI(req.originalUrl));
+      res.redirect("/login?path=" + encodeURI(req.originalUrl));
     }
   
 }
@@ -99,6 +99,9 @@ app.all('/', checkLogin);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use("/login", function(req, res, next) {
+  res.render('login', { title: 'faceAfeka' });
+});
 // Rest API routes
 //app.use('/scenarios',checkLogin, scenarios);
 //app.use('/rooms',checkLogin, rooms);
@@ -110,11 +113,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/data_updates', checkLogin, dataUpdates);
 //app.use('/configuration', checkLogin, configuration);
 //app.use('/irLearning', checkLogin, irLearning);
+app.use('/', checkLogin, index);
 app.use('/auth', auth);
 app.use("/posts", checkLogin, posts);
-
-app.use("/members", checkLogin, members);
-//app.use('/', index);
 app.use('/users', checkLogin, users);
 
 // catch 404 and forward to error handler

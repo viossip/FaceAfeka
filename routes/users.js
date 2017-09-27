@@ -4,7 +4,7 @@ var db = require("../core/db");
 var utils = require("../core/utils");
 
 //  Get a specific user profile, given his id.
-router.get("/profile/:id", function(req, res) {
+/* router.get("/profile/:id", function(req, res) {
   console.log("Retrieving user " + JSON.stringify(req.params.id));
   var userId = parseInt(req.params.id);
   
@@ -24,7 +24,7 @@ router.get("/profile/:id", function(req, res) {
       //res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: ProfileImageId});
     });
   }
-});
+}); */
 
 //	Get a specific user.
 router.get("/getUser", function(req, res) {
