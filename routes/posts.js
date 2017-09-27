@@ -4,8 +4,9 @@ var db = require("../core/db");
 var utils = require("../core/utils");
 
 //  Get a specific user profile, given his id.
-router.get("/profile/:id", function(req, res) {
-  console.log("Retrieving user " + JSON.stringify(req.params.id));
+router.post("/addPost", function(req, res) {
+    console.log("posts: fuck");
+/*   console.log("Retrieving user " + JSON.stringify(req.params.id));
   var userId = parseInt(req.params.id);
   
   //  Check if provided id is a positive number and its length is between 1 to 7 digits
@@ -23,7 +24,7 @@ router.get("/profile/:id", function(req, res) {
       });
       //res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: ProfileImageId});
     });
-  }
+  } */
 });
 
 module.exports = router;

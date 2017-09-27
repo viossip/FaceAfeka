@@ -134,7 +134,7 @@ const User = sequelize.define('user', {
 });
 
 //  Creates a new table called UserFriends which stores the ids of the two users who are friends.
-User.belongsToMany(User, { as: 'Friends', through: 'UserFriends' } );
+User.belongsToMany(User, { as: 'friends', through: 'UserFriends' } );
 
 //  Creates a new table called UserPostLikes which stores the ids of users and posts.
 User.belongsToMany(Post, { as: 'PostLikes', through: 'UserPostLikes' });
@@ -156,9 +156,16 @@ User.hasMany(Post, { as: 'Posts' });
 User.hasMany(Comment, { as: 'Comments' } );
 
 //  Converts Object to JSON object (when saving elements in the DB).
-function convertJSONtoOBJ(jsonObj) {
-    if (jsonObj)
-        jsonObj = jsonObj.get({ plain: true });
+function convertJSONtoOBJ(object) {
+    try {
+        var jsonObj = JSON.parse(object);
+        if (jsonObj)
+            jsonObj = jsonObj.get({ plain: true });
+    }
+    catch(e) {
+
+    }
+
     /*
     for (var field in jsonObj) {
         if (field && jsonObj.hasOwnProperty(field)) {
@@ -205,6 +212,7 @@ User.sync();
 Post.sync();
 Comment.sync();
 Image.sync();
+sequelize.sync();
 
 /* ---------------- DATABASE FUNCTIONS ---------------- */
 
@@ -227,7 +235,10 @@ module.exports.addUser = function(user, password, onResult) {
         user.randomString = passObj.randomString;
         user.hash = passObj.hash;
         User.create(user).then(function(userDB) {
-            onResult(userDB);
+            module.exports.addImage({}, function(image) {
+                userDB.addImage(image);
+                onResult(userDB);
+            });
         }, function(error) {
             onResult(null, error);
         });
@@ -265,9 +276,12 @@ module.exports.getUserByLogin = function(userLogin, onResult) {
 //  Checks a user's login.
 module.exports.checkUserLogin = function(login, password, onResult) {
     module.exports.getUserByLogin(login, function(user) {
-        if (!user)
+        if (!user) {
+            console.log("db: No such user " + login);
             onResult(false);
+        }
         else {
+            console.log("db: Found user " + login);
             generateSHA512Pass(password, user.randomString, function(passObj) {
                 onResult(user.hash === passObj.hash);
             });

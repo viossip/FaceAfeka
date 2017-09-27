@@ -10,7 +10,8 @@ var cors = require('cors');
 //  Routes
 var index = require('./routes/index');
 var users = require('./routes/users');
-var auth = require('./routes/auth').router;
+var auth = require('./routes/auth');
+var posts = require("./routes/posts");
 
 var oldLog = console.log;
 
@@ -109,6 +110,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/configuration', checkLogin, configuration);
 //app.use('/irLearning', checkLogin, irLearning);
 app.use('/auth', auth);
+app.use("/posts", checkLogin, posts);
 
 //app.use('/', index);
 app.use('/users', checkLogin, users);
