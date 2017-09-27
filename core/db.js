@@ -14,7 +14,7 @@ var sequelize = new Sequelize('database', 'root', 'pass', {
 	},
 
 	// SQLite only
-	storage : './database.sqlite',
+	storage : '../database.sqlite',
 	logging: false
 });
 
