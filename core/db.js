@@ -63,9 +63,6 @@ const Comment = sequelize.define('comment', {
 	freezeTableName : true
 });
 
-//  Adds the attribute commentId to images.
-Comment.hasMany(Image, { as: 'CommentImages' });
-
 //  Post model.
 const Post = sequelize.define('post', {
     id: {
@@ -93,7 +90,11 @@ const Post = sequelize.define('post', {
 });
 
 //  Adds the attribute postId to images.
-Post.hasMany(Image, { as: 'PostImages' });
+//Post.hasMany(Image, { as: 'PostImages' });
+
+//  Creates a new model called PostImage that has foreign keys userId and imageId
+Post.belongsToMany(Image, {through: 'PostImage'});
+Image.belongsToMany(Post, {through: 'PostImage'});
 
 //  Adds the attribute postId to comments.
 Post.hasMany(Comment, { as: 'PostComments' });
@@ -142,7 +143,11 @@ User.belongsToMany(Post, { as: 'PostLikes', through: 'UserPostLikes' });
 User.belongsToMany(Comment, { as: 'CommentLikes', through: 'UserCommentLikes' });
 
 //  Adds the attribute ProfileImageId to users.
-User.hasOne(Image, { as: 'ProfileImage'} );
+//User.hasOne(Image, { as: 'ProfileImage'} );
+
+//  Creates a new model called UserImage that has foreign keys userId and imageId
+Image.belongsToMany(User, {through: 'UserImage'});
+User.belongsToMany(Image, {through: 'UserImage'});
 
 //  Adds the attribute userId to posts.
 User.hasMany(Post, { as: 'Posts' });
@@ -260,6 +265,8 @@ module.exports.getUserByLogin = function(userLogin, onResult) {
 //  Checks a user's login.
 module.exports.checkUserLogin = function(login, password, onResult) {
     module.exports.getUserByLogin(login, function(user) {
+        if (!user.randomString)
+            onResult(false);
         generateSHA512Pass(password, user.randomString, function(passObj) {
             onResult(user.hash === passObj.hash);
         });
