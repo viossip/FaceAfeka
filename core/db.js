@@ -212,6 +212,7 @@ User.sync();
 Post.sync();
 Comment.sync();
 Image.sync();
+
 sequelize.sync();
 
 /* ---------------- DATABASE FUNCTIONS ---------------- */

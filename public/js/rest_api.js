@@ -229,11 +229,11 @@ function authLogout(onSuccess, onFailure) {
 }
 
 function getUser(id, onSuccess, onFailure) {
-	get("/auth/getUser?id=" + id, onSuccess, onFailure);
+	get("/users/getUser?id=" + id, onSuccess, onFailure);
 }
 
 function getUsers(onSuccess, onFailure) {
-	get("/auth/getUsers", onSuccess, onFailure);
+	get("/users/getUsers", onSuccess, onFailure);
 }
 
 function checkLoginExists(user, onSuccess, onFailure) {

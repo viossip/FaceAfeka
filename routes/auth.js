@@ -90,24 +90,5 @@ router.post('/register', function (req, res) {
 		}
 	});
 });
-
-//	Get a specific user.
-router.get("/getUser", function(req, res) {
-	console.log("Retrieving user " + JSON.stringify(req.body.id));
-
-	db.getUserById(req.body.id, function(user) {
-		res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: ProfileImageId});
-	});
-
-});
-
-//	Get all users.
-router.get("/getUsers", function(req, res) {
-	
-	db.getAllUsers(function(users){
-		res.send(users);
-	});
-	
-});
 		
 module.exports = router;
