@@ -265,8 +265,7 @@ module.exports.getUserByLogin = function(userLogin, onResult) {
 //  Checks a user's login.
 module.exports.checkUserLogin = function(login, password, onResult) {
     module.exports.getUserByLogin(login, function(user) {
-        console.log(JSON.stringify(user));
-        if (!user)
+        if (user === null)
             onResult(false);
         generateSHA512Pass(password, user.randomString, function(passObj) {
             onResult(user.hash === passObj.hash);
