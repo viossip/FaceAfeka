@@ -53,8 +53,10 @@
                                                 <button type="submit" class="btn btn-default">Submit</button>
 
                                                 <div class = "pull-right">
-                                                    <div class="btn-group">
-                                                      <button type="button" class="btn btn-default"><i class = "fa fa-file-image-o"></i> Image</button>
+                                                    <div class="upload icons-wrapper">
+                                                         <div class="upload-btn">
+                                                                <input type="file" id="images" name = "uploadImages" class="btn btn-primary" accept=".jpg, .jpeg, .png" multiple="multiple"/>
+                                                        </div> 
                                                     </div>
                                                 </div>
 
@@ -143,6 +145,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <% include ./partials/scripts %>
     <script src="js/post_cnt.js"></script>
+    <script src="js/utils.js"></script>
 
   </body>
 </html>
