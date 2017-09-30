@@ -355,9 +355,18 @@ module.exports.getPostById = function(postId, onResult) {
     }).then(onResult);
 };
 
-//  Retrieves a given post's comments.
+/* //  Retrieves a given post's comments.
 module.exports.getPostComments = function(post, onResult) {
     post.getComments().then(onResult(comments));
+}; */
+
+//  Retrieves a given post's comments.
+module.exports.getPostComments = function(postId, onResult) {
+    Comment.findAll({
+        where: {
+            postId: postId
+        }
+    }).then(onResult);
 };
 
 //  Retrieves a given post's images.

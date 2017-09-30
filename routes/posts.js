@@ -17,7 +17,7 @@ router.all('*', function (req, res, next) {
 
 //  Adds a given post to DB.
 router.post("/addPost",storage.any(), function (req, res, next) {	
-    console.log("Posts route: post uploaded successfully");
+    //console.log("Posts route: post uploaded successfully");
 
     var files = req.files; 
 
@@ -30,18 +30,33 @@ router.post("/addPost",storage.any(), function (req, res, next) {
     });
 });
 
+
+router.post("/addComment", storage.any(), function (req, res, next) {	
+    //console.log("Posts route: comment uploaded successfully"); 
+    
+    db.addComment( { postId : req.body.postId, userId : req.body.userId, text: req.body.text} , function(commentDB){ 
+        res.send([commentDB]);
+    });
+});
+
 //	Get a specific post.
 router.get("/getPost/:id", function(req, res) {
 	db.getPostById(req.params.id, function(post) {
-		res.send([{id: post.id, text : post.text , updatedAt: post.updatedAt, createdAt: post.createdAt}]);
+        res.send([post]);
 	});
 });
 
 //	Get the posts of specific user.
 router.get("/getPostsOfUser/:userId", function(req, res) {
 	db.getUserPosts(req.params.userId, function(posts) {
-        console.log(JSON.stringify(posts));
 		res.send(posts);
+    });
+});
+
+//	Get the comments of specific post.
+router.get("/getCommentsOfPost/:postId", function(req, res) {
+	db.getPostComments(req.params.postId, function(comments) {
+		res.send(comments);
     });
 });
 

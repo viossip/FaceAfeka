@@ -24,25 +24,58 @@ function uploadDone(data){
     $('#privateCheckBox').prop('checked', false);
     $('#preview').empty();
 
-    //getPosts(showPosts, function(){ })
-    console.log("getPost(data.id, showPosts, function(){ }); : " + JSON.stringify(data.id));
     getPost(data.id, showPosts, function(){ });
 
     // Display the new uploaded post
     // TODO: 
 }
 
-function setCommentsListener(){
+function addComment(postId){
 
+    var commentTextElement = $('#commentText_'+postId);
+
+    if(typeof commentTextElement !== 'undefined'){
+        var commentText = commentTextElement.val();
+        event.preventDefault();
+
+        console.log("Comment Text"+ commentText);
+
+        if(!commentText || commentText.length === 0){
+            commentTextElement.attr('placeholder', "Write something here...").focus();
+            return;
+        }
+
+        uploadComment(postId, showComments, function(){ });
+    }
 }
 
-// Display new posts from given array of posts
+// Displays comments from given array of posts
+function showComments(commentsArr, onSuccess, onFailure){
+    //console.log("showComment"+ JSON.stringify(commentsArr));
+    if(typeof commentsArr !== 'undefined'){
+        commentsArr.forEach(function(comment) {
+            $('#commentText_'+comment.postId).val("");
+            $( "#commentsPlaceHolder_"+  comment.postId).prepend(function() {
+                var showComment =
+                                "<div class = 'comment'>"+
+                                    "<a class = 'comment-avatar pull-left' href = '#'><img src = 'img/user.png'></a>"+
+                                    "<div class = 'comment-text'>"+
+                                        "<p>"+ comment.text +"</p>"+
+                                    "</div>"+
+                                "</div> <!-- ENDof Comment -->";
+                return showComment;
+            });
+        }, this);
+    }
+}
+
+// Displays posts from given array of posts
 function showPosts(postsArr, onSuccess, onFailure){
 
     console.log("UploadDone -> showPosts: " + JSON.stringify(postsArr));
     if(typeof postsArr !== 'undefined'){
         postsArr.forEach(function(post) {
-            $( "#postsPlaceHolder" ).append(function() {
+            $( "#postsPlaceHolder" ).prepend(function() {
                 var showPosts =
                 "<div class='panel panel-default post' "+ "id= 'post_"+post.id +"'>"+
                     "<div class='panel-body'>" + 
@@ -52,45 +85,46 @@ function showPosts(postsArr, onSuccess, onFailure){
                                     "<div class = 'text-center'>DevUser1</div>" + 
                                 "</a>"+
                                 "<div class = 'likes text-center'>7 Likes</div>" +
+                                
                             "</div> <!-- ENDof Col-sm-2 -->"+
             
                             "<div class = 'col-sm-10'>"+
                                 "<div class = 'bubble'>" +
                                     "<div class = 'pointer'>"+
                                         "<p>"+post.text+"</p>"+
-                                    "</div>"+
+                                    "</div>" +
 
                                     "<div class = 'pointer-border'> </div>"+
                                 "</div> <!-- ENDof bubbble -->" +
 
-                                "<p class = 'post-actions'><a href = '#'>Comment</a> - <a href = '#'>Like</a> - <a href = '#'>Follow</a> - <a href = '#'>Share</a></p>"+
+                                "<div class='container'>" +
+                                    "<div class='row'>" +
+                                        "<div id ='postActions' class='col-xs-3'>" +
+                                            "<p class = 'post-actions'>" +
+                                            "<a href = '#'>Comment</a> - <a href = '#'>Like</a> - <a href = '#'>Follow</a> - <a href = '#'>Share</a>" +
+                                            "</p>"+
+                                        "</div>" +
+                                        "<div id ='postCreatedDate' class='col-xs-2' style='font-family: Arial Black; font-size: 12px; color: blue'>Created: "+ post.createdAt + "</div>" +
+                                        "<div id ='postPrivacy' class='col-xs-2' style='font-family: Arial Black; font-size: 13px; color: blue'>Private: "+ post.privacy + "</div>" +
+                                        
+                                    "</div>" +
+                                "</div>" +
 
-                                "<div class = 'comment-form'>"+
+                                "<div class = 'comment-form'>" +
 
-                                    "<form class='form-inline'>"+
-                                        "<div class='form-group'>"+
-                                            "<input type='text' class='form-control' id='exampleInputName2' placeholder='Enter Comment'>"+
+                                    "<form class='form-inline'>" +
+                                        "<div class='form-group'>" +
+                                            "<input type='text' id = 'commentText_"+post.id+"' class='form-control' placeholder='Enter Comment'>"+
                                         "</div>"+
-                                        "<button type='submit' class='btn btn-default'>Add</button>"+
+                                        "<button id='btnAddComment_"+post.id+"' type='button' class='btn btn-default'>Add</button>"+
                                     "</form>"+
 
                                 "</div> <!-- ENDof CommentForm -->"+
 
                                 "<div class = 'clearfix'></div>"+
 
-                                "<div class = 'comments'>"+
-
-                                //////////////////////////////////////////////////
-                                    "<div class = 'comment'>"+
-                                        "<a class = 'comment-avatar pull-left' href = '#'><img src = 'img/user.png'></a>"+
-                                        "<div class = 'comment-text'>"+
-                                            "<p>The saga shells the curse beneath its renewing muck.</p>"+
-                                        "</div>"+
-                                    "</div> <!-- ENDof Comment -->"+
-                                ///////////////////////////////////////////////////
-
+                                "<div id='commentsPlaceHolder_"+post.id+"' class = 'comments'>"+
                                     "<div class = 'clearfix'></div>"+
-
                                 "</div> <!-- ENDof Comments -->"+
 
                             "</div> <!-- ENDof Col-sm-10 -->"+
@@ -100,6 +134,7 @@ function showPosts(postsArr, onSuccess, onFailure){
                 "</div>";
             return showPosts;
             });
+            getPostComments(post.id, showComments, function(){ });
         }, this);
     }
 }
@@ -123,9 +158,6 @@ function previewImages() {
   }
 }
 
-/* function getUserPosts(userId){
-    
-} */
 
 $(document).ready(function() {
     //  Attach event handler to the form (sign in button)
@@ -141,18 +173,16 @@ $(document).ready(function() {
 
     var userId = $("#li_userId").text().split(':')[1].trim();
 
-    getUserPosts(userId ,showPosts, function(){ }); ////////////////////////////////////////////userId???????
+    getUserPosts(userId ,showPosts, function(){ });
 
 
     // Listener for add comment button
-    $('body').on('click', '#postsPlaceHolder', function(event) { event.stopPropagation(); console.log("asdasd")});
-
-     // Listener for comment filed added with new post created.
-    $(document).on('DOMNodeInserted', function(e) {
-        if ( $(e.target).hasClass('post') ) {
-             console.log("asdasd");
-        } 
+    $('body').on('click', '#postsPlaceHolder', function(event) { 
+        if(event.target.id.split('_')[0] == "btnAddComment"){
+            var postIdToComment = event.target.id.split('_')[1];
+            //console.log("comment ID: " + postIdToComment);
+            addComment(postIdToComment);
+        }
+        
     });
-
-   // showPosts();
 });

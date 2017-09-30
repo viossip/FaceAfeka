@@ -33,14 +33,8 @@ function uploadPost(event, onSuccess, onFailure)
 		contentType: false, // Set content type to false as jQuery will tell the server its a query string request
 		success: function(data, textStatus, jqXHR)
 		{
-			if(typeof data.error === 'undefined')
-			{
-				onSuccess(data);
-			}
-			else
-			{
-				console.log('ERRORS: ' + data.error);
-			}
+			if(typeof data.error === 'undefined'){ onSuccess(data); }
+			else { console.log('ERRORS: ' + data.error); }
 			$('input[type=file]').val('');
 		},
 		error: function(jqXHR, textStatus, errorThrown)
@@ -50,6 +44,39 @@ function uploadPost(event, onSuccess, onFailure)
 			onFailure();
 		}
     });
+}
+
+// Create new comment to post with given id.
+function uploadComment(postId, onSuccess, onFailure){
+	var data = new FormData();
+	data.append("postId", postId);
+	data.append("userId", $("#li_userId").text().split(':')[1].trim());
+	data.append("text", $('#commentText_'+postId).val());
+
+	/* post("/posts/addComment", data ,onSuccess,onFailure) */
+
+	$.ajax({
+		url: '/posts/addComment',
+        type: 'POST',
+		data: data,
+		cache: false,
+		dataType: 'json',
+		processData: false, // Don't process the files
+		contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+		success: function(data, textStatus, jqXHR)
+		{
+			if(typeof data.error === 'undefined'){ onSuccess(data); }
+			else { console.log('ERRORS: ' + data.error); }
+			$('input[type=file]').val('');
+		},
+		error: function(jqXHR, textStatus, errorThrown)
+		{
+			console.log('ERRORS: ' + textStatus);
+			$('input[type=file]').val('');
+			onFailure();
+		}
+    });
+
 }
 
 //	Get all posts.
@@ -65,4 +92,9 @@ function getPost(postId, onSuccess, onFailure) {
 //	Get all posts of specific user.
 function getUserPosts(userId, onSuccess, onFailure) {
 	get("/posts/getPostsOfUser/"+ userId, onSuccess, onFailure);
+}
+
+//	Get all comments of specific post.
+function getPostComments(commentId, onSuccess, onFailure) {
+	get("/posts/getCommentsOfPost/"+ commentId, onSuccess, onFailure);
 }
