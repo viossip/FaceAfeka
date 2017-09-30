@@ -184,7 +184,7 @@ Photos
 }
 
 
-/* .roundedTwo */
+/* .Checkbox */
 .checkbox {
   width: 20px;
   height: 20px;
@@ -195,45 +195,11 @@ Photos
   box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0,0,0,0.5);
 }
 
-#imagePreview {
+/* #imagePreview {
     width: 180px;
     height: 180px;
     background-position: center center;
     background-size: cover;
     -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, .3);
     display: inline-block;
-}
-
-/* end .roundedTwo */
-
-/*
- * Make all images responsive
- */
- /*
-img {
-  max-width: 100%;
-  max-height: 100%; }
-
- .upload {
-  float: left;
-  width: 140px;
-  height: 50px;
-  border: 1px dashed #c1c1c1;
-  transform: translate3d(0, 0, 0);
-  background: #fff;
-  font-family: 'Montserrat-Regular';
-  font-size: 12px;
-  color: #000;
-  line-height: 50px;
-  text-align: center;
-  margin-left: 30px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  position: relative; }
-
-  .upload input[type=file] {
-
-    width: 140px;
-    height: 50px; 
-  } */
+} */

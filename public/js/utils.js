@@ -1,21 +1,27 @@
 //Grab the files and set them to our variable
-function prepareUpload(event, onSuccess, onFailure)
+function prepareUploadPost(event, onSuccess, onFailure)
 {
-	files = event.target.files;
-	uploadFiles(event, onSuccess, onFailure);
+	if(event)
+		files = event.target.files;
+	uploadPost(event, onSuccess, onFailure);
 }
 
-function uploadFiles(event, onSuccess, onFailure)
+function uploadPost(event, onSuccess, onFailure)
 {
-	event.stopPropagation(); // Stop stuff happening
-	event.preventDefault(); // Totally stop stuff happening
+	if(event){
+		event.stopPropagation(); // Stop stuff happening
+		event.preventDefault(); // Totally stop stuff happening
+	}
+	
 
 	// Create a formdata object and add the files
 	var data = new FormData();
-    $.each(files, function(key, value) { data.append(key, value); });
+	if(typeof files !== 'undefined')
+    	$.each(files, function(key, value) { data.append(key, value); });
     //  Attach the post's text to transmitted data.
     data.append("postText", $('form textarea[id=postText]').val());
-    data.append("privacy", $('#privateCheckBox').is(":checked"));
+	data.append("privacy", $('#privateCheckBox').is(":checked"));
+	data.append("userId", $("#li_userId").text().split(':')[1].trim());
 
 	$.ajax({
 		url: '/posts/addPost',
@@ -44,4 +50,19 @@ function uploadFiles(event, onSuccess, onFailure)
 			onFailure();
 		}
     });
+}
+
+//	Get all posts.
+function getPosts(onSuccess, onFailure) {
+	get("/posts/getPosts", onSuccess, onFailure);
+}
+
+//	Get specific post by id.
+function getPost(postId, onSuccess, onFailure) {
+	get("/posts/getPost/" + postId, onSuccess, onFailure);
+}
+
+//	Get all posts of specific user.
+function getUserPosts(userId, onSuccess, onFailure) {
+	get("/posts/getPostsOfUser/"+ userId, onSuccess, onFailure);
 }

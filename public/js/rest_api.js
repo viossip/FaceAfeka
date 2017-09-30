@@ -244,12 +244,6 @@ function register(userObj, passwordStr, onSuccess, onFailure){
 	post("/auth/registerUser", { user: userObj, password: passwordStr }, onSuccess, onFailure);
 }
 
-//	Posts
-
-function addPost(postObj, image, onSuccess, onFailure) {
-	post("/posts/addPost", {}, onSuccess, onFailure);
-}
-
 //energy config
 /* function getConfig(onSuccess, onFailure) {
 	get("/configuration/getConfig", onSuccess,

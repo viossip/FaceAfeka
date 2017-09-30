@@ -304,9 +304,18 @@ module.exports.getAllUsers = function(onResult) {
     User.findAll().then(onResult);
 };
 
-//  Retrieves a given user's posts.
+/* //  Retrieves a given user's posts.
 module.exports.getUserPosts = function(user, onResult) {
     user.getPosts().then(onResult(posts));
+}; */
+
+//  Retrieves a given user's posts.
+module.exports.getUserPosts = function(userId, onResult) {
+    Post.findAll({
+        where: {
+            userId: userId
+        }
+    }).then(onResult);
 };
 
 //  Retrieves a given user's comments.
@@ -331,6 +340,19 @@ module.exports.addPost = function(post, images, onResult) {
 	}, function(error) {
 		onResult(null, error);
 	});
+};
+
+module.exports.getAllPosts = function(onResult) {
+    Post.findAll().then(onResult);
+};
+
+//  Retrieve a post given it's id.
+module.exports.getPostById = function(postId, onResult) {
+    Post.findOne({
+        where: {
+            id: postId
+        }
+    }).then(onResult);
 };
 
 //  Retrieves a given post's comments.
