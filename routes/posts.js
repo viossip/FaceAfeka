@@ -21,7 +21,10 @@ router.post("/addPost",storage.any(), function (req, res, next) {
 
     var files = req.files; 
 
-    var imgsDB = req.files.map(function(img) {return { imagePath : IMAGES_PATH + "/" + img.filename};});
+    var imgsDB = req.files.map(function(img) {
+        console.log("------------------------------------------------------------"+IMAGES_PATH + "/" + img.filename);
+        return { imagePath : IMAGES_PATH + "/" + img.filename};
+    });
     //console.log(JSON.stringify(imgsDB));
 
     db.addPost( { text : req.body.postText, privacy : req.body.privacy, userId: req.body.userId}, imgsDB , function(postDB){ 
