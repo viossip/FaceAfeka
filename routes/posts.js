@@ -5,7 +5,6 @@ var utils = require("../core/utils");
 var fs = require("fs");
 var path = require('path');
 var multer  =   require('multer');
-//var uploadSource = './';
 
 const IMAGES_PATH = "../public/img/uploadedImgs";
 
@@ -20,23 +19,27 @@ router.all('*', function (req, res, next) {
 router.post("/addPost",storage.any(), function (req, res, next) {	
     /* res.send({file:req.files[0].filename}); */
     console.log("Posts route: post uploaded successfully");
-    // get the post's text
-    var text = req.body.postText;
+
     var files = req.files; 
 
-    console.log(JSON.stringify(text));
-    req.files.forEach(function(entry) { console.log(entry.path) });
+    var imgsDB = req.files.map(function(img) {return { imagePath : IMAGES_PATH + "/" + img.filename};});
+    console.log(JSON.stringify(imgsDB));
 
-    console.log(JSON.stringify(req.files  ));
-    res.send({"result":"success"});
+    db.addPost( { text : req.body.postText, privacy : req.body.privacy}, imgsDB , function(postDB){ 
+        console.log(JSON.stringify(postDB));
+        res.send(postDB);
+ });
+    //db.addPost( { text : req.body.postText, privacy : req.body.privacy}, imgsDB , res);
+    //res.send({"result":"success"});
 });
 
 router.get("/getPost", function(req, res){
-	var fileName = req.query.fileName;
-	
+
+	/* var fileName = req.query.fileName;
 	fs.readFile(path.join(__dirname, IMAGES_PATH + fileName), function(err, data) {
 		res.send(data);
-	});
+  }); */
+  
 });
 
 module.exports = router;

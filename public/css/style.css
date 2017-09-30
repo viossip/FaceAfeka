@@ -183,6 +183,29 @@ Photos
     width: 100%;
 }
 
+
+/* .roundedTwo */
+.checkbox {
+  width: 20px;
+  height: 20px;
+  position: relative; 
+  background: #fcfff4;
+  background: linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+  border-radius: 50px;
+  box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0,0,0,0.5);
+}
+
+#imagePreview {
+    width: 180px;
+    height: 180px;
+    background-position: center center;
+    background-size: cover;
+    -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, .3);
+    display: inline-block;
+}
+
+/* end .roundedTwo */
+
 /*
  * Make all images responsive
  */

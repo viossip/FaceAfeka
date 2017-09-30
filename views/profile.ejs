@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <% include ./partials/head %>
-  </head>
+    <head>
+        <% include ./partials/head %>
+    </head>
 
-  <body>
+    <body>
 
     <header>
         <% include ./partials/header %>
@@ -12,133 +12,148 @@
 
     <% include ./partials/navbar %>
 
-   <!-- Section -->
-      <section>
-          <div class = "container">
-              <div class = "row">
-                  <div class = "col-md-8">
-                      <div class="profile">
-                          <h1 class="page-header"><%= userFullname %></h1>
-                          <div class="row">
-                              <div class="col-md-4 user-profile-image">
-                                  <img src="<%= userImage %>" class="img-thumbnail">
-                              </div>
+    <!-- Section -->
+    <section>
+        <div class = "container">
+            <div class = "row">
+                <div class = "col-md-8">
+                    <div class="profile">
+                        <h1 class="page-header"><%= userFullname %></h1>
+                        <div class="row">
+                            <div class="col-md-4 user-profile-image">
+                                <img src="<%= userImage %>" class="img-thumbnail">
+                            </div>
 
-                              <div class="col-md-8 user-details">
-                                  <ul>
-                                      <li><strong>Name: </strong><%= userFullname %></li>
-                                      <li><strong>Email Address: </strong><%= userEmail %></li>
-                                  </ul>
+                            <div class="col-md-8 user-details">
+                                <ul>
+                                    <li><strong>Name: </strong><%= userFullname %></li>
+                                    <li><strong>Email Address: </strong><%= userEmail %></li>
+                                </ul>
+                            </div> <!-- ENDof Col-md-8 -->
+                        </div> <!-- ENDof row -->
 
-
-
-                              </div> <!-- ENDof Col-md-8 -->
-
-                          </div> <!-- ENDof row -->
-
-                          <br><br>
-
-                          <div class = "row">
-                              <div class = "col-md-12">
-                                      <!-- Profile Wall -->
-                                     <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <h3 class="panel-title">Wall</h3>
-                                        </div>
-                                        <div class="panel-body">
-                                            <form>
-                                                <div class="form-group">
-                                                    <textarea type="text" id="postText" class="form-control"  placeholder="Write on the wall"></textarea>
-                                                </div>
+                        <br><br>
+                            
+                        <div class = "row">
+                            <div class = "col-md-12">
+                                <!-- Profile Wall -->
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Wall</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <form>
+                                            <div class="form-group">
+                                                <textarea type="text" id="postText" class="form-control"  placeholder="Write on the wall"></textarea>
+                                            </div>
+                                            <div style="display: inblock; width:20%; float:left;">
                                                 <button type="submit" class="btn btn-default">Submit</button>
+                                            </div>
+                                            <div style="display: inblock; width:20%; float:left;">
+                                                <input type="checkbox" id="privateCheckBox" class="checkbox" name="privateCheckBox" value="checked">Private</input> 
+                                            </div>      
+                                            <div class = "pull-right">
+                                                <input type="file" id="images" name = "uploadImages" class="btn btn-primary" accept=".jpg, .jpeg, .png" multiple="multiple"/>
+                                                <div id="preview">qweqwe</div>
+                                             </div>
+                                        </form>
+                                    </div>   
+                                </div> <!-- ENDof panel panel-default -->
 
-                                                <div class = "pull-right">
-                                                    <div class="upload icons-wrapper">
-                                                         <div class="upload-btn">
-                                                                <input type="file" id="images" name = "uploadImages" class="btn btn-primary" accept=".jpg, .jpeg, .png" multiple="multiple"/>
-                                                        </div> 
-                                                    </div>
-                                                </div>
+                                
+                                <!-- /////////////////////////////////////////////////  -->
+                                <!-- Posts -->
+                                <div id="postsPlaceHolder">
+                                    
+                                <!-- /////////////////////////////////////////////////  -->
+                                   
+                                 <!-- /////////////////////////////////////////////////  -->        
 
-                                            </form>
-                                        </div>
-                                    </div> <!-- ENDof panel panel-default -->
-                              </div> <!-- ENDof Col-MD-12 -->
-                          </div> <!-- ENDof Row -->
+                                 <!-- /////////////////////////////////////////////////  --> 
 
-                      </div> <!-- ENDof Profile -->
 
-                  </div> <!-- ENDof Col-md-8 -->
+                                 <!-- /////////////////////////////////////////////////  --> 
 
-                   <div class = "col-md-4">
+                                </div> <!-- ENDof panel panel-default post -->
 
+                                <!--/////////////////////////////////////////////////  -->
+
+                            </div> <!-- ENDof Col-MD-12 -->
+                        </div> <!-- ENDof Row -->
+                    </div> <!-- ENDof Profile -->
+                </div> <!-- ENDof Col-md-8 -->
+
+
+                
+
+
+
+                <div class = "col-md-4">
                     <div class="panel panel-default friends">
-                      <div class="panel-heading">
-                        <h3 class="panel-title">My Friends</h3>
-                      </div>
-                      <div class="panel-body">
-                        <ul>
-                            <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
-                            </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
-                            </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
-                            </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
-                            </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
-                            </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
-                            </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
-                            </li>
-                             <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
-                            </li>
-                        </ul>
-                        <div class = "clearfix"></div>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">My Friends</h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul>
+                                <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
+                                </li>
+                                <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
+                                </li>
+                                <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
+                                </li>
+                                <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
+                                </li>
+                                <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
+                                </li>
+                                <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
+                                </li>
+                                <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
+                                </li>
+                                <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
+                                </li>
+                            </ul>
+                            <div class = "clearfix"></div>                                
+                                <a class = "btn btn-primary" href = "#">View All Friends</a>
+                            </div>
+                        </div>
 
-                        <a class = "btn btn-primary" href = "#">View All Friends</a>
-                      </div>
+                        <div class="panel panel-default groups">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Latest Groups</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class = "group-item">
+                                    <img src = "../../img/group.png">
+                                    <h4><a href = "#">Sample Group One</a></h4>
+                                    <p>This is a Dobble Social Network sample groups</p>
+                                </div>
+                                <div class = "clearfix"></div>
+                                    <div class = "group-item">
+                                        <img src = "../../img/group.png">
+                                        <h4><a href = "#">Sample Group One</a></h4>
+                                        <p>This is a Dobble Social Network sample groups</p>
+                                    </div>
+                                </div>
+                                <div class = "clearfix"></div>
+                                    <div class = "group-item">
+                                        <img src = "../../img/group.png">
+                                        <h4><a href = "#">Sample Group One</a></h4>
+                                        <p>This is a Dobble Social Network sample groups</p>
+                                    </div>
+                                </div>
+                                <div class = "clearfix"></div>
+                                    <a class = "btn btn-primary" href = "#">View All Groups</a>
+                                </div>
+                            </div>    
+                        </div> <!-- ENDof panel-body -->
                     </div>
+                </div> <!-- ENDof Col-md-4 -->
+            </div> <!--ENDof Row -->
+        </div> <!--ENDof Container -->
+    </section>
 
-                    <div class="panel panel-default groups">
-                      <div class="panel-heading">
-                        <h3 class="panel-title">Latest Groups</h3>
-                      </div>
-                      <div class="panel-body">
-                        <div class = "group-item">
-                            <img src = "../../img/group.png">
-                            <h4><a href = "#">Sample Group One</a></h4>
-                            <p>This is a Dobble Social Network sample groups</p>
-                        </div>
-                        <div class = "clearfix"></div>
-                        <div class = "group-item">
-                            <img src = "../../img/group.png">
-                            <h4><a href = "#">Sample Group One</a></h4>
-                            <p>This is a Dobble Social Network sample groups</p>
-                        </div>
-                        <div class = "clearfix"></div>
-                        <div class = "group-item">
-                            <img src = "../../img/group.png">
-                            <h4><a href = "#">Sample Group One</a></h4>
-                            <p>This is a Dobble Social Network sample groups</p>
-                        </div>
-
-                        <div class = "clearfix"></div>
-                        <a class = "btn btn-primary" href = "#">View All Groups</a>
-
-                      </div> <!-- ENDof panel-body -->
-                    </div>
-
-                  </div> <!-- ENDof Col-md-4 -->
-
-              </div> <!--ENDof Row -->
-
-          </div> <!--ENDof Container -->
-      </section>
-
-      <!-- Footer -->
-        <% include ./partials/footer %>
+    <!-- Footer -->
+    <% include ./partials/footer %>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -146,6 +161,5 @@
     <% include ./partials/scripts %>
     <script src="js/post_cnt.js"></script>
     <script src="js/utils.js"></script>
-
   </body>
 </html>

@@ -13,8 +13,9 @@ function uploadFiles(event, onSuccess, onFailure)
 	// Create a formdata object and add the files
 	var data = new FormData();
     $.each(files, function(key, value) { data.append(key, value); });
-    //  Append the post's text to transmitted data.
+    //  Attach the post's text to transmitted data.
     data.append("postText", $('form textarea[id=postText]').val());
+    data.append("privacy", $('#privateCheckBox').is(":checked"));
 
 	$.ajax({
 		url: '/posts/addPost',

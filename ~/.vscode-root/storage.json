@@ -444,12 +444,27 @@
     "telemetry.machineId": "5d86ed6669cb05dbea9dc773b247fea5111a9cd3545987922e9ff3714fa1007c",
     "theme": "vs-dark vscode-theme-defaults-themes-dark_plus-json",
     "themeBackground": "#1e1e1e",
-    "pickerWorkingDir": "/home/touchwand",
+    "pickerWorkingDir": "/home/touchwand/faceAfekaProject",
     "openedPathsList": {
         "files": [],
         "folders": [
-            "/home/touchwand/socialNetworkExample",
-            "/home/touchwand/faceAfekaProject/faceAfeka"
+            "/home/touchwand/faceAfekaProject/faceAfeka",
+            "/home/touchwand/socialNetworkExample"
         ]
+    },
+    "windowsState": {
+        "openedWindows": [],
+        "openedFolders": [],
+        "lastActiveWindow": {
+            "workspacePath": "/home/touchwand/faceAfekaProject/faceAfeka",
+            "uiState": {
+                "mode": 0,
+                "x": 65,
+                "y": 24,
+                "width": 1855,
+                "height": 1056
+            },
+            "backupPath": "/home/touchwand/faceAfekaProject/faceAfeka/~/.vscode-root/Backups/20192d1060e1d7276a96ee6b2a9e534b"
+        }
     }
 }
