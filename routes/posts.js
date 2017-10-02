@@ -17,14 +17,19 @@ router.all('*', function (req, res, next) {
 
 //  Adds a given post to DB.
 router.post("/addPost",storage.any(), function (req, res, next) {	
-    //console.log("Posts route: post uploaded successfully");
+    console.log("Posts route: post uploaded successfully");
 
-    var files = req.files; 
+    //var files = req.files; 
 
     var imgsDB = req.files.map(function(img) {
         console.log("------------------------------------------------------------"+IMAGES_PATH + "/" + img.filename);
         return { imagePath : IMAGES_PATH + "/" + img.filename};
     });
+    console.log("+-+-+-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"+imgsDB);
+    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"+JSON.stringify(imgsDB));
+
+
+
     //console.log(JSON.stringify(imgsDB));
 
     db.addPost( { text : req.body.postText, privacy : req.body.privacy, userId: req.body.userId}, imgsDB , function(postDB){ 
@@ -36,7 +41,6 @@ router.post("/addPost",storage.any(), function (req, res, next) {
 
 router.post("/addComment", storage.any(), function (req, res, next) {	
     //console.log("Posts route: comment uploaded successfully"); 
-    
     db.addComment( { postId : req.body.postId, userId : req.body.userId, text: req.body.text} , function(commentDB){ 
         res.send([commentDB]);
     });
@@ -62,6 +66,21 @@ router.get("/getCommentsOfPost/:postId", function(req, res) {
 		res.send(comments);
     });
 });
+
+ //	Get images of specific post by given post Id.
+router.get("/getImages/:postId", function(req, res){
+    var imgs = [];
+    db.getPostImages(req.params.postId, function(imgsFromDB) {
+        imgsFromDB.forEach(function(imgFromDB) {
+            console.log("------------------------------------------------------------"+imgFromDB.imagePath);
+            fs.readFile(imgFromDB.imagePath , function(err, imgFromFile) {
+                imgs.push(imgFromFile);
+            });
+        }, this);
+        res.send(imgs);
+    });
+});
+
 
 /* //	Get all posts.
 router.get("/getPosts", function(req, res) {

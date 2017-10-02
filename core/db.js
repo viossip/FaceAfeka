@@ -89,12 +89,13 @@ const Post = sequelize.define('post', {
 	freezeTableName : true
 });
 
+////////////////////////////////////////////////////////////////////////////////////
 //  Adds the attribute postId to images.
-//Post.hasMany(Image, { as: 'PostImages' });
-
-//  Creates a new model called PostImage that has foreign keys userId and imageId
+Post.hasMany(Image, { as: 'PostImages' });
+////////////////////////////////////////////////////////////////////////////////////
+/* //  Creates a new model called PostImage that has foreign keys postId and imageId
 Post.belongsToMany(Image, {through: 'PostImage'});
-Image.belongsToMany(Post, {through: 'PostImage'});
+Image.belongsToMany(Post, {through: 'PostImage'}); */
 
 //  Adds the attribute postId to comments.
 Post.hasMany(Comment, { as: 'PostComments' });
@@ -332,12 +333,10 @@ module.exports.getUserFriends = function(user, onResult) {
 module.exports.addPost = function(post, images, onResult) {
 
 	Post.create(post).then(function(postDB) {
-        
-        if (images) {
-            images.forEach(function(imageObj) {
-                postDB.addImage(imageObj);
-            });
-        }
+        images.forEach(function(imageObj) {
+            imageObj["postId"] = postDB.id;                
+            module.exports.addImage(imageObj, function(){});
+        });
         onResult(postDB);
 	}, function(error) {
 		onResult(null, error);
