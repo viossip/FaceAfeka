@@ -370,9 +370,18 @@ module.exports.getPostComments = function(postId, onResult) {
     }).then(onResult);
 };
 
-//  Retrieves a given post's images.
+/* //  Retrieves a given post's images.
 module.exports.getPostImages = function(post, onResult) {
     post.getImages().then(onResult(images));
+}; */
+
+//  Retrieves a given post's images.
+module.exports.getPostImages = function(postId, onResult) {
+        Image.findAll({
+        where: {
+            postId: postId
+        }
+    }).then(onResult);
 };
 
 //  Retrieves a given post's likes.

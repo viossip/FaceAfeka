@@ -51,7 +51,6 @@ function addComment(postId){
 
 // Displays comments from given array of posts
 function showComments(commentsArr, onSuccess, onFailure){
-    //console.log("showComment"+ JSON.stringify(commentsArr));
     if(typeof commentsArr !== 'undefined'){
         commentsArr.forEach(function(comment) {
             $('#commentText_'+comment.postId).val("");
@@ -69,6 +68,17 @@ function showComments(commentsArr, onSuccess, onFailure){
     }
 }
 
+// Displays requested images from server by their names given in the array.
+function getImages(imagesArr, onSuccess, onFailure){
+    
+    if(typeof imagesArr !== 'undefined'){
+        imagesArr.forEach(function(img) {
+            $("#imagesPlaceHolder_"+  img.postId).prepend('<img height="50px" width="50px" id ="img" src="/posts/getImage/' +img.name+ '" /> ');
+        }, this);
+    }
+}
+
+
 // Displays posts from given array of posts
 function showPosts(postsArr, onSuccess, onFailure){
 
@@ -80,14 +90,19 @@ function showPosts(postsArr, onSuccess, onFailure){
                 "<div class='panel panel-default post' "+ "id= 'post_"+post.id +"'>"+
                     "<div class='panel-body'>" + 
                         "<div class = row>" +
+                            "<div class = row>" +
+                            // IMAGES
+                                "<div id='imagesPlaceHolder_"+post.id+"' class = 'col-sm-8'>"+
+                                "</div>" +
+                            "</div>" +
                             "<div class = 'col-sm-2'>" + 
                                 "<a class = 'post-avatar thumbnail' href='profile.html'> <img src='img/user.png'>" +
                                     "<div class = 'text-center'>DevUser1</div>" + 
                                 "</a>"+
                                 "<div class = 'likes text-center'>7 Likes</div>" +
-                                
+                                    
                             "</div> <!-- ENDof Col-sm-2 -->"+
-            
+                
                             "<div class = 'col-sm-10'>"+
                                 "<div class = 'bubble'>" +
                                     "<div class = 'pointer'>"+
@@ -106,7 +121,7 @@ function showPosts(postsArr, onSuccess, onFailure){
                                         "</div>" +
                                         "<div id ='postCreatedDate' class='col-xs-2' style='font-family: Arial Black; font-size: 12px; color: blue'>Created: "+ post.createdAt + "</div>" +
                                         "<div id ='postPrivacy' class='col-xs-2' style='font-family: Arial Black; font-size: 13px; color: blue'>Private: "+ post.privacy + "</div>" +
-                                        
+                                            
                                     "</div>" +
                                 "</div>" +
 
@@ -122,19 +137,20 @@ function showPosts(postsArr, onSuccess, onFailure){
                                 "</div> <!-- ENDof CommentForm -->"+
 
                                 "<div class = 'clearfix'></div>"+
-
+                                //  COMMENTS
                                 "<div id='commentsPlaceHolder_"+post.id+"' class = 'comments'>"+
                                     "<div class = 'clearfix'></div>"+
                                 "</div> <!-- ENDof Comments -->"+
 
-                            "</div> <!-- ENDof Col-sm-10 -->"+
-
+                            "</div> <!-- ENDof Col-sm-10 -->"+        
                         "</div> <!-- ENDof row -->"+
                     "</div> <!-- ENDof panel body -->";
                 "</div>";
             return showPosts;
             });
+
             getPostComments(post.id, showComments, function(){ });
+            getPostImages(post.id, getImages, function(){});
         }, this);
     }
 }
@@ -174,7 +190,6 @@ $(document).ready(function() {
     var userId = $("#li_userId").text().split(':')[1].trim();
 
     getUserPosts(userId ,showPosts, function(){ });
-
 
     // Listener for add comment button
     $('body').on('click', '#postsPlaceHolder', function(event) { 

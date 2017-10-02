@@ -17,23 +17,13 @@ router.all('*', function (req, res, next) {
 
 //  Adds a given post to DB.
 router.post("/addPost",storage.any(), function (req, res, next) {	
-    console.log("Posts route: post uploaded successfully");
-
-    //var files = req.files; 
+    //console.log("Posts route: post uploaded successfully");
 
     var imgsDB = req.files.map(function(img) {
-        console.log("------------------------------------------------------------"+IMAGES_PATH + "/" + img.filename);
         return { imagePath : IMAGES_PATH + "/" + img.filename};
     });
-    console.log("+-+-+-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"+imgsDB);
-    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"+JSON.stringify(imgsDB));
-
-
-
-    //console.log(JSON.stringify(imgsDB));
 
     db.addPost( { text : req.body.postText, privacy : req.body.privacy, userId: req.body.userId}, imgsDB , function(postDB){ 
-        //console.log(JSON.stringify(postDB));
         res.send(postDB);
     });
 });
@@ -67,18 +57,24 @@ router.get("/getCommentsOfPost/:postId", function(req, res) {
     });
 });
 
- //	Get images of specific post by given post Id.
-router.get("/getImages/:postId", function(req, res){
-    var imgs = [];
+ //	Get images names array of specific post by given post Id.
+router.get("/getImagesOfPost/:postId", function(req, res){
+    
+    var imgsNames = [];
     db.getPostImages(req.params.postId, function(imgsFromDB) {
         imgsFromDB.forEach(function(imgFromDB) {
-            console.log("------------------------------------------------------------"+imgFromDB.imagePath);
-            fs.readFile(imgFromDB.imagePath , function(err, imgFromFile) {
-                imgs.push(imgFromFile);
-            });
+            imgsNames.push({"name" : (imgFromDB.imagePath).split('/').pop(), "postId" : req.params.postId })
         }, this);
-        res.send(imgs);
+        res.send(imgsNames);
     });
+});
+
+ //	Get images names array of specific post by given post Id.
+router.get("/getImage/:imageName", function(req, res){
+    
+    fs.readFile(path.join(__dirname, IMAGES_PATH + "/" + req.params.imageName) , function(err, imgFromFile) {
+        res.send(imgFromFile); 
+    }); 
 });
 
 

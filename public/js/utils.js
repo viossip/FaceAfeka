@@ -95,6 +95,17 @@ function getUserPosts(userId, onSuccess, onFailure) {
 }
 
 //	Get all comments of specific post.
-function getPostComments(commentId, onSuccess, onFailure) {
-	get("/posts/getCommentsOfPost/"+ commentId, onSuccess, onFailure);
+function getPostComments(postId, onSuccess, onFailure) {
+	get("/posts/getCommentsOfPost/"+ postId, onSuccess, onFailure);
 }
+
+//	Get all imgs of specific post.
+function getPostImages(postId, onSuccess, onFailure) {
+	get("/posts/getImagesOfPost/"+ postId, onSuccess, onFailure);
+}
+
+//	Get all imgs of specific post.
+function getImage(imageName, onSuccess, onFailure) {
+	get("/posts/getImage/"+ imageName, onSuccess, onFailure);
+}
+//
