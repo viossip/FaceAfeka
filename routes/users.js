@@ -26,14 +26,23 @@ var utils = require("../core/utils");
   }
 }); */
 
-//	Get a specific user.
-router.get("/getUser", function(req, res, next) {
+//	Get a specific user given his id.
+router.get("/getUserById", function(req, res, next) {
 	console.log("Retrieving user " + JSON.stringify(req.body.id));
 
 	db.getUserById(req.body.id, function(user) {
 		res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: ProfileImageId});
 	});
 
+});
+
+//  Get a specific user given his login.
+router.get("/getUserByLogin", function(req, res, next) {
+  console.log("Retrieving user " + JSON.stringify(req.body.id));
+
+  db.getUserByLogin(req.body.login, function(user) {
+    res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: ProfileImageId});
+  });
 });
 
 //	Get all users.

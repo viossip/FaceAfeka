@@ -198,42 +198,37 @@ function reconnectRelay(){
 reconnectRelay();
 */
 
+/* ---------------- USERS API ---------------- */
+
+function getUserById(id, onSuccess, onFailure) {
+	get("/users/getUserById?id=" + id, onSuccess, onFailure);
+}
+
+function getUserByLogin(login, onSuccess, onFailure) {
+	get("/users/getUserByLogin?login=" + login, onSuccess, onFailure);
+}
+
+function getUsers(onSuccess, onFailure) {
+	get("/users/getUsers", onSuccess, onFailure);
+}
+
+function editUser(user, onSuccess, onFailure) {
+	post("/users/updateUser", user, onSuccess, onFailure);
+}
+
+/* ---------------- AUTH API ---------------- */
+
 function login(user, pass, onSuccess, onFailure) {
 	get("/auth/login?user=" + user + "&pass=" + pass, function(user){
-		//contId = user.controllers[0];
 		//clientId = user.login;
 		//currUser = user;
-		//if(user.role !== "ADMIN"){
-		//	hideAdminOptions();
-		//}
 		onSuccess(user);
 
 	}, onFailure);
 }
 
-
-/* function sendStrings(content, onSuccess, onFailure) {
-	post("/configuration/sendStrings", content, onSuccess, onFailure);
-} */
-
-/* function getHolidays(onSuccess, onFailure) {
-	get("/configuration/getHolidays", onSuccess, onFailure);
-}
- */
-function editUser(user, onSuccess, onFailure) {
-	post("/users/updateUser", user, onSuccess, onFailure);
-}
-
 function authLogout(onSuccess, onFailure) {
 	get("/auth/logout", onSuccess, onFailure);
-}
-
-function getUser(id, onSuccess, onFailure) {
-	get("/users/getUser?id=" + id, onSuccess, onFailure);
-}
-
-function getUsers(onSuccess, onFailure) {
-	get("/users/getUsers", onSuccess, onFailure);
 }
 
 function checkLoginExists(user, onSuccess, onFailure) {
@@ -244,172 +239,90 @@ function register(userObj, passwordStr, onSuccess, onFailure){
 	post("/auth/registerUser", { user: userObj, password: passwordStr }, onSuccess, onFailure);
 }
 
-//energy config
-/* function getConfig(onSuccess, onFailure) {
-	get("/configuration/getConfig", onSuccess,
-			onFailure);
+/* ---------------- POSTS API ---------------- */
+
+/* //	Get posts written to a given user's wall
+function getPostsToUser(userId, onSuccess, onFailure) {
+	get("/posts/getPostsToUser?id=" + userId, onSuccess, onFailure);
 }
 
-function saveConfig(config, onSuccess, onFailure) {
-	post("/configuration/saveConfig", config, onSuccess,
-			onFailure);
+//	Get posts written by a given user.
+function getPostsByUser(userId, onSuccess, onFailure) {
+	get("/posts/getPostsByUser?id=" + userId, onSuccess, onFailure);
+} */
+
+//	Get all posts.
+function getPosts(onSuccess, onFailure) {
+	get("/posts/getPosts", onSuccess, onFailure);
 }
 
-function internetStatus(onSuccess, onFailure) {
-	get("/configuration/internetStatus", onSuccess,
-			onFailure);
+//	Get specific post by id.
+function getPost(postId, onSuccess, onFailure) {
+	get("/posts/getPost/" + postId, onSuccess, onFailure);
 }
 
-function scanWIFI(onSuccess, onFailure) {
-	get("/configuration/scanWIFI", onSuccess,
-			onFailure);
-}
- */
-
-//rooms
-/* function getRooms(onSuccess, onFailure) {
-	get("/rooms/listRooms", onSuccess, onFailure);
+//	Get all posts of specific user.
+function getUserPosts(userId, onSuccess, onFailure) {
+	get("/posts/getUserPosts/"+ userId, onSuccess, onFailure);
 }
 
-function getRoom(id, onSuccess, onFailure) {
-	get("/rooms/getRoomByID?id=" + id, onSuccess, onFailure);
+//	Get all comments of specific post.
+function getPostComments(postId, onSuccess, onFailure) {
+	get("/posts/getPostComments/"+ postId, onSuccess, onFailure);
 }
 
-function addRoom(room, onSuccess, onFailure) {
-	post("/rooms/addRoom", room, onSuccess, onFailure);
+//	Get all imgs of specific post.
+function getPostImages(postId, onSuccess, onFailure) {
+	get("/posts/getPostImages/"+ postId, onSuccess, onFailure);
 }
 
-function editRoom(room, onSuccess, onFailure) {
-	post("/rooms/editRoom", room, onSuccess, onFailure);
+//	Get all imgs of specific post.
+function getImage(imageName, onSuccess, onFailure) {
+	get("/posts/getImage/"+ imageName, onSuccess, onFailure);
 }
 
-function deleteRoom(id, onSuccess, onFailure) {
-	get("/rooms/deleteRoom?id=" + id, onSuccess, onFailure);
+function uploadPost(data, onSuccess, onFailure) {
+	postFiles("/posts/addPost", data, onSuccess, onFailure);
 }
 
-function getGroups(onSuccess, onFailure) {
-	get("/groups/listGroups", onSuccess, onFailure);
-}
-
-function getGroup(id, onSuccess, onFailure) {
-	get("/groups/getGroupByID?id=" + id, onSuccess, onFailure);
-}
-
-function addGroup(group, onSuccess, onFailure) {
-	post("/groups/addGroup", group, onSuccess, onFailure);
-}
-
-function editGroup(group, onSuccess, onFailure) {
-	post("/groups/editGroup", group, onSuccess, onFailure);
-}
-
-function deleteGroup(id, onSuccess, onFailure) {
-	get("/groups/deleteGroup?id=" + id, onSuccess, onFailure);
-}
-
-//units
-function getUnits(onSuccess, onFailure) {
-	get("/units/listUnits", onSuccess, onFailure);
-}
-
-function getUnit(id, onSuccess, onFailure) {
-	get("/units/getUnitByID?id=" + id, onSuccess, onFailure);
-}
-
-function addUnit(unit, onSuccess, onFailure) {
-	post("/units/addUnit", unit, onSuccess, onFailure);
-}
-
-function cancelAddUnit(data, onSuccess, onFailure){
-	post("/units/cancelAddUnit", data, onSuccess, onFailure);
-}
-
-function editUnit(unit, onSuccess, onFailure) {
-	post("/units/editUnit", unit, onSuccess, onFailure);
-}
-
-function deleteUnit(unit, onSuccess, onFailure) {
-	post("/units/deleteUnit", unit, onSuccess, onFailure);
-}
-
-function forceRemoveUnit(unit, onSuccess, onFailure) {
-	post("/units/forceRemoveUnit", unit, onSuccess, onFailure);
-}
-
-function getUnitGroups(unitId, onSuccess, onFailure){
-	get("/units/getUnitGroups?unitId="+unitId, onSuccess, onFailure);
-}
-
-function getAllUnitGroups(onSuccess, onFailure){
-	get("/groups/getAllUnitGroups", onSuccess, onFailure);
-}
-
-//scenarios
-function getScenarios(onSuccess, onFailure) {
-	get("/scenarios/listScenarios", onSuccess, onFailure);
-}
-
-function getScenario(id, onSuccess, onFailure) {
-	get("/scenarios/getScenarioByID?id=" + id, onSuccess, onFailure);
-}
-
-function addScenario(scenario, onSuccess, onFailure) {
-	post("/scenarios/addScenario", scenario, onSuccess, onFailure);
-}
-
-function editScenario(scenario, onSuccess, onFailure) {
-	post("/scenarios/editScenario", scenario, onSuccess, onFailure);
-}
-
-function deleteScenario(id, onSuccess, onFailure) {
-	get("/scenarios/deleteScenario?id=" + id, onSuccess, onFailure);
-}
-
-function activateScenario(id, activate, onSuccess, onFailure) {
-	get("/scenarios/activateScenario?id=" + id+"&activate="+activate, onSuccess, onFailure);
-}
-
-function runScenario(id, onSuccess, onFailure) {
-	get("/scenarios/runScenario?id="+id, onSuccess, onFailure);
-}
-
-function getUnitScenarios(unitId, onSuccess, onFailure){
-	get("/scenarios/getUnitScenarios?unitId="+unitId, onSuccess, onFailure);
-}
-
-//units actions
-function sendActionToUnit(settings, onSuccess, onFailure) {
-	post("/units/action", settings, onSuccess, onFailure);
-}
-
-function remindPassword(login, onSuccess, onFailure){
-	get("/configuration/remindPassword?login="+login, onSuccess, onFailure);
-}
-
-//settings actions
-function updateZwaveNetwork(onSuccess, onFailure) {
-	get("/configuration/updateZwaveNetwork", onSuccess, onFailure);
-}
-
-function resetZwaveNetwork(onSuccess, onFailure) {
-	get("/configuration/resetZwaveNetwork", onSuccess, onFailure);
+function uploadComment(data, onSuccess, onFailure) {
+	post("/posts/addComment", data, onSuccess, onFailure);	
 }
 
 
-function addControllerEventListener(listener) {
-	eventListeners.push(listener);
+
+/* ---------------- HTTP METHODS ---------------- */
+
+//	Post request with files.
+function postFiles(url, data, onSuccess, onFailure) {
+
+	$.ajax({
+		url: url,
+        type: 'POST',
+		data: data,
+		cache: false,
+		dataType: 'json',
+		processData: false, // Don't process the files
+		contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+		success: function(data, textStatus, jqXHR)
+		{
+			onSuccess(data);
+		},
+		error: function(error) {
+      		if (error.status === 401) {
+        		if (window.location.pathname.indexOf("login") < 0) {
+          			window.location = "/login";
+        		}
+      		}
+
+     		if (onFailure) {
+        		onFailure(error);
+			}
+		}
+    });
 }
 
-function removeControllerEventListener(listener) {
-	eventListeners.splice(eventListeners.indexOf(listener, 1));
-}
-
-function removeAllListeners(){
-	eventListeners = [];
-	binaryListener = null;
-}
- */
-
+//	Regular post request.
 function post(url, data, onSuccess, onFailure, contentType, sync, direct) {
 
 	var async = true;
@@ -426,30 +339,29 @@ function post(url, data, onSuccess, onFailure, contentType, sync, direct) {
 	url += "&poller="+pollerId;
 
 	$.ajax({
-		url : url,
-		data : data ? JSON.stringify(data) : null,
-				contentType : contentType || 'application/json',
-				type : 'POST',
-				async : async,
-				success : function(data) {
-					onSuccess(data);
-				},
-				error : function(error) {
+    	url: url,
+    	data: data ? JSON.stringify(data) : null,
+    	contentType: contentType || "application/json",
+    	type: "POST",
+    	async: async,
+    	success: function(data) {
+      		onSuccess(data);
+    	},
+    	error: function(error) {
+      		if (error.status === 401) {
+        		if (window.location.pathname.indexOf("login") < 0) {
+          			window.location = "/login";
+        		}
+      		}
 
-					if(error.status === 401){
-						if(window.location.pathname.indexOf("login") < 0){
-							window.location = "/login";
-						}
-					}
-
-					if (onFailure) {
-						onFailure(error);
-					}
-				}
-
-	});
+     		if (onFailure) {
+        		onFailure(error);
+      		}
+    	}
+  });
 }
 
+//	Regular get request.
 function get(url, onSuccess, onFailure, sync) {
     
 	var async = true;

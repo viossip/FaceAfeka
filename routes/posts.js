@@ -20,19 +20,33 @@ router.post("/addPost",storage.any(), function (req, res, next) {
     //console.log("Posts route: post uploaded successfully");
 
     var imgsDB = req.files.map(function(img) {
-        return { imagePath : IMAGES_PATH + "/" + img.filename};
+        return { imagePath : IMAGES_PATH + "/" + img.filename };
     });
 
-    db.addPost( { text : req.body.postText, privacy : req.body.privacy, userId: req.body.userId}, imgsDB , function(postDB){ 
-        res.send(postDB);
+    db.getUserByLogin(req.session.user, function(user) {
+        db.addPost({ text: req.body.postText, privacy: req.body.privacy, 
+                     writtenTo: req.body.userId, writtenBy: user.id }, imgsDB, function(postDB) {
+            db.getPostLikes(postDB, function(likes) {
+                res.send({ post: postDB, likes: likes });
+            });
+        });
     });
 });
 
 
-router.post("/addComment", storage.any(), function (req, res, next) {	
+/* router.post("/addComment", storage.any(), function (req, res, next) {	
     //console.log("Posts route: comment uploaded successfully"); 
     db.addComment( { postId : req.body.postId, userId : req.body.userId, text: req.body.text} , function(commentDB){ 
         res.send([commentDB]);
+    });
+}); */
+
+router.post("/addComment", function (req, res) {	
+    //console.log("Posts route: comment uploaded successfully");
+    db.getUserByLogin(req.session.user, function(user) {
+        db.addComment({ postId: req.body.postId, userId: user.id, text: req.body.text} , function(commentDB){ 
+            res.send([commentDB]);
+        });
     });
 });
 
@@ -44,21 +58,24 @@ router.get("/getPost/:id", function(req, res) {
 });
 
 //	Get the posts of specific user.
-router.get("/getPostsOfUser/:userId", function(req, res) {
-	db.getUserPosts(req.params.userId, function(posts) {
+router.get("/getUserPosts/:userId", function(req, res) {
+/* 	db.getUserPosts(req.params.userId, function(posts) {
 		res.send(posts);
+    }); */
+    db.getPostsToUser(req.params.userId, function(posts) {
+        res.send(posts);
     });
 });
 
 //	Get the comments of specific post.
-router.get("/getCommentsOfPost/:postId", function(req, res) {
+router.get("/getPostComments/:postId", function(req, res) {
 	db.getPostComments(req.params.postId, function(comments) {
 		res.send(comments);
     });
 });
 
  //	Get images names array of specific post by given post Id.
-router.get("/getImagesOfPost/:postId", function(req, res){
+router.get("/getPostImages/:postId", function(req, res){
     
     var imgsNames = [];
     db.getPostImages(req.params.postId, function(imgsFromDB) {
@@ -75,6 +92,20 @@ router.get("/getImage/:imageName", function(req, res){
     fs.readFile(path.join(__dirname, IMAGES_PATH + "/" + req.params.imageName) , function(err, imgFromFile) {
         res.send(imgFromFile); 
     }); 
+});
+
+router.get("/getPostsToUser", function(req, res) {
+    console.log(req.query.id);
+    db.getPostsToUser(req.query.id, function(posts) {
+        console.log(JSON.stringify(posts));
+    });
+});
+
+router.get("/getPostsByUser", function(req, res) {
+    console.log(req.query.id);
+    db.getPostsByUser(req.query.id, function(posts) {
+        console.log(JSON.stringify(posts));
+    });
 });
 
 

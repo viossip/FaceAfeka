@@ -71,6 +71,14 @@ const Post = sequelize.define('post', {
         primaryKey: true,
         allowNull: false
     },
+    writtenBy: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    writtenTo: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
     text: {
         type: Sequelize.STRING,
         defaultValue: ""
@@ -138,7 +146,7 @@ const User = sequelize.define('user', {
 User.belongsToMany(User, { as: 'friends', through: 'UserFriends' } );
 
 //  Creates a new table called UserPostLikes which stores the ids of users and posts.
-User.belongsToMany(Post, { as: 'PostLikes', through: 'UserPostLikes' });
+Post.belongsToMany(User, { as: 'PostLikes', through: 'UserPostLikes' });
 
 //  Creates a new table called UserCommentLikes which stores the ids of users and comments.
 User.belongsToMany(Comment, { as: 'CommentLikes', through: 'UserCommentLikes' });
@@ -150,8 +158,11 @@ User.belongsToMany(Comment, { as: 'CommentLikes', through: 'UserCommentLikes' })
 Image.belongsToMany(User, {through: 'UserImage'});
 User.belongsToMany(Image, {through: 'UserImage'});
 
-//  Adds the attribute userId to posts.
-User.hasMany(Post, { as: 'Posts' });
+//  Adds the function PostsWritten to User which retrieves all posts with writtenBy field that equals to the user's id.
+User.hasMany(Post, { as: 'PostsWritten', foreignKey: 'writtenBy', sourceKey: 'id' });
+
+//  Adds the function PostsOnWall to User which retrieves all posts with writtenTo field that equals to the user's id.
+User.hasMany(Post, { as: 'PostsOnWall', foreignKey: 'writtenTo', sourceKey: 'id' });
 
 //  Adds the attribute userId to comments.
 User.hasMany(Comment, { as: 'Comments' } );
@@ -319,6 +330,20 @@ module.exports.getUserPosts = function(userId, onResult) {
     }).then(onResult);
 };
 
+//  Retrieves posts written by the given user.
+module.exports.getPostsByUser = function(userId, onResult) {
+    module.exports.getUserById(userId, function(user) {
+        user.getPostsWritten().then(onResult);
+    });
+};
+
+//  Retrieves posts written to the given user's wall.
+module.exports.getPostsToUser = function(userId, onResult) {
+    module.exports.getUserById(userId, function(user) {
+        user.getPostsOnWall().then(onResult);
+    });
+};
+
 //  Retrieves a given user's comments.
 module.exports.getUserComments = function(user, onResult) {
     user.getComments().then(onResult(comments));
@@ -386,7 +411,7 @@ module.exports.getPostImages = function(postId, onResult) {
 
 //  Retrieves a given post's likes.
 module.exports.getPostLikes = function(post, onResult) {
-    post.getUsers().then(onResult(users));
+    post.getPostLikes().then(onResult);
 };
 
 //  Adds a comment to the DB.
