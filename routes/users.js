@@ -27,7 +27,7 @@ var utils = require("../core/utils");
 }); */
 
 //	Get a specific user.
-router.get("/getUser", function(req, res) {
+router.get("/getUser", function(req, res, next) {
 	console.log("Retrieving user " + JSON.stringify(req.body.id));
 
 	db.getUserById(req.body.id, function(user) {
@@ -37,7 +37,7 @@ router.get("/getUser", function(req, res) {
 });
 
 //	Get all users.
-router.get("/getUsers", function(req, res) {
+router.get("/getUsers", function(req, res, next) {
 	
 	db.getAllUsers(function(users){
 		res.send(users);
@@ -46,7 +46,7 @@ router.get("/getUsers", function(req, res) {
 });
 
 //	Update user in DB.
-router.post('/updateUser', function (req, res) {
+router.post('/updateUser', function (req, res,next) {
 	console.log("Updating user " + req.body.user);
 	
 	var user = req.body;
@@ -60,6 +60,36 @@ router.post('/updateUser', function (req, res) {
 		res.sendStatus(200);
 	});
 	
+});
+
+//  Add a given user (given the id) to current user's friends list.
+router.get("/addFriend", function (req, res, next) {
+  var friendId = req.query.id;
+
+  if (!friendId)
+    res.sendStatus(404);
+  else {
+    db.getUserByLogin(req.session.user, function(currUser) {
+      db.getUserById(friendId, function(friend) {
+        currUser.addFriend(friend);
+      });
+    });
+  }
+});
+
+//  Remove a given user (given the id) from current user's friends list.
+router.get("/removeFriend", function(req, res, next) {
+  var friendId = req.query.id;
+
+  if (!friendId && friendId > 0)
+    res.sendStatus(404);
+  else {
+    db.getUserByLogin(req.session.user, function(currUser) {
+        db.removeFriend(currUser.id, friendId, function(deleted) {
+          deleted ? res.send({}) : res.sendStatus(400);
+        });
+    });
+  }
 });
 
 module.exports = router;

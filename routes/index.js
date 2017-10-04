@@ -44,15 +44,15 @@ router.get('/profile', function(req, res, next) {
   if (!currUserId) {
     db.getUserByLogin(req.session.user, function(user) {
       currUserId = user.id;
-      retrieveUser(currUserId, req, res, next);
+      renderProfile(currUserId, req, res, next);
     });
   }
   else {
-    retrieveUser(currUserId, req, res, next);
+    renderProfile(currUserId, req, res, next);
   }
 });
 
-function retrieveUser(currUserId, req, res, next) {
+function renderProfile(currUserId, req, res, next) {
   console.log("index: Retrieving user id " + currUserId);
   var userId = parseInt(currUserId);
   
@@ -62,6 +62,8 @@ function retrieveUser(currUserId, req, res, next) {
       //user.getImages().then(function(images) {
       //  console.log(JSON.stringify(images[0].imagePath));
       //});
+      if (!user)
+        res.sendStatus(401);
       if (!user.image || user.image === "")
         user.image = "../public/img/user.png";
       res.render("profile", {
@@ -73,7 +75,7 @@ function retrieveUser(currUserId, req, res, next) {
     });
   }
   else
-    res.sendStatus(404);
+    res.sendStatus(401);
 }
 
 module.exports = router;

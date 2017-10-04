@@ -443,8 +443,8 @@ function post(url, data, onSuccess, onFailure, contentType, sync, direct) {
 				error : function(error) {
 
 					if(error.status === 401){
-						if(window.location.pathname.indexOf("login.html") < 0){
-							window.location = "/login.html";
+						if(window.location.pathname.indexOf("login") < 0){
+							window.location = "/login";
 						}
 					}
 
@@ -483,8 +483,8 @@ function get(url, onSuccess, onFailure, sync) {
 		error : function(error) {
 
 			if(error.status === 401){
-				if(window.location.pathname.indexOf("login.html") < 0){
-					window.location = "/login.html";
+				if(window.location.pathname.indexOf("login") < 0){
+					window.location = "/login";
 				}
             }
             

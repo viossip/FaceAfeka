@@ -375,3 +375,61 @@ module.exports.addImage = function(image, onResult) {
 		onResult(null, error);
 	});
 };
+
+//  Add given friend to current user's friends list.
+module.exports.addFriend = function(currUser, currFriendId, onResult) {
+    UserFriends.create(
+        { userId: currUser.id, friendId: currFriendId }).then(function(userFriendDb) {
+            onResult(userFriendDb);
+        }, function(error) {
+            onResult(null, error);
+        });
+};
+
+//  Remove given friend from current user's friends list.
+module.exports.removeFriend = function(currUserId, currFriendId, onResult) {
+    UserFriends.destroy({
+		where: {
+            userId: currUserId,
+            friendId: currFriendId
+		}
+	}).then(onResult);
+};
+
+//  "Create" a post like given the user and post ids.
+module.exports.addPostLike = function(currUserId, currPostId, onResult) {
+    UserPostLikes.create({ userId: currUserId, postId: currPostId }).then(function(userPostLikeDd) {
+        onResult(userPostLikeDd);
+    }, function(error) {
+        onResult(null, error);
+    });
+};
+
+//  Remove a post like given the user and post ids.
+module.exports.removePostLike = function(currUserId, currPostId, onResult) {
+    UserPostLikes.destory({
+        where: {
+            userId: currUserId,
+            postId: currPostId
+        }
+    }).then(onResult);
+};
+
+//  "Create" a comment like given the user and comment ids.
+module.exports.addCommentLike = function(currUserId, currCommentId, onResult) {
+    UserCommentLikes.create({ userId: currUserId, commentId: currCommentId }).then(function(userCommentLike) {
+        onResult(userCommentLike);
+    }, function(error) {
+        onResult(null, error);
+    });
+};
+
+//  Remove a comment like given the user and comment ids.
+module.exports.removeCommentLike = function(currUserId, currCommentId, onResult) {
+    UserCommentLikes.destory({
+        where: {
+            userId: currUserId,
+            commentId: currCommentId
+        }
+    }).then(onResult);
+};
