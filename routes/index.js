@@ -67,10 +67,12 @@ function renderProfile(currUserId, req, res, next) {
       if (!user.image || user.image === "")
         user.image = "../public/img/user.png";
       res.render("profile", {
+        userId: user.id,
         userFullname: user.firstName + " " + user.lastName,
         userEmail: user.login,
         userImage: user.image
       });
+      
       //res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: ProfileImageId});
     });
   }
