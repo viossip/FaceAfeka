@@ -120,6 +120,8 @@ function uploadDone(data) {
     $('#privateCheckBox').prop('checked', false);
     $('#preview').empty();
     console.log(JSON.stringify(data));
+
+    //  Why get post again if you already have it??? (data)!!!
     getPost(data.id, showPosts, function(){ });
 
     // Display the new uploaded post
