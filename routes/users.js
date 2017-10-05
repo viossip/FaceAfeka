@@ -30,7 +30,7 @@ var utils = require("../core/utils");
 router.get("/getUserById", function(req, res, next) {
 	console.log("Retrieving user " + JSON.stringify(req.body.id));
 
-  if (req.body.id === "") {
+  if (!req.body.id) {
     if (req.session.user) {
       db.getUserByLogin(req.session.user, function(user) {
         res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: ProfileImageId});
