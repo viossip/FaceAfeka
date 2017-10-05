@@ -1,11 +1,6 @@
 var imgEvent;
-
-//Grab the files and set them to our variable
-/* function prepareUploadPost(event, onSuccess, onFailure) {
-	if(event)
-		files = event.target.files;
-	uploadPost(event, onSuccess, onFailure);
-} */
+var userId_glob = window.location.href.split('=')[1];
+var domain_glob = window.location.split('/')[0];
 
 function prepareUploadPost(event, onSuccess, onFailure) {
     if (event) {
@@ -26,75 +21,6 @@ function prepareUploadPost(event, onSuccess, onFailure) {
     uploadPost(data, onSuccess, onFailure);
 }
 
-/*
-function uploadPost(event, onSuccess, onFailure) {
-	if(event){
-		event.stopPropagation(); // Stop stuff happening
-		event.preventDefault(); // Totally stop stuff happening
-	}
-	
-	// Create a formdata object and add the files
-	var data = new FormData();
-	if(typeof files !== 'undefined')
-    	$.each(files, function(key, value) { data.append(key, value); });
-    //  Attach the post's text to transmitted data.
-    data.append("postText", $('form textarea[id=postText]').val());
-	data.append("privacy", $('#privateCheckBox').is(":checked"));
-	data.append("userId", $("#li_userId").text().split(':')[1].trim());
-
-	$.ajax({
-		url: '/posts/addPost',
-        type: 'POST',
-		data: data,
-		cache: false,
-		dataType: 'json',
-		processData: false, // Don't process the files
-		contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-		success: function(data, textStatus, jqXHR)
-		{
-			if(typeof data.error === 'undefined'){ onSuccess(data); }
-			else { console.log('ERRORS: ' + data.error); }
-			$('input[type=file]').val('');
-		},
-		error: function(jqXHR, textStatus, errorThrown)
-		{
-			console.log('ERRORS: ' + textStatus);
-			$('input[type=file]').val('');
-			onFailure();
-		}
-    });
-}*/
-
-// Create new comment to post with given id.
-/* function uploadComment(postId, onSuccess, onFailure){
-	var data = new FormData();
-	data.append("postId", postId);
-	data.append("userId", $("#li_userId").text().split(':')[1].trim());
-	data.append("text", $('#commentText_'+postId).val());
-
-	$.ajax({
-		url: '/posts/addComment',
-        type: 'POST',
-		data: data,
-		cache: false,
-		dataType: 'json',
-		processData: false, // Don't process the files
-		contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-		success: function(data, textStatus, jqXHR)
-		{
-			if(typeof data.error === 'undefined'){ onSuccess(data); }
-			else { console.log('ERRORS: ' + data.error); }
-			$('input[type=file]').val('');
-		},
-		error: function(jqXHR, textStatus, errorThrown)
-		{
-			console.log('ERRORS: ' + textStatus);
-			$('input[type=file]').val('');
-			onFailure();
-		}
-    });
-
-} */
 
 function postClicked(event) {
 	
@@ -112,40 +38,6 @@ function postClicked(event) {
     prepareUploadPost(imgEvent, showPosts, function(){ });
 }
 
-
-/*function uploadDone(data) {
-    //  Clear post form fields
-    $('input[type=file]').val('');
-    $('form textarea[id=postText]').val("");
-    $('#privateCheckBox').prop('checked', false);
-    $('#preview').empty();
-    console.log(JSON.stringify(data));
-
-    //  Why get post again if you already have it??? (data)!!!
-    //getPost(data.id, showPosts, function(){ });
-
-    // Display the new uploaded post
-    // TODO: 
-}*/
-
-/* function addComment(postId){
-
-    var commentTextElement = $('#commentText_'+postId);
-
-    if(typeof commentTextElement !== 'undefined'){
-        var commentText = commentTextElement.val();
-        event.preventDefault();
-
-        console.log("Comment Text"+ commentText);
-
-        if(!commentText || commentText.length === 0){
-            commentTextElement.attr('placeholder', "Write something here...").focus();
-            return;
-        }
-
-        uploadComment(postId, showComments, function(){ });
-    }
-} */
 
 function addComment(postID) {
   var commentTextElement = $("#commentText_" + postID);
@@ -213,7 +105,7 @@ function showPosts(postsArr) {
     $('form textarea[id=postText]').val("");
     $('#privateCheckBox').prop('checked', false);
     $('#preview').empty();
-    console.log(JSON.stringify(postsArr));
+    //console.log(JSON.stringify(postsArr));
 
     if(typeof postsArr !== 'undefined'){
         postsArr.forEach(function(post) {
@@ -250,7 +142,7 @@ function showPosts(postsArr) {
                                     "<div class='row'>" +
                                         "<div id ='postActions' class='col-xs-3'>" +
                                             "<p class = 'post-actions'>" +
-                                            "<a href = '#'>Comment</a> - <a href = '/posts/addLike/postId="+post.id+"&userId=" /*TODO:*/+"'>Like</a> - <a href = '#'>Follow</a> - <a href = '#'>Share</a>" +
+                                            "<a href = '#'>Comment</a> - <a href = '" + window.location.split('/')[0] + "/posts/addLike/postId="+post.id+"&userId="+userId_glob+"'>Like</a> - <a href = '#'>TEST:"+domain_glob+"  Follow</a> - <a href = '#'>Share</a>" +
                                             "</p>"+
                                         "</div>" +
                                         "<div id ='postCreatedDate' class='col-xs-2' style='font-family: Arial Black; font-size: 12px; color: blue'>Created: "+ post.createdAt + "</div>" +
@@ -322,14 +214,15 @@ $(document).ready(function() {
             alert("You can select only 3 images");
     });
 
-    var userId = $("#li_userId").text().split(':')[1].trim();
+    //var userId = $("#li_userId").text().split(':')[1].trim();
 
-    var userId = window.location.href.split('?')[1];
-    console.log("------------------------------------- "+ userId)
-    if(userId === undefined)
-        userId = getCurrentUser(function(){},function(){});
-
-    //getUserPosts(userId ,showPosts, function(){ });
+    if(userId_glob)
+        getUserPosts(userId_glob ,showPosts, function(){ });
+    else  
+        getCurrentUser(function(user){
+            userId_glob = user.id; //   save variable globally
+            getUserPosts(user.id ,showPosts, function(){ });
+        },function(){});
 
     // Listener for add comment button
     $('body').on('click', '#postsPlaceHolder', function(event) { 
@@ -338,6 +231,5 @@ $(document).ready(function() {
             //console.log("comment ID: " + postIdToComment);
             addComment(postIdToComment);
         }
-        
     });
 });
