@@ -25,13 +25,8 @@ router.post("/addPost",storage.any(), function (req, res, next) {
 
     db.getUserByLogin(req.session.user, function(user) {
         db.addPost({ text: req.body.postText, privacy: req.body.privacy, 
-                     writtenTo: req.body.userId, writtenBy: user.id }, imgsDB, function(postDB) {
-            console.log("+++++++++++++++++++++++++++++++++++++++++" + JSON.stringify(postDB));             
+                     writtenTo: req.body.userId, writtenBy: user.id }, imgsDB, function(postDB) {                   
             res.send([postDB]);
-            //db.getPostLikes(postDB, function(likesDB) {
-            //    res.send({ post: postDB, likes: likesDB });
-            //res.send({ post: postDB, likes: likesDB });
-            //});
         });
     });
 });
@@ -112,11 +107,10 @@ router.get("/getPostsToUser", function(req, res) {
     });
 });
 
-router.get("/getPostsByUser", function(req, res) {
-    console.log(req.query.id);
-    db.getPostsByUser(req.query.id, function(posts) {
-        console.log(JSON.stringify(posts));
-    });
+//  Adds like of specific user to specific post
+router.get("/addLike", function(req, res) {
+    console.log("++++++++++++++++++ PostId: "+ req.query.postId + "+++++++++ UserId: " + req.query.userId);
+    
 });
 
 
