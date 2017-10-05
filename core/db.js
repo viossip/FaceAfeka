@@ -109,7 +109,8 @@ Post.hasMany(Image, { as: 'PostImages' });
 Post.belongsToMany(Image, {through: 'PostImage'});
 Image.belongsToMany(Post, {through: 'PostImage'}); */
 
-//  Adds the function PostComments to Post which retrieves all comments with postId field that equals to the post's id.
+//  Adds the function getPostComments (and more functions) to Post which retrieves all comments
+//  with postId field that equals to the post's id.
 Post.hasMany(Comment, { as: 'PostComments', sourceKey: 'id', foreignKey: 'postId'});
 
 //  User model.
@@ -162,10 +163,12 @@ User.belongsToMany(Comment, { as: 'CommentLikes', through: 'UserCommentLikes' })
 Image.belongsToMany(User, {through: 'UserImage'});
 User.belongsToMany(Image, {through: 'UserImage'});
 
-//  Adds the function PostsWritten to User which retrieves all posts with writtenBy field that equals to the user's id.
+//  Adds the function getPostsWritten (and more functions) to User which retrieves all posts 
+//  with writtenBy field that equals to the user's id.
 User.hasMany(Post, { as: 'PostsWritten', sourceKey: 'id', foreignKey: 'writtenBy' });
 
-//  Adds the function PostsOnWall to User which retrieves all posts with writtenTo field that equals to the user's id.
+//  Adds the function getPostsOnWall (and more functions) to User which retrieves all posts
+//  with writtenTo field that equals to the user's id.
 User.hasMany(Post, { as: 'PostsOnWall', sourceKey: 'id', foreignKey: 'writtenTo' });
 
 //  Adds the attribute userId to comments.
