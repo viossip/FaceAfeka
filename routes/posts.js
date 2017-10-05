@@ -26,7 +26,8 @@ router.post("/addPost",storage.any(), function (req, res, next) {
     db.getUserByLogin(req.session.user, function(user) {
         db.addPost({ text: req.body.postText, privacy: req.body.privacy, 
                      writtenTo: req.body.userId, writtenBy: user.id }, imgsDB, function(postDB) {
-                        res.send([postDB]);
+            console.log("+++++++++++++++++++++++++++++++++++++++++" + JSON.stringify(postDB));             
+            res.send([postDB]);
             //db.getPostLikes(postDB, function(likesDB) {
             //    res.send({ post: postDB, likes: likesDB });
             //res.send({ post: postDB, likes: likesDB });

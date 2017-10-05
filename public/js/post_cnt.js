@@ -250,7 +250,7 @@ function showPosts(postsArr) {
                                     "<div class='row'>" +
                                         "<div id ='postActions' class='col-xs-3'>" +
                                             "<p class = 'post-actions'>" +
-                                            "<a href = '#'>Comment</a> - <a href = '#'>Like</a> - <a href = '#'>Follow</a> - <a href = '#'>Share</a>" +
+                                            "<a href = '#'>Comment</a> - <a href = '"+ /*TODO:*/+"'>Like</a> - <a href = '#'>Follow</a> - <a href = '#'>Share</a>" +
                                             "</p>"+
                                         "</div>" +
                                         "<div id ='postCreatedDate' class='col-xs-2' style='font-family: Arial Black; font-size: 12px; color: blue'>Created: "+ post.createdAt + "</div>" +

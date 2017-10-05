@@ -362,9 +362,8 @@ module.exports.getUserFriends = function(user, onResult) {
 };
 
 //  Adds a post to the DB.
-module.exports.addPost = function(post, images, onResult) {
-
-	Post.create(post).then(function(postDB) {
+module.exports.addPost = function(post, images, onResult) {    
+	Post.create(post).then(function(postDB) {      
         images.forEach(function(imageObj) {
             imageObj["postId"] = postDB.id;                
             module.exports.addImage(imageObj, function(){});
