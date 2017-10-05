@@ -1,6 +1,7 @@
 var imgEvent;
 var userId_glob = window.location.href.split('=')[1];
-var domain_glob = window.location.split('/')[0];
+var test = window.location.hostname;
+var domain_glob = window.location.hostname;
 
 function prepareUploadPost(event, onSuccess, onFailure) {
     if (event) {
@@ -123,7 +124,7 @@ function showPosts(postsArr) {
                                 "<a class = 'post-avatar thumbnail' href='profile.html'> <img src='img/user.png'>" +
                                     "<div class = 'text-center'>DevUser1</div>" + 
                                 "</a>"+
-                                "<div class = 'likes text-center' id='likesPost_"+post.id+"'> " +
+                                "<div class = 'likes text-center' id='likesPost_"+post.id+"'> " + domain_glob +
                                    // "7 Likes" +
                                 "</div>" +
                                     
@@ -142,7 +143,7 @@ function showPosts(postsArr) {
                                     "<div class='row'>" +
                                         "<div id ='postActions' class='col-xs-3'>" +
                                             "<p class = 'post-actions'>" +
-                                            "<a href = '#'>Comment</a> - <a href = '" + window.location.split('/')[0] + "/posts/addLike/postId="+post.id+"&userId="+userId_glob+"'>Like</a> - <a href = '#'>TEST:"+domain_glob+"  Follow</a> - <a href = '#'>Share</a>" +
+                                            "<a href = '#'>Comment</a> - <a href = '" +  + "/posts/addLike/postId="+post.id+"&userId="+userId_glob+"'>Like</a> - <a href = '#'>TEST:"+domain_glob+"  Follow</a> - <a href = '#'>Share</a>" +
                                             "</p>"+
                                         "</div>" +
                                         "<div id ='postCreatedDate' class='col-xs-2' style='font-family: Arial Black; font-size: 12px; color: blue'>Created: "+ post.createdAt + "</div>" +
@@ -219,7 +220,7 @@ $(document).ready(function() {
     if(userId_glob)
         getUserPosts(userId_glob ,showPosts, function(){ });
     else  
-        getCurrentUser(function(user){
+        getUserById("", function(user){
             userId_glob = user.id; //   save variable globally
             getUserPosts(user.id ,showPosts, function(){ });
         },function(){});
