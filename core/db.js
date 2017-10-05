@@ -344,7 +344,7 @@ module.exports.searchUserPrefix = function(prefix, onResult) {
 
 //  Retrieves a given user's friends.
 module.exports.getUserFriends = function(user, onResult) {
-    user.getUsers().then(onResult(friends));
+    user.getUsers().then(onResult);
 };
 
 //  Add given friend to current user's friends list.
@@ -367,21 +367,22 @@ module.exports.removeFriend = function(currUserId, currFriendId, onResult) {
 	}).then(onResult);
 };
 
-/* ---------------- POSTS ---------------- */
-
-/* //  Retrieves a given user's posts.
-module.exports.getUserPosts = function(user, onResult) {
-    user.getPosts().then(onResult(posts));
-}; */
-
-//  Retrieves a given user's posts.
-module.exports.getUserPosts = function(userId, onResult) {
-    Post.findAll({
-        where: {
-            userId: userId
+module.exports.changeProfilePic = function(user, images, onResult) {
+    user.setImages([]).then(function() {
+        if (images.length !== 0) {
+            images.forEach(function(imageObj) {
+                module.exports.addImage(imageObj, function(image){
+                    user.addImage(image).then(onResult(image.imagePath));
+                });
+            });
         }
-    }).then(onResult);
+        else {
+            onResult();
+        }
+    });
 };
+
+/* ---------------- POSTS ---------------- */
 
 //  Retrieves posts written by the given user.
 module.exports.getPostsByUser = function(userId, onResult) {
@@ -399,12 +400,17 @@ module.exports.getPostsToUser = function(userId, onResult) {
 
 //  Adds a post to the DB.
 module.exports.addPost = function(post, images, onResult) {    
-	Post.create(post).then(function(postDB) {      
-        images.forEach(function(imageObj) {              
-            module.exports.addImage(imageObj, function(image){
-                postDB.addImage(image).then(onResult(postDB));
+	Post.create(post).then(function(postDB) {
+        if (images.length !== 0) {
+            images.forEach(function(imageObj) {              
+                module.exports.addImage(imageObj, function(image){
+                    postDB.addImage(image).then(onResult(postDB));
+                });
             });
-        });
+        }   
+        else {
+            onResult(postDB);
+        }
 	}, function(error) {
 		onResult(null, error);
 	});
@@ -432,8 +438,8 @@ module.exports.getPostLikes = function(postId, onResult) {
 
 //  "Create" a post like given the user and post ids.
 module.exports.addPostLike = function(currUserId, currPostId, onResult) {
-    UserPostLikes.create({ userId: currUserId, postId: currPostId }).then(function(userPostLikeDd) {
-        onResult(userPostLikeDd);
+    UserPostLikes.create({ userId: currUserId, postId: currPostId }).then(function(userPostLikeDB) {
+        onResult(userPostLikeDB);
     }, function(error) {
         onResult(null, error);
     });
@@ -462,15 +468,6 @@ module.exports.getUserComments = function(user, onResult) {
         post.getPostComments().then(onResult);
     });
 }; 
-
-//  Retrieves a given post's comments.
-/* module.exports.getPostComments = function(postId, onResult) {
-    Comment.findAll({
-        where: {
-            postId: postId
-        }
-    }).then(onResult);
-}; */
 
 //  Adds a comment to the DB.
 module.exports.addComment = function(comment, onResult) {
@@ -513,20 +510,6 @@ module.exports.removeCommentLike = function(currUserId, currCommentId, onResult)
         post.getImages().then(onResult);
     });
 }; 
-
-//  Retrieves a given post's images.
-/* module.exports.getPostImages = function(postId, onResult) {
-        Image.findAll({
-        where: {
-            postId: postId
-        }
-    }).then(onResult);
-}; */
-
-//  Retrieves a given comment's images.
-module.exports.getCommentImages = function(comment, onResult) {
-    comment.getImages().then(onResult(images));
-};
 
 //  Adds an image to the DB.
 module.exports.addImage = function(image, onResult) {

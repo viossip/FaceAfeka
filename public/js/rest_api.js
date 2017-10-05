@@ -7,196 +7,6 @@ var eventListeners = [];
 var binaryListener = null;
 
 var pollerId = Math.random();
-/*
-function notifyEventListeners(data){
-	$.each(eventListeners, function(idx, listener) {
-
-		try{
-
-			if(Array.isArray(data)){
-
-				$.each(data,function(idx, event){
-					if (listener.unitId && listener.unitId !== event.unitId) {
-						return;
-					}
-
-					if (listener.type	&& listener.type !== event.type) {
-						return;
-					}
-
-					listener.cb(event);	
-				});
-
-			}else{
-				var event = data;
-
-				if (listener.unitId && listener.unitId !== event.unitId) {
-					return;
-				}
-
-				if (listener.type	&& listener.type !== event.type) {
-					return;
-				}
-
-				listener.cb(event);	
-			}
-		}catch(e){
-			console.log(e.stack);
-		}
-	});
-}
-
-var updatesSocket = null;
-
-function reconnectUpdates(){
-
-	var wsPrefix = "ws:";
-
-	if(window.location.protocol === "https:"){
-		wsPrefix = "wss:";
-	}
-
-	updatesSocket = new WebSocket(wsPrefix+"//"+location.host+"/async","relay_protocol");
-
-	updatesSocket.binaryType = "arraybuffer";
-
-	updatesSocket.onmessage = function (event) {
-
-		if(event.data instanceof ArrayBuffer){
-			if(binaryListener){
-				binaryListener(event.data);
-			}
-		}else{
-
-			var data = JSON.parse(event.data);
-
-			notifyEventListeners(data);
-
-		}
-	};	
-
-	updatesSocket.onopen = function (event) {
-		console.log("Opened updates websocket "+event);
-		if(clientId){
-			updatesSocket.send(JSON.stringify({clientId:clientId+"_"+pollerId}));
-		}
-	};
-
-	updatesSocket.onerror = function(){
-
-		//setTimeout(reconnectUpdates, 2000);
-
-	};
-
-	updatesSocket.onclose = function(){
-
-		setTimeout(reconnectUpdates, 2000);
-
-	};
-}
-
-if(!useProxy){
-
-	reconnectUpdates();
-
-}else{
-
-	$(document).ready(function(){
-
-		$(".icon-cloud > span").css("background-position","-940px -275px");
-
-	});
-
-}
-
-//proxy polling
-
-var proxyEventListeners = {};
-
-var currProxyAjax = null, currContAjax = null;
-
-var relaySocket = null;
-
-
-setInterval(function(){
-
-	for(var reqId in proxyEventListeners){
-		try{
-			var handler = proxyEventListeners[reqId];
-
-			var ts = parseInt(reqId.split("_")[1]);
-
-			if(new Date().getTime() - ts > 10000){
-				delete proxyEventListeners[reqId];
-				if(handler.onFailure){
-					showMessageDialog(nls.string1 || "Error", nls.string26 || "Failed to load data", function(){
-						logout();
-					});
-					handler.onFailure();
-				}	
-			}
-
-		}catch(e){
-
-		}
-
-	}
-
-},10000);
-
-function reconnectRelay(){
-	var wsPrefix = "ws:";
-
-	if(window.location.protocol === "https:"){
-		wsPrefix = "wss:";
-	}
-	relaySocket = new WebSocket(wsPrefix+"//"+PROXY_ADDRESS+"/client_relay","relay_protocol");
-
-	relaySocket.onopen = function (event) {
-		console.log("Opened websocket "+event); 
-	};
-
-	relaySocket.onerror = function(){
-
-		//setTimeout(reconnectRelay, 1000);
-
-	};
-
-	relaySocket.onclose = function(){
-
-		setTimeout(reconnectRelay, 1000);
-
-	};
-
-	relaySocket.onmessage = function (event) {
-
-		var data = JSON.parse(event.data);
-
-		if(data.async){
-			notifyEventListeners(data);
-			return;
-		}
-
-		var requestHandler = proxyEventListeners[data.url + "_" + data.requestId];
-
-		if(requestHandler){
-
-			try{
-				var dataObj = JSON.parse(data.data);
-				requestHandler.onSuccess(dataObj);
-			}catch(err){
-				requestHandler.onSuccess(data.data);
-			}
-
-			delete proxyEventListeners[data.url + "_" + data.requestId];
-		}
-
-	};
-
-}
-
-reconnectRelay();
-*/
 
 /* ---------------- USERS API ---------------- */
 
@@ -218,6 +28,14 @@ function searchUserPrefix(prefix, onSuccess, onFailure) {
 
 function editUser(user, onSuccess, onFailure) {
 	post("/users/updateUser", user, onSuccess, onFailure);
+}
+
+function getUserFriends(userId, onSuccess, onFailure) {
+	get("/users/getUserFriends?id=" + userId, onSuccess, onFailure);
+}
+
+function uploadProfileImage(data, onSuccess, onFailure) {
+	postFiles("/users/addProfileImg", data, onSuccess, onFailure);
 }
 
 /* ---------------- AUTH API ---------------- */
@@ -245,15 +63,10 @@ function register(userObj, passwordStr, onSuccess, onFailure){
 
 /* ---------------- POSTS API ---------------- */
 
-/* //	Get posts written to a given user's wall
-function getPostsToUser(userId, onSuccess, onFailure) {
-	get("/posts/getPostsToUser?id=" + userId, onSuccess, onFailure);
-}
-
 //	Get posts written by a given user.
 function getPostsByUser(userId, onSuccess, onFailure) {
 	get("/posts/getPostsByUser?id=" + userId, onSuccess, onFailure);
-} */
+} 
 
 //	Get all posts.
 function getPosts(onSuccess, onFailure) {
@@ -265,9 +78,9 @@ function getPost(postId, onSuccess, onFailure) {
 	get("/posts/getPost/" + postId, onSuccess, onFailure);
 }
 
-//	Get all posts of specific user.
-function getUserPosts(userId, onSuccess, onFailure) {
-	get("/posts/getUserPosts/"+ userId, onSuccess, onFailure);
+//	Get all posts from a given user's wall.
+function getPostsToUser(userId, onSuccess, onFailure) {
+	get("/posts/getPostsToUser/"+ userId, onSuccess, onFailure);
 }
 
 //	Get all comments of specific post.
@@ -287,17 +100,20 @@ function getPostImages(postId, onSuccess, onFailure) {
 
 //	Get all imgs of specific post.
 function getImage(imageName, onSuccess, onFailure) {
-	get("/posts/getImage/"+ imageName, onSuccess, onFailure);
+	get("/getImage/"+ imageName, onSuccess, onFailure);
 }
 
+//	Uploads a post to the server.
 function uploadPost(data, onSuccess, onFailure) {
 	postFiles("/posts/addPost", data, onSuccess, onFailure);
 }
 
+//	Uploads a comment to the server.
 function uploadComment(data, onSuccess, onFailure) {
 	post("/posts/addComment", data, onSuccess, onFailure);	
 }
 
+//	Adds a post like.
 function addLike(data, onSuccess, onFailure) {
 	post("/posts/addLike", data, onSuccess, onFailure);	
 }

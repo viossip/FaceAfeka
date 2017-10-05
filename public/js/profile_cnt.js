@@ -1,25 +1,50 @@
-var currUserId = -1;
+
+var userId = window.location.href.split('=')[1];
 
 $(document).ready(function() {
-    //currUserId = window.location.substr(window.location.lastIndexOf("/"), window.location.length);
-    console.log(currUserId);
-    //updateUserDetails();
 
+    //updateUserFriends();
 
+    if (userId) {
+        $(".change-image-label").hide();
+        $(".change-image-input").prop("disabled", true);
+    }
+
+    $(".change-image-input").change(changeProfilePic);
 });
 
-//  Updates the current user's details.
-function updateUserDetails() {
-    getUserById(currUserId, function(user) {
-        $(".profile > h1").html("");
-        $(".profile > h1").html(user.firstname + " " + user.lastname);
-        $(".user-fullname").html("");
-        $(".user-fullname").html(user.firstname + " " + user.lastname);
-        $(".user-email").html("");
-        $(".user-email").html(user.login);
-        if (user.image !== "") 
-            $(".profile img").attr("src", user.image);
-    }, function(err) {
+//  Retrieves friends from backend and inserts them to the friends box.
+function updateUserFriends() {
+    getUserFriends(userId, function(friends) {
+        //  Empty the ui friends list
+        var friendListElement = $("#friends-list").html("");
 
+        friends.forEach(function(friend) {
+            friendListElement.append("<li><a class='thumbnail' href='http://" + window.location.host + "profile?id=" + friend.id + "'><img src='../../img/user.png'></a>");
+        });
+    }, function(err) {
+        
+    });
+}
+
+function changeProfilePic(event) {
+    var files = {};
+
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        files = event.target.files;
+    }
+
+    var data = new FormData();
+	if(typeof files !== 'undefined') {
+    	$.each(files, function(key, value) {
+            data.append(key, value);
+        });
+    }
+
+    uploadProfileImage(data, function(imageObj) {
+        console.log("FINISHED UPLOADING: " + imageObj);
+        $(".user-profile-image img").attr("src", "/getImage/" + imageObj.imageName);
     });
 }

@@ -22,22 +22,28 @@
                     <div class="profile">
                         <h1 class="page-header"><%= userFullname %></h1>
                         <div class="row">
-                            <div class="col-md-4 user-profile-image">
+                            <div class="col-sm-4 user-profile-image">
                                 <img src="<%= userImage %>" class="img-thumbnail">
                             </div>
 
-                            <div class="col-md-8 user-details">
+                            <div class="col-sm-8 user-details">
                                 <ul>
                                     <li id="li_userId"><strong>ID: </strong><%= userId %></li>
                                     <li id="li_userFullname"><strong>Name: </strong><%= userFullname %></li>
                                     <li id="li_userEmail"><strong>Email Address: </strong><%= userEmail %></li>
                                 </ul>
                             </div> <!-- ENDof Col-md-8 -->
-                            <div class = "col-md-3">
-                                <p><a href = "#" class = "btn btn-default btn-block"><i class = " fa fa-envelope"></i> Send Message</a></p>
-                           </div>
                         </div> <!-- ENDof row -->
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col-sm-4">
+                                <label class="btn btn-primary change-image-label" style="width: 100%;">
+                                    Change Image <input type="file" class="change-image-input" accept=".jpg, .jpeg, .png" hidden>
+                                </label>
+                            </div>
+                            <div class="col-sm-8">
 
+                            </div>
+                        </div>
                         <br><br>
                             
                         <div class = "row">
@@ -59,7 +65,10 @@
                                                 <input type="checkbox" id="privateCheckBox" class="checkbox" name="privateCheckBox" value="checked">Private</input> 
                                             </div>      
                                             <div class = "pull-right">
-                                                <input type="file" id="images" name = "uploadImages" class="btn btn-primary" accept=".jpg, .jpeg, .png" multiple="multiple"/>
+                                                <label class="btn btn-primary" style="width: 100%;">
+                                                    Upload Images <input type="file" id="images" name="uploadImages" class="btn btn-primary" accept=".jpg, .jpeg, .png" multiple="multiple" hidden>
+                                                </label>
+                                                <!--<input type="file" id="images" name = "uploadImages" class="btn btn-primary" accept=".jpg, .jpeg, .png" multiple="multiple"/>-->
                                                 <div id="preview"></div>
                                              </div>
                                         </form>
@@ -83,10 +92,10 @@
                 <div class = "col-md-4">
                     <div class="panel panel-default friends">
                         <div class="panel-heading">
-                            <h3 class="panel-title">My Friends</h3>
+                            <h3 class="panel-title">Friends</h3>
                         </div>
                         <div class="panel-body">
-                            <ul>
+                            <ul id="friends-list">
                                 <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
                                 </li>
                                 <li><a class = "thumbnail" href = "profile.html"><img src = "../../img/user.png"></a>
@@ -116,22 +125,22 @@
                             <div class="panel-body">
                                     <ul class="photos gallery-parent">
                                         <li><a href="img/sample1.jpg" data-toggle="lightbox" data-parent=".gallery-parent" data-hover="tooltip"
-                                                data-placement="top"><img src = "img/sample1.jpg" class = "img-thumbnail"></a></li>
+                                                data-placement="top"><img src="img/sample1.jpg" class="img-thumbnail"></a></li>
 
                                         <li><a href="img/sample2.jpg" data-toggle="lightbox" data-parent=".gallery-parent" data-hover="tooltip"
-                                                data-placement="top" <img src="img/sample2.jpg" class="img-thumbnail"></a></li>
+                                                data-placement="top"><img src="img/sample2.jpg" class="img-thumbnail"></a></li>
 
                                         <li><a href="img/sample3.jpg" data-toggle="lightbox" data-parent=".gallery-parent" data-hover="tooltip"
-                                                data-placement="top" <img src="img/sample3.jpg" class="img-thumbnail"></a></li>
+                                                data-placement="top"><img src="img/sample3.jpg" class="img-thumbnail"></a></li>
 
                                         <li><a href="img/sample4.jpg" data-toggle="lightbox" data-parent=".gallery-parent" data-hover="tooltip"
-                                                data-placement="top" <img src="img/sample4.jpg" class="img-thumbnail"></a></li>
+                                                data-placement="top"><img src="img/sample4.jpg" class="img-thumbnail"></a></li>
 
                                         <li><a href="img/sample5.jpg" data-toggle="lightbox" data-parent=".gallery-parent" data-hover="tooltip"
-                                                data-placement="top" <img src="img/sample5.jpg" class="img-thumbnail"></a></li>
+                                                data-placement="top"><img src="img/sample5.jpg" class="img-thumbnail"></a></li>
 
                                         <li><a href="img/sample6.jpg" data-toggle="lightbox" data-parent=".gallery-parent" data-hover="tooltip"
-                                                data-placement="top" <img src="img/sample6.jpg" class="img-thumbnail"></a></li>
+                                                data-placement="top"><img src="img/sample6.jpg" class="img-thumbnail"></a></li>
 
                                     </ul>
                                 <!--<div class = "group-item">
@@ -172,6 +181,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <% include ./partials/scripts %>
+    <script src="js/profile_cnt.js"></script>
     <script src="js/post_cnt.js"></script>
     <script src="js/utils.js"></script>
     <script>

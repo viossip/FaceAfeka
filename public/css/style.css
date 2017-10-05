@@ -1,5 +1,9 @@
 /* ---------- ALL ---------- */
 
+[hidden] {
+    display: none !important;
+}
+
 .ui-autocomplete {
     position: absolute;
     top: 100%;

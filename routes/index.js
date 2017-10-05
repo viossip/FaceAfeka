@@ -1,8 +1,10 @@
 var express = require('express');
 var db = require("../core/db");
 var utils = require("../core/utils");
+var path = require('path');
 var router = express.Router();
 
+const IMAGES_PATH = "../uploadedImgs";
 
 //  Get index page.
 router.get('/', function(req, res, next) {
@@ -52,7 +54,13 @@ router.get('/profile', function(req, res, next) {
   }
 });
 
+//	Get images names array of specific post by given post Id.
+router.get("/getImage/:imageName", function(req, res){
+    res.sendFile(path.join(__dirname, IMAGES_PATH, req.params.imageName));
+});
+
 function renderProfile(currUserId, req, res, next) {
+
   console.log("index: Retrieving user id " + currUserId);
   var userId = parseInt(currUserId);
   
@@ -64,14 +72,27 @@ function renderProfile(currUserId, req, res, next) {
       //});
       if (!user)
         res.sendStatus(401);
-      if (!user.image || user.image === "")
-        user.image = "../public/img/user.png";
-      res.render("profile", {
-        userId: user.id,
-        userFullname: user.firstName + " " + user.lastName,
-        userEmail: user.login,
-        userImage: user.image
-      });
+      if (user.getImages().length === 0) {
+        userImage = "/getImage/user.png";
+        res.render("profile", {
+          userId: user.id,
+          userFullname: user.firstName + " " + user.lastName,
+          userEmail: user.login,
+          userImage: userImage
+        });
+      }
+        
+      else {
+        user.getImages().then(function(images) {
+          userImage = "/getImage/" + images[0].imagePath.split('/').pop();
+          res.render("profile", {
+            userId: user.id,
+            userFullname: user.firstName + " " + user.lastName,
+            userEmail: user.login,
+            userImage: userImage
+          });
+        });
+      }
       
       //res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: ProfileImageId});
     });

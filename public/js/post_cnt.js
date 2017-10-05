@@ -3,16 +3,17 @@ var userId_glob = window.location.href.split('=')[1];
 var domain_glob = window.location.hostname;
 
 function prepareUploadPost(event, onSuccess, onFailure) {
-    if (event) {
+    if (event)
         files = event.target.files;
-        event.stopPropagation(); // Stop event propagation.
-		event.preventDefault(); // Prevent default event action.
-    }
-
+        
 	// Create a formdata object and add the files
 	var data = new FormData();
-	if(typeof files !== 'undefined')
-    	$.each(files, function(key, value) { data.append(key, value); });
+	if(typeof files !== 'undefined') {
+    	$.each(files, function(key, value) {
+            data.append(key, value);
+        });
+    }
+    
     //  Attach the post's text to transmitted data.
     data.append("postText", $('form textarea[id=postText]').val());
 	data.append("privacy", $('#privateCheckBox').is(":checked"));
@@ -81,7 +82,7 @@ function getImages(imagesArr, onSuccess, onFailure){
     
     if(typeof imagesArr !== 'undefined'){
         imagesArr.forEach(function(img) {
-            $("#imagesPlaceHolder_"+  img.postId).prepend('<img height="50px" width="50px" id ="img" src="/posts/getImage/' +img.name+ '" /> ');
+            $("#imagesPlaceHolder_"+  img.postId).prepend('<img height="50px" width="50px" id ="img" src="/getImage/' +img.name+ '" /> ');
         }, this);
     }
 }
@@ -207,7 +208,7 @@ $(document).ready(function() {
     $('form').submit(postClicked);
 
     //  Attach event handler to the file input button.
-    $('input[type=file]').on('change', function(event){
+    $("#images").on('change', function(event){
         previewImages();
         imgEvent = event;
         if($("#images")[0].files.length > 3) // Limit of 3 imgs per post.
@@ -235,11 +236,11 @@ $(document).ready(function() {
     //var userId = $("#li_userId").text().split(':')[1].trim();
 
     if(userId_glob)
-        getUserPosts(userId_glob ,showPosts, function(){ });
+        getPostsToUser(userId_glob ,showPosts, function(){ });
     else  
         getUserById("", function(user){
             userId_glob = user.id; //   save variable globally
-            getUserPosts(user.id ,showPosts, function(){ });
+            getPostsToUser(user.id ,showPosts, function(){ });
         },function(){});
 
     // Listener for add comment button
