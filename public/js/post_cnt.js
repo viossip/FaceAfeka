@@ -22,7 +22,7 @@ function prepareUploadPost(event, onSuccess, onFailure) {
     data.append("postText", $('form textarea[id=postText]').val());
 	data.append("privacy", $('#privateCheckBox').is(":checked"));
     data.append("userId", $("#li_userId").text().split(':')[1].trim());
-    console.log("DATA:" + JSON.stringify(data));
+    //console.log("DATA:" + JSON.stringify(data));
     uploadPost(data, onSuccess, onFailure);
 }
 
@@ -109,24 +109,24 @@ function postClicked(event) {
 		return;
     }
 
-    prepareUploadPost(imgEvent, uploadDone, function(){ });
+    prepareUploadPost(imgEvent, showPosts, function(){ });
 }
 
 
-function uploadDone(data) {
+/*function uploadDone(data) {
+    //  Clear post form fields
     $('input[type=file]').val('');
-    //  Clear the textField of post
     $('form textarea[id=postText]').val("");
     $('#privateCheckBox').prop('checked', false);
     $('#preview').empty();
     console.log(JSON.stringify(data));
 
     //  Why get post again if you already have it??? (data)!!!
-    getPost(data.id, showPosts, function(){ });
+    //getPost(data.id, showPosts, function(){ });
 
     // Display the new uploaded post
     // TODO: 
-}
+}*/
 
 /* function addComment(postId){
 
@@ -194,9 +194,27 @@ function getImages(imagesArr, onSuccess, onFailure){
     }
 }
 
+// Getting requested likes from server per post. The format of array {likes: likes, postId:postId }
+function getLikes(likesArr, onSuccess, onFailure){
+    if(typeof likesArr !== 'undefined'){
+        $("#likesPost_"+  likesArr.postId).text(likesArr.likes.length + " Likes");
+     }
+     //TODO: add link that will open the list of users in case where the likes array is not empty.
+     //
+     //
+}
+
 
 // Displays posts from given array of posts
 function showPosts(postsArr) {
+
+    //  Clear post form fields
+    $('input[type=file]').val('');
+    $('form textarea[id=postText]').val("");
+    $('#privateCheckBox').prop('checked', false);
+    $('#preview').empty();
+    console.log(JSON.stringify(postsArr));
+
     if(typeof postsArr !== 'undefined'){
         postsArr.forEach(function(post) {
             $( "#postsPlaceHolder" ).prepend(function() {
@@ -213,7 +231,9 @@ function showPosts(postsArr) {
                                 "<a class = 'post-avatar thumbnail' href='profile.html'> <img src='img/user.png'>" +
                                     "<div class = 'text-center'>DevUser1</div>" + 
                                 "</a>"+
-                                "<div class = 'likes text-center'>7 Likes</div>" +
+                                "<div class = 'likes text-center' id='likesPost_"+post.id+"'> " +
+                                   // "7 Likes" +
+                                "</div>" +
                                     
                             "</div> <!-- ENDof Col-sm-2 -->"+
                 
@@ -265,6 +285,7 @@ function showPosts(postsArr) {
 
             getPostComments(post.id, showComments, function(){ });
             getPostImages(post.id, getImages, function(){});
+            getPostLikes(post.id, getLikes, function(){});
         }, this);
     }
 }

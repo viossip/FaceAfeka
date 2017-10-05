@@ -26,9 +26,11 @@ router.post("/addPost",storage.any(), function (req, res, next) {
     db.getUserByLogin(req.session.user, function(user) {
         db.addPost({ text: req.body.postText, privacy: req.body.privacy, 
                      writtenTo: req.body.userId, writtenBy: user.id }, imgsDB, function(postDB) {
-            db.getPostLikes(postDB, function(likes) {
-                res.send({ post: postDB, likes: likes });
-            });
+                        res.send([postDB]);
+            //db.getPostLikes(postDB, function(likesDB) {
+            //    res.send({ post: postDB, likes: likesDB });
+            //res.send({ post: postDB, likes: likesDB });
+            //});
         });
     });
 });
@@ -53,7 +55,7 @@ router.post("/addComment", function (req, res) {
 //	Get a specific post.
 router.get("/getPost/:id", function(req, res) {
 	db.getPostById(req.params.id, function(post) {
-        res.send([post]);
+       // res.send([post]);
 	});
 });
 
@@ -72,6 +74,14 @@ router.get("/getPostComments/:postId", function(req, res) {
 	db.getPostComments(req.params.postId, function(comments) {
 		res.send(comments);
     });
+});
+
+//	Get the likes of specific post.
+router.get("/getPostLikes/:postId", function(req, res) {
+	db.getPostLikes(req.params.postId, function(likesDB) {
+        //  *Return the given postId - in case there is no likes of post, (before to know in which post update the likes)
+            res.send({likes : likesDB, postId : req.params.postId});
+        });
 });
 
  //	Get images names array of specific post by given post Id.

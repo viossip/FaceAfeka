@@ -271,6 +271,11 @@ function getPostComments(postId, onSuccess, onFailure) {
 	get("/posts/getPostComments/"+ postId, onSuccess, onFailure);
 }
 
+//	Get all likes of specific post.
+function getPostLikes(postId, onSuccess, onFailure) {
+	get("/posts/getPostLikes/"+ postId, onSuccess, onFailure);
+}
+
 //	Get all imgs of specific post.
 function getPostImages(postId, onSuccess, onFailure) {
 	get("/posts/getPostImages/"+ postId, onSuccess, onFailure);

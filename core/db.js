@@ -419,8 +419,10 @@ module.exports.getPostImages = function(postId, onResult) {
 };
 
 //  Retrieves a given post's likes.
-module.exports.getPostLikes = function(post, onResult) {
-    post.getPostLikes().then(onResult);
+module.exports.getPostLikes = function(postId, onResult) {
+    module.exports.getPostById(postId, function(post) {
+        post.getPostLikes().then(onResult);
+    });
 };
 
 //  Adds a comment to the DB.
