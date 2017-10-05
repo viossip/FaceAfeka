@@ -50,6 +50,10 @@ const Comment = sequelize.define('comment', {
         primaryKey: true,
         allowNull: false
     },
+    postId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
     text: {
         type: Sequelize.STRING,
         defaultValue: ""
@@ -105,8 +109,8 @@ Post.hasMany(Image, { as: 'PostImages' });
 Post.belongsToMany(Image, {through: 'PostImage'});
 Image.belongsToMany(Post, {through: 'PostImage'}); */
 
-//  Adds the attribute postId to comments.
-Post.hasMany(Comment, { as: 'PostComments' });
+//  Adds the function PostComments to Post which retrieves all comments with postId field that equals to the post's id.
+Post.hasMany(Comment, { as: 'PostComments', sourceKey: 'id', foreignKey: 'postId'});
 
 //  User model.
 const User = sequelize.define('user', {
@@ -143,7 +147,7 @@ const User = sequelize.define('user', {
 });
 
 //  Creates a new table called UserFriends which stores the ids of the two users who are friends.
-User.belongsToMany(User, { as: 'friends', through: 'UserFriends' } );
+User.belongsToMany(User, { as: 'Friends', through: 'UserFriends' } );
 
 //  Creates a new table called UserPostLikes which stores the ids of users and posts.
 Post.belongsToMany(User, { as: 'PostLikes', through: 'UserPostLikes' });
@@ -159,10 +163,10 @@ Image.belongsToMany(User, {through: 'UserImage'});
 User.belongsToMany(Image, {through: 'UserImage'});
 
 //  Adds the function PostsWritten to User which retrieves all posts with writtenBy field that equals to the user's id.
-User.hasMany(Post, { as: 'PostsWritten', foreignKey: 'writtenBy', sourceKey: 'id' });
+User.hasMany(Post, { as: 'PostsWritten', sourceKey: 'id', foreignKey: 'writtenBy' });
 
 //  Adds the function PostsOnWall to User which retrieves all posts with writtenTo field that equals to the user's id.
-User.hasMany(Post, { as: 'PostsOnWall', foreignKey: 'writtenTo', sourceKey: 'id' });
+User.hasMany(Post, { as: 'PostsOnWall', sourceKey: 'id', foreignKey: 'writtenTo' });
 
 //  Adds the attribute userId to comments.
 User.hasMany(Comment, { as: 'Comments' } );
@@ -381,19 +385,21 @@ module.exports.getPostById = function(postId, onResult) {
     }).then(onResult);
 };
 
-/* //  Retrieves a given post's comments.
-module.exports.getPostComments = function(post, onResult) {
-    post.getComments().then(onResult(comments));
-}; */
+ //  Retrieves a given post's comments.
+module.exports.getPostComments = function(postId, onResult) {
+    module.exports.getPostById(postId, function(post) {
+        post.getPostComments().then(onResult);
+    });
+}; 
 
 //  Retrieves a given post's comments.
-module.exports.getPostComments = function(postId, onResult) {
+/* module.exports.getPostComments = function(postId, onResult) {
     Comment.findAll({
         where: {
             postId: postId
         }
     }).then(onResult);
-};
+}; */
 
 /* //  Retrieves a given post's images.
 module.exports.getPostImages = function(post, onResult) {
