@@ -236,6 +236,18 @@ sequelize.sync();
 
 /* ---------------- DATABASE FUNCTIONS ---------------- */
 
+/* ---------------- GENERAL ---------------- */
+
+//  Generates a random string and an encrypted sha512 string as a password, given a password string.
+function generateSHA512Pass(password, randomString, onResult) {
+    var passObj = {};
+    passObj.randomString = randomString;
+    if (!randomString)
+        passObj.randomString = crypto.randomBytes(16).toString('hex');
+    passObj.hash = crypto.pbkdf2Sync(password, passObj.randomString, 100000, 512, 'sha512').toString('hex');        
+    onResult(passObj);
+}
+
 //  Resets the database and destroys all tables.
 module.exports.reset = function() {
     User.destroy();
@@ -248,6 +260,8 @@ module.exports.reset = function() {
 module.exports.countUsers = function(onResult) {
     User.count().then(onResult(count));
 };
+
+/* ---------------- USERS ---------------- */
 
 //  Adds a user to the DB.
 module.exports.addUser = function(user, password, onResult) {
@@ -264,16 +278,6 @@ module.exports.addUser = function(user, password, onResult) {
         });
     });
 };
-
-//  Generates a random string and an encrypted sha512 string as a password, given a password string.
-function generateSHA512Pass(password, randomString, onResult) {
-    var passObj = {};
-    passObj.randomString = randomString;
-    if (!randomString)
-        passObj.randomString = crypto.randomBytes(16).toString('hex');
-    passObj.hash = crypto.pbkdf2Sync(password, passObj.randomString, 100000, 512, 'sha512').toString('hex');        
-    onResult(passObj);
-}
 
 //  Retrieve a user given it's id.
 module.exports.getUserById = function(userId, onResult) {
@@ -338,6 +342,33 @@ module.exports.searchUserPrefix = function(prefix, onResult) {
     });
 };
 
+//  Retrieves a given user's friends.
+module.exports.getUserFriends = function(user, onResult) {
+    user.getUsers().then(onResult(friends));
+};
+
+//  Add given friend to current user's friends list.
+module.exports.addFriend = function(currUser, currFriendId, onResult) {
+    UserFriends.create(
+        { userId: currUser.id, friendId: currFriendId }).then(function(userFriendDb) {
+            onResult(userFriendDb);
+        }, function(error) {
+            onResult(null, error);
+        });
+};
+
+//  Remove given friend from current user's friends list.
+module.exports.removeFriend = function(currUserId, currFriendId, onResult) {
+    UserFriends.destroy({
+		where: {
+            userId: currUserId,
+            friendId: currFriendId
+		}
+	}).then(onResult);
+};
+
+/* ---------------- POSTS ---------------- */
+
 /* //  Retrieves a given user's posts.
 module.exports.getUserPosts = function(user, onResult) {
     user.getPosts().then(onResult(posts));
@@ -366,16 +397,6 @@ module.exports.getPostsToUser = function(userId, onResult) {
     });
 };
 
-//  Retrieves a given user's comments.
-module.exports.getUserComments = function(user, onResult) {
-    user.getComments().then(onResult(comments));
-};
-
-//  Retrieves a given user's friends.
-module.exports.getUserFriends = function(user, onResult) {
-    user.getUsers().then(onResult(friends));
-};
-
 //  Adds a post to the DB.
 module.exports.addPost = function(post, images, onResult) {    
 	Post.create(post).then(function(postDB) {      
@@ -402,91 +423,11 @@ module.exports.getPostById = function(postId, onResult) {
     }).then(onResult);
 };
 
- //  Retrieves a given post's comments.
-module.exports.getPostComments = function(postId, onResult) {
-    module.exports.getPostById(postId, function(post) {
-        post.getPostComments().then(onResult);
-    });
-}; 
-
-//  Retrieves a given post's comments.
-/* module.exports.getPostComments = function(postId, onResult) {
-    Comment.findAll({
-        where: {
-            postId: postId
-        }
-    }).then(onResult);
-}; */
-
- //  Retrieves a given post's images.
-module.exports.getPostImages = function(postId, onResult) {
-    module.exports.getPostById(postId, function(post) {
-        post.getImages().then(onResult);
-    });
-}; 
-
-//  Retrieves a given post's images.
-/* module.exports.getPostImages = function(postId, onResult) {
-        Image.findAll({
-        where: {
-            postId: postId
-        }
-    }).then(onResult);
-}; */
-
 //  Retrieves a given post's likes.
 module.exports.getPostLikes = function(postId, onResult) {
     module.exports.getPostById(postId, function(post) {
         post.getPostLikes().then(onResult);
     });
-};
-
-//  Adds a comment to the DB.
-module.exports.addComment = function(comment, onResult) {
-	Comment.create(comment).then(function(commentDB) {
-		onResult(commentDB);
-	}, function(error) {
-		onResult(null, error);
-	});
-};
-
-//  Retrieves a given comment's images.
-module.exports.getCommentImages = function(comment, onResult) {
-    comment.getImages().then(onResult(images));
-};
-
-//  Retrieves a given comment's likes.
-module.exports.getCommentLikes = function(comment, onResult) {
-    comment.getUsers().then(onResult(users));
-};
-
-//  Adds an image to the DB.
-module.exports.addImage = function(image, onResult) {
-	Image.create(image).then(function(imageDB) {
-		onResult(imageDB);
-	}, function(error) {
-		onResult(null, error);
-	});
-};
-
-//  Add given friend to current user's friends list.
-module.exports.addFriend = function(currUser, currFriendId, onResult) {
-    UserFriends.create(
-        { userId: currUser.id, friendId: currFriendId }).then(function(userFriendDb) {
-            onResult(userFriendDb);
-        }, function(error) {
-            onResult(null, error);
-        });
-};
-
-//  Remove given friend from current user's friends list.
-module.exports.removeFriend = function(currUserId, currFriendId, onResult) {
-    UserFriends.destroy({
-		where: {
-            userId: currUserId,
-            friendId: currFriendId
-		}
-	}).then(onResult);
 };
 
 //  "Create" a post like given the user and post ids.
@@ -508,6 +449,43 @@ module.exports.removePostLike = function(currUserId, currPostId, onResult) {
     }).then(onResult);
 };
 
+/* ---------------- COMMENTS ---------------- */
+
+//  Retrieves a given user's comments.
+module.exports.getUserComments = function(user, onResult) {
+    user.getComments().then(onResult(comments));
+};
+
+ //  Retrieves a given post's comments.
+ module.exports.getPostComments = function(postId, onResult) {
+    module.exports.getPostById(postId, function(post) {
+        post.getPostComments().then(onResult);
+    });
+}; 
+
+//  Retrieves a given post's comments.
+/* module.exports.getPostComments = function(postId, onResult) {
+    Comment.findAll({
+        where: {
+            postId: postId
+        }
+    }).then(onResult);
+}; */
+
+//  Adds a comment to the DB.
+module.exports.addComment = function(comment, onResult) {
+	Comment.create(comment).then(function(commentDB) {
+		onResult(commentDB);
+	}, function(error) {
+		onResult(null, error);
+	});
+};
+
+//  Retrieves a given comment's likes.
+module.exports.getCommentLikes = function(comment, onResult) {
+    comment.getUsers().then(onResult(users));
+};
+
 //  "Create" a comment like given the user and comment ids.
 module.exports.addCommentLike = function(currUserId, currCommentId, onResult) {
     UserCommentLikes.create({ userId: currUserId, commentId: currCommentId }).then(function(userCommentLike) {
@@ -525,4 +503,36 @@ module.exports.removeCommentLike = function(currUserId, currCommentId, onResult)
             commentId: currCommentId
         }
     }).then(onResult);
+};
+
+/* ---------------- IMAGES ---------------- */
+
+ //  Retrieves a given post's images.
+ module.exports.getPostImages = function(postId, onResult) {
+    module.exports.getPostById(postId, function(post) {
+        post.getImages().then(onResult);
+    });
+}; 
+
+//  Retrieves a given post's images.
+/* module.exports.getPostImages = function(postId, onResult) {
+        Image.findAll({
+        where: {
+            postId: postId
+        }
+    }).then(onResult);
+}; */
+
+//  Retrieves a given comment's images.
+module.exports.getCommentImages = function(comment, onResult) {
+    comment.getImages().then(onResult(images));
+};
+
+//  Adds an image to the DB.
+module.exports.addImage = function(image, onResult) {
+	Image.create(image).then(function(imageDB) {
+		onResult(imageDB);
+	}, function(error) {
+		onResult(null, error);
+	});
 };
