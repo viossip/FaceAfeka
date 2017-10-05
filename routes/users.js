@@ -33,13 +33,17 @@ router.get("/getUserById", function(req, res, next) {
   if (!req.body.id) {
     if (req.session.user) {
       db.getUserByLogin(req.session.user, function(user) {
-        res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: ProfileImageId});
+        user.getImages().then(function(images) {
+          res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: images[0].id});
+        });
       });
     }
   }
   else {
     db.getUserById(req.body.id, function(user) {
-      res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: ProfileImageId});
+      user.getImages().then(function(images) {
+        res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: images[0].id});
+      });
     });
   }
 });
