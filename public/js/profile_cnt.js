@@ -5,6 +5,7 @@ $(document).ready(function() {
     console.log(currUserId);
     //updateUserDetails();
 
+
 });
 
 //  Updates the current user's details.
