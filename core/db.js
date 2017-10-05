@@ -323,6 +323,21 @@ module.exports.getAllUsers = function(onResult) {
     User.findAll().then(onResult);
 };
 
+//  Get users whom names begin with the given string
+module.exports.searchUserPrefix = function(prefix, onResult) {
+    module.exports.getAllUsers(function(users) {
+        var userList = [];
+        users.forEach(function(user) { 
+            var fullname = user.firstName + " " + user.lastName;
+            if (fullname.indexOf(prefix) === 0) {
+                console.log("found: " + fullname);
+                userList.push({ label: fullname, id: user.id });
+            }
+        });
+        onResult(userList);
+    });
+};
+
 /* //  Retrieves a given user's posts.
 module.exports.getUserPosts = function(user, onResult) {
     user.getPosts().then(onResult(posts));

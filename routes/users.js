@@ -54,6 +54,15 @@ router.get("/getUsers", function(req, res, next) {
 	
 });
 
+//  Get users whom names begin with the given string
+router.get("/searchUserPrefix", function(req, res) {
+  console.log("users: Searching for user with name " + req.query.prefix);
+  db.searchUserPrefix(req.query.prefix, function(users) {
+    console.log(JSON.stringify(users));
+    res.send(users);
+  });
+});
+
 //	Update user in DB.
 router.post('/updateUser', function (req, res,next) {
 	console.log("Updating user " + req.body.user);

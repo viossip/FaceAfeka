@@ -212,6 +212,10 @@ function getUsers(onSuccess, onFailure) {
 	get("/users/getUsers", onSuccess, onFailure);
 }
 
+function searchUserPrefix(prefix, onSuccess, onFailure) {
+	get("/users/searchUserPrefix?prefix=" + prefix, onSuccess, onFailure);
+}
+
 function editUser(user, onSuccess, onFailure) {
 	post("/users/updateUser", user, onSuccess, onFailure);
 }

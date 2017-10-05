@@ -1,3 +1,5 @@
+var searchResults = [];
+
 $(document).ready(function() {
     navbarRelPath();
     $('.btn-signout').click(function(event) {
@@ -5,7 +7,20 @@ $(document).ready(function() {
         authLogout(function() {
             window.location.reload();
         });
-    });	
+    });
+
+    $("#userSearch").on("input", function(event) {
+        var searchText = $(this).val();
+        searchUserPrefix(searchText, function(userList) {
+            searchResults = userList;
+            $("#userSearch").autocomplete({
+                source: searchResults,
+                select: function(event, ui) {
+                    window.location = "/profile?id=" + ui.item.id;
+                }
+            });
+        });
+    });
 });
 
 var deleteCookie = function(name) {
@@ -19,3 +34,4 @@ function navbarRelPath() {
         elem.attr("href", window.location.origin + "/" + path);
     });
 }
+
