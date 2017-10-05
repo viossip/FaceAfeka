@@ -103,11 +103,11 @@ const Post = sequelize.define('post', {
 
 ////////////////////////////////////////////////////////////////////////////////////
 //  Adds the attribute postId to images.
-Post.hasMany(Image, { as: 'PostImages' });
+//Post.hasMany(Image, { as: 'PostImages' });
 ////////////////////////////////////////////////////////////////////////////////////
-/* //  Creates a new model called PostImage that has foreign keys postId and imageId
-Post.belongsToMany(Image, {through: 'PostImage'});
-Image.belongsToMany(Post, {through: 'PostImage'}); */
+/* //  Creates a new model called PostImage that has foreign keys postId and imageId*/
+Post.belongsToMany(Image, { through: "PostImage"});
+Image.belongsToMany(Post, { through: "PostImage"}); 
 
 //  Adds the function getPostComments (and more functions) to Post which retrieves all comments
 //  with postId field that equals to the post's id.
@@ -379,11 +379,11 @@ module.exports.getUserFriends = function(user, onResult) {
 //  Adds a post to the DB.
 module.exports.addPost = function(post, images, onResult) {    
 	Post.create(post).then(function(postDB) {      
-        images.forEach(function(imageObj) {
-            imageObj["postId"] = postDB.id;                
-            module.exports.addImage(imageObj, function(){});
+        images.forEach(function(imageObj) {              
+            module.exports.addImage(imageObj, function(image){
+                postDB.addImage(image).then(onResult(postDB));
+            });
         });
-        onResult(postDB);
 	}, function(error) {
 		onResult(null, error);
 	});
@@ -418,19 +418,21 @@ module.exports.getPostComments = function(postId, onResult) {
     }).then(onResult);
 }; */
 
-/* //  Retrieves a given post's images.
-module.exports.getPostImages = function(post, onResult) {
-    post.getImages().then(onResult(images));
-}; */
+ //  Retrieves a given post's images.
+module.exports.getPostImages = function(postId, onResult) {
+    module.exports.getPostById(postId, function(post) {
+        post.getImages().then(onResult);
+    });
+}; 
 
 //  Retrieves a given post's images.
-module.exports.getPostImages = function(postId, onResult) {
+/* module.exports.getPostImages = function(postId, onResult) {
         Image.findAll({
         where: {
             postId: postId
         }
     }).then(onResult);
-};
+}; */
 
 //  Retrieves a given post's likes.
 module.exports.getPostLikes = function(postId, onResult) {
