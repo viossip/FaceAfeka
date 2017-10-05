@@ -101,4 +101,13 @@ router.get("/removeFriend", function(req, res, next) {
   }
 });
 
+router.get("/getCurrentUser", function(req, res, next) {
+    if (req.session.user) {
+      db.getUserByLogin(req.session.user, function(user) {
+        console.log("++++++++++++++++++++++++++++++++++ "+ JSON.stringify(user));
+          res.send(user);
+      });
+    }
+});
+
 module.exports = router;

@@ -294,6 +294,9 @@ function uploadComment(data, onSuccess, onFailure) {
 	post("/posts/addComment", data, onSuccess, onFailure);	
 }
 
+function getCurrentUser(onSuccess, onFailure) {
+	get("/users/getCurrentUser", onSuccess, onFailure);	
+}
 
 
 /* ---------------- HTTP METHODS ---------------- */
