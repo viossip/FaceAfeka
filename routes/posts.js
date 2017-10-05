@@ -108,8 +108,8 @@ router.get("/getPostsToUser", function(req, res) {
 });
 
 //  Adds like of specific user to specific post
-router.get("/addLike", function(req, res) {
-    console.log("++++++++++++++++++ PostId: "+ req.query.postId + "+++++++++ UserId: " + req.query.userId);
+router.post("/addLike", function(req, res) {
+    console.log("++++++++++++++++++ PostId: "+ req.body.postId + "+++++++++ UserId: " + req.body.userId);
     
 });
 

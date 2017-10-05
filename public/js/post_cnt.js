@@ -1,6 +1,5 @@
 var imgEvent;
 var userId_glob = window.location.href.split('=')[1];
-var test = window.location.hostname;
 var domain_glob = window.location.hostname;
 
 function prepareUploadPost(event, onSuccess, onFailure) {
@@ -124,7 +123,7 @@ function showPosts(postsArr) {
                                 "<a class = 'post-avatar thumbnail' href='profile.html'> <img src='img/user.png'>" +
                                     "<div class = 'text-center'>DevUser1</div>" + 
                                 "</a>"+
-                                "<div class = 'likes text-center' id='likesPost_"+post.id+"'> " + domain_glob +
+                                "<div class = 'likes text-center' id='likesPost_"+post.id+"'> " +
                                    // "7 Likes" +
                                 "</div>" +
                                     
@@ -143,7 +142,7 @@ function showPosts(postsArr) {
                                     "<div class='row'>" +
                                         "<div id ='postActions' class='col-xs-3'>" +
                                             "<p class = 'post-actions'>" +
-                                            "<a href = '#'>Comment</a> - <a href = '" +  + "/posts/addLike/postId="+post.id+"&userId="+userId_glob+"'>Like</a> - <a href = '#'>TEST:"+domain_glob+"  Follow</a> - <a href = '#'>Share</a>" +
+                                            "<a>Comment</button > - <a id='like_"+ post.id +"'>Like</a> - <a>Follow</a> - <a>Share</a>" +
                                             "</p>"+
                                         "</div>" +
                                         "<div id ='postCreatedDate' class='col-xs-2' style='font-family: Arial Black; font-size: 12px; color: blue'>Created: "+ post.createdAt + "</div>" +
@@ -214,6 +213,24 @@ $(document).ready(function() {
         if($("#images")[0].files.length > 3) // Limit of 3 imgs per post.
             alert("You can select only 3 images");
     });
+
+    //href = 'http://" + window.location.hostname + "/posts/addLike/postId="+post.id+"&userId="+userId_glob+"'
+    $(document).delegate('*[id^="like_"]', 'click', function(event) {
+        event.preventDefault();
+        console.log("------------------------- " + event.target.id);
+        //var postId = event.target.id.split('_')[1];
+       // var userId = userId_glob;
+        addLike({ postId : event.target.id.split('_')[1], userId : userId_glob}, function(){
+            console.log("????????????????????????????????");
+        }, function(){ });
+       // $(this).ekkoLightbox();
+
+    });
+
+/*     $('*[id^="postActions_"] :nth-child(2)').click(function(e) { 
+        e.preventDefault();
+        console.log("-------------------------------- " + e);
+    }); */
 
     //var userId = $("#li_userId").text().split(':')[1].trim();
 

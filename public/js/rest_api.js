@@ -298,6 +298,10 @@ function uploadComment(data, onSuccess, onFailure) {
 	post("/posts/addComment", data, onSuccess, onFailure);	
 }
 
+function addLike(data, onSuccess, onFailure) {
+	post("/posts/addLike", data, onSuccess, onFailure);	
+}
+
 
 /* ---------------- HTTP METHODS ---------------- */
 
