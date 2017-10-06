@@ -93,45 +93,44 @@ function getImages(imagesArr, onSuccess, onFailure){
 
 // Getting requested likes from server per post. The format of array {likes: likes, postId:postId }
 function getLikes(likes){
-    console.log("------------------------------------------------- " + JSON.stringify(likes));
+    //console.log("------------------------------------------------- " + JSON.stringify(likes));
     var id;
 
     if(typeof likes !== 'undefined'){
 
         likes.forEach(function(like){
       
+            // If the like is of the current user
             if(like.id == userId_glob){
                 if($("#likeBtn_"+  like.postId).text() == "Unlike"){
                     $("#likeBtn_"+  like.postId).text("Like");
-                    changeLikesCounter(like.postId, -1);
-                
+                    changeLikesCounter(like.postId, -1);    
+                    $('#liker_' + like.id + '_post_' + like.postId).remove();
                 }
                 else{
                     $("#likeBtn_"+  like.postId).text("Unlike");
-                    changeLikesCounter(like.postId, 1);
-                      
-
-                }
-
+                    $("#likersList_"+  like.postId).prepend('<li id = "liker_'+like.id+'_post_'+like.postId+'">'+
+                                                                '<a href="#">'+ like.fullname +'</a>'+
+                                                            '</li> ');
+                    changeLikesCounter(like.postId, 1);                    
+                }           
             }
-
-            
+            else{
+                changeLikesCounter(like.postId, 1);
+                $("#likersList_"+  like.postId).prepend('<li id = "user_'+like.id+'_post_'+like.postId+'">'+
+                '<a href="http://'+ domain_glob +':'+ location.port +'/profile?id='+ like.id +'">'+ like.fullname +'</a>'+
+                '</li> ');
+            }
+                
+            // Disable drop-down function when there is no likes on post.
             if ($("#likesPost_"+  like.postId).text()==0)
                 $("#likersDropdown_"+  like.postId).removeAttr('data-toggle');
             else
                 if(!($("#likersDropdown_"+  like.postId).attr('data-toggle')))
                     $("#likersDropdown_"+  like.postId).attr('data-toggle', 'dropdown');
 
-        });
-
-
-       // $("#imagesPlaceHolder_"+  img.postId).prepend('<img height="50px" width="50px" id ="img" src="/getImage/' +img.name+ '" /> ');
-        
-
+        });  
     }
-     //TODO: add link that will open the list of users in case where the likes array is not empty.
-     //
-     //
 }
 
 function changeLikesCounter(postId, num){
@@ -175,9 +174,7 @@ function showPosts(postsArr) {
 
                                         "<span class='caret'></span>" +                                     
                                         "<ul class='dropdown-menu' id='likersList_"+post.id+"'>" +
-                                            "<li><a href='#'>User_2_test</a></li>" +
-                                            "<li><a href='#'>CSS</a></li>" +
-                                            "<li><a href='#'>JavaScript</a></li>" +
+                                        //  Likers links place.
                                         "</ul>" +
                                     "</div>" +
                                 "</div>" +
