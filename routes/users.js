@@ -181,6 +181,7 @@ router.get("/removeFriend", function(req, res, next) {
 });
 
 router.post("/addProfileImg", upload.any(), function(req, res) {
+  
 
   var imgs = req.files.map(function(img) {
     return { imagePath : IMAGES_PATH + "/" + img.filename };

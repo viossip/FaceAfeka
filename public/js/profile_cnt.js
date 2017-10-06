@@ -38,7 +38,9 @@ function changeProfilePic(event) {
 
     var data = new FormData();
 	if(typeof files !== 'undefined') {
-        data.append(files[0].key, files[0].value);
+        $.each(files, function(key, value) {
+            data.append(key, value);
+        });
     }
 
     uploadProfileImage(data, function(imageObj) {

@@ -359,7 +359,7 @@ module.exports.changeUserProfilePic = function(user, images, onResult) {
     user.setProfileImages([]).then(function() {
         if (images.length !== 0) {
             images.forEach(function(imageObj) {
-                module.exports.addImage(imageObj, function(image){
+                module.exports.addImage(imageObj, function(image) {
                     user.addProfileImage(image).then(onResult(image.imagePath));
                 });
             });
@@ -378,7 +378,6 @@ module.exports.addUserAlbumImage = function(user, images, onResult) {
             module.exports.addImage(image, function(imageObj) {
                 imageObjArr.push(imageObj);
                 if (images.length-1 === index) {
-                    console.log(JSON.stringify(imageObjArr));
                     user.addAlbumImages(imageObjArr).then(onResult(images));
                 }
             });
