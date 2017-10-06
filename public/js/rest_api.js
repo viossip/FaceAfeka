@@ -135,6 +135,16 @@ function removeLike(postId, onSuccess, onFailure) {
 	get("/posts/removeLike/"+ postId, onSuccess, onFailure);	
 }
 
+//	Remove the post by ID.
+function removePost(postId, onSuccess, onFailure) {
+	get("/posts/removePost/"+ postId, onSuccess, onFailure);	
+}
+
+//	Remove the comment by ID.
+function removePost(commentId, onSuccess, onFailure) {
+	get("/posts/removeComment/"+ commentId, onSuccess, onFailure);	
+}
+
 
 /* ---------------- HTTP METHODS ---------------- */
 

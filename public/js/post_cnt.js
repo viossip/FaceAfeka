@@ -65,12 +65,15 @@ function showComments(commentsArr, onSuccess, onFailure){
         commentsArr.forEach(function(comment) {
             $('#commentText_'+comment.postId).val("");
             $( "#commentsPlaceHolder_"+  comment.postId).prepend(function() {
+                // var delBtn = (post.writtenBy != userId_glob)?"":
+                // "<div class = 'col-sm-2 pull-right'>" +
+                //     "<button id='btnDeletePost_"+post.id+"' type='button' class='btn btn-danger pull-right'>Delete</button>" +
+                // "</div>" ;
+
                 var showComment =
                                 "<div class = 'comment'>"+
                                     "<a class = 'comment-avatar pull-left' href = '#'><img src = 'img/user.png'></a>"+
-                                    "<div class = 'comment-text'>"+
-                                        "<p>"+ comment.text +"</p>"+
-                                    "</div>"+
+                                    "<div class = 'comment-text'><p>"+ comment.text +"</p></div>"+
                                 "</div> <!-- ENDof Comment -->";
                 return showComment;
             });
@@ -304,11 +307,13 @@ $(document).ready(function() {
 
     // Listener for add comment button
     $('body').on('click', '#postsPlaceHolder', function(event) { 
-        if(event.target.id.split('_')[0] == "btnAddComment"){
-            var postIdToComment = event.target.id.split('_')[1];
-            addComment(postIdToComment);
+        if(event.target.id.split('_')[0] == "btnAddComment")
+            addComment(event.target.id.split('_')[1]);
+        else if(event.target.id.split('_')[0] == "btnDeletePost"){
+            removePost(event.target.id.split('_')[1], function(){}, function(){});
         }
-        else if(event.target.id.split('_')[0] == "btnDeletePost")
-        console.log("--------------------------------- ");
+            
+        else
+            console.log("++++++++++++++++++++++++++++++ ");///////////////////////////////////////..
     });
 });

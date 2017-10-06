@@ -117,6 +117,12 @@ router.get("/removeLike/:postId", function(req, res) {
     });
 });
 
+//  Removes post by ID.
+router.get("/removePost/:postId", function(req, res) {
+
+    db.removePost(req.params.postId);
+});
+
 
 /* //	Get all posts.
 router.get("/getPosts", function(req, res) {
