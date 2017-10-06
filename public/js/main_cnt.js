@@ -35,3 +35,23 @@ function navbarRelPath() {
     });
 }
 
+function updateAlbumImages(images) {
+    var ulGalleryElem = $(".gallery-parent");
+    images.forEach(function(image, index) {
+        var imageName = image.imagePath.split("/").pop();
+        ulGalleryElem.append("<li><a href='getImage/" + imageName + "' data-toggle='lightbox' data-parent='.gallery-parent' data-hover='tooltip' data-placement='top'><img src='getImage/" + imageName + "' class='img-thumbnail'></a></li>");
+        if (images.length-1 === index)
+            lightboxSetup();
+    });
+}
+
+function lightboxSetup() {
+    $(document).delegate('*[data-toggle="lightbox"]', 'click', function(event) {
+        event.preventDefault();
+        $(this).ekkoLightbox();
+    });
+
+    $(function () {
+        $('[data-hover="tooltip"]').tooltip();
+    });
+}

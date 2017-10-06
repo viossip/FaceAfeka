@@ -13,7 +13,6 @@ var storage = multer.diskStorage({
     cb(null, path.join(__dirname, IMAGES_PATH));
   },
   filename: function (req, file, cb) {
-    console.log(JSON.stringify(file));
     var randString = crypto.randomBytes(10).toString('hex');
     var fileExt = file.originalname.split(".").pop();
     cb(null, randString + "_" + Date.now() + "." + fileExt);
