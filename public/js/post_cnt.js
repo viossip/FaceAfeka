@@ -88,12 +88,16 @@ function getImages(imagesArr, onSuccess, onFailure){
 }
 
 // Getting requested likes from server per post. The format of array {likes: likes, postId:postId }
-function getLikes(likesArr, onSuccess, onFailure){
-  //  if(typeof likesArr !== 'undefined'){
-     //   $("#likesPost_"+  likesArr.postId).text(likesArr.UserPostLikes.length + " Likes");
-   //  }
-   console.log("------------------------------------------------- " + JSON.stringify(likesArr));
-
+function getLikes(likes){
+    console.log("------------------------------------------------- " + JSON.stringify(likes));
+    if(typeof likes !== 'undefined'){
+        likes.forEach(function(like){
+            var el = parseInt($("#likesPost_"+  like.postId).text()); 
+            $("#likesPost_"+  like.postId).text(el+1);        
+            
+            //$("#likesPost_"+  like.postId).text($(  (parseInt($("#likesPost_"+  like.postId).text()) + 1) + " Likes"));            
+        });
+    }
      //TODO: add link that will open the list of users in case where the likes array is not empty.
      //
      //
@@ -126,10 +130,10 @@ function showPosts(postsArr) {
                                 "<a class = 'post-avatar thumbnail' href='profile.html'> <img src='img/user.png'>" +
                                     "<div class = 'text-center'>DevUser1</div>" + 
                                 "</a>"+
-                                "<div class = 'likes text-center' id='likesPost_"+post.id+"'> " +
-                                   // "7 Likes" +
-                                "</div>" +
-                                    
+                                "<div class = 'likes text-center'>" +
+                                    "<div id='likesPost_"+post.id+"'>0</div> Likes" +
+                                    // "7 Likes" +
+                                "</div>" +    
                             "</div> <!-- ENDof Col-sm-2 -->"+
                 
                             "<div class = 'col-sm-10'>"+
@@ -220,8 +224,9 @@ $(document).ready(function() {
     $(document).delegate('*[id^="like_"]', 'click', function(event) {
 
         event.preventDefault();
-        console.log("??????????????????????????// " + userId_glob);
-        addLike({ postId : event.target.id.split('_')[1], userId : userId_glob}, getLikes, function() {});
+        console.log("+++++++++++ PostID: " + JSON.stringify(event.target.id.split('_')[1]));   
+        var postId = event.target.id.split('_')[1];
+        addLike(postId, getLikes, function(){ });
         
     });
 

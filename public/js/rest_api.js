@@ -114,8 +114,8 @@ function uploadComment(data, onSuccess, onFailure) {
 }
 
 //	Adds a post like.
-function addLike(data, onSuccess, onFailure) {
-	post("/posts/addLike", data, onSuccess, onFailure);	
+function addLike(postId, onSuccess, onFailure) {
+	get("/posts/addLike/"+ postId, onSuccess, onFailure);	
 }
 
 
