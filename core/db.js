@@ -335,7 +335,7 @@ module.exports.searchUserPrefix = function(prefix, onResult) {
 
 //  Retrieves a given user's friends.
 module.exports.getUserFriends = function(user, onResult) {
-    user.getUsers().then(onResult);
+    user.getFriends().then(onResult);
 };
 
 //  Add given friend to current user's friends list.
@@ -497,7 +497,7 @@ module.exports.removePostLike = function(currUserId, currPostId, onResult) {
 //  Remove a post given it's id.
 module.exports.removePost = function(postId, onResult) {
     module.exports.getPostById(postId, function(post) {
-        post.getPostcomments().then(function(comments) {
+        post.getPostComments().then(function(comments) {
             comments.forEach(function(comment, index) {
                 removeCommentById(comment.id, function() {});
                 if (comment.length-1 === index) {
