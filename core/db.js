@@ -360,7 +360,9 @@ module.exports.removeFriend = function(currUserId, currFriendId, onResult) {
 
 //  Changes a given user's profile image.
 module.exports.changeUserProfilePic = function(user, images, onResult) {
-    user.setProfileImages([]).then(function() {
+
+    //  Adds the profile image (from the images array which is size 1..).
+    function addProfile(images) {
         if (images.length !== 0) {
             images.forEach(function(imageObj) {
                 module.exports.addImage(imageObj, function(image) {
@@ -370,6 +372,26 @@ module.exports.changeUserProfilePic = function(user, images, onResult) {
         }
         else {
             onResult();
+        }
+    }
+
+    //  Try to get the user's profile images.
+    user.getProfileImages().then(function(imagesDB) {
+        //  If its empty, it means that the user had no profile image before, and had the regular user.png profile.
+        //  Just add the newly given image without removing anything.
+        if (imagesDB.length === 0) {
+            addProfile(images);
+        }
+
+        //  There was a custom profile image before, delete it, and then add the new image.
+        else {
+            var oldImage = imagesDB[0];
+            //  Remove the profile image from the UserProfileImage table.
+            user.removeProfileImage(oldImage);
+            //  Removes an image object from the Image table and also from the file system.
+            module.exports.removeImage(oldImage, function() {
+                addProfile(images);
+            });
         }
     });
 };
@@ -537,21 +559,23 @@ module.exports.addImage = function(image, onResult) {
 	});
 };
 
-//  Removes an image object.
+//  Removes an image object from the Image table and also from the file system.
 module.exports.removeImage = function(image, onResult) {
-    try {
-        fs.unlink(path.join(__dirname, image.imagePath), function() {
-            console.log("Successfully removed image " + path.join(__dirname, image.imagePath));
-            Image.destroy({
-                where: {
-                    id: image.id
-                }
-            }).then(onResult);
-        });
-    }
-    catch(err) {
-        console.log("Error while removing image.");
-        onResult();
+    if (image.imagePath.split("/").pop !== "user.png") {
+        try {
+            fs.unlink(path.join(__dirname, image.imagePath), function() {
+                console.log("db: Successfully removed image " + path.join(__dirname, image.imagePath));
+                Image.destroy({
+                    where: {
+                        id: image.id
+                    }
+                }).then(onResult);
+            });
+        }
+        catch(err) {
+            console.log("db: Error while removing image.");
+            onResult();
+        }
     }
 };
 

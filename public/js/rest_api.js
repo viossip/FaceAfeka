@@ -42,6 +42,10 @@ function uploadAlbumImage(data, onSuccess, onFailure) {
 	postFiles("/users/addAlbumImg", data, onSuccess, onFailure);
 }
 
+function removeAlbumImage(imageId, onSuccess, onFailure) {
+	get("/users/removeAlbumImg?imageId=" + imageId, onSuccess, onFailure);
+}
+
 function getUserAlbumImages(userId, onSuccess, onFailure) {
 	get("/users/getUserAlbumImages?id=" + userId, onSuccess, onFailure);
 }
