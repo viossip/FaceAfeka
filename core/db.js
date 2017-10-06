@@ -1,5 +1,9 @@
 var Sequelize = require("sequelize");
 var crypto = require('crypto');
+var fs = require("fs");
+var path = require('path');
+
+const IMAGES_PATH = "../uploadedImgs";
 
 /* ---------------- DATABASE DEFINITION ---------------- */
 
@@ -378,21 +382,9 @@ module.exports.addUserAlbumImage = function(user, images, onResult) {
             module.exports.addImage(image, function(imageObj) {
                 imageObjArr.push(imageObj);
                 if (images.length-1 === index) {
-                    user.addAlbumImages(imageObjArr).then(onResult(images));
+                    user.addAlbumImages(imageObjArr).then(onResult(imageObjArr));
                 }
             });
-        });
-    }
-    else {
-        onResult();
-    }
-};
-
-//  Removes an image from user's album (not profile image!).
-module.exports.removeUserAlbumImage = function(user, images, onResult) {
-    if (images.length !== 0) {
-        images.forEach(function(imageObj) {
-            user.removeAlbumImage(imageObj).then(onResult(imageObj));
         });
     }
     else {
@@ -474,7 +466,7 @@ module.exports.addPostLike = function(currUserId, currPostId, onResult) {
 //  Remove a post like given the user and post ids.
 module.exports.removePostLike = function(currUserId, currPostId, onResult) {
     module.exports.getUserById(currUserId, function(user) {
-        module.getPostById(currPostId, function(post) {
+        module.exports.getPostById(currPostId, function(post) {
             user.removePostLike(post).then(onResult);
         });
     });
@@ -543,4 +535,31 @@ module.exports.addImage = function(image, onResult) {
 	}, function(error) {
 		onResult(null, error);
 	});
+};
+
+//  Removes an image object.
+module.exports.removeImage = function(image, onResult) {
+    try {
+        fs.unlink(path.join(__dirname, image.imagePath), function() {
+            console.log("Successfully removed image " + path.join(__dirname, image.imagePath));
+            Image.destroy({
+                where: {
+                    id: image.id
+                }
+            }).then(onResult);
+        });
+    }
+    catch(err) {
+        console.log("Error while removing image.");
+        onResult();
+    }
+};
+
+//  Gets an image object given it's id.
+module.exports.getImageById = function(imageId, onResult) {
+    Image.findOne({
+        where: {
+            id: imageId
+        }
+    }).then(onResult);
 };
