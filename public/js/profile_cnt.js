@@ -38,13 +38,10 @@ function changeProfilePic(event) {
 
     var data = new FormData();
 	if(typeof files !== 'undefined') {
-    	$.each(files, function(key, value) {
-            data.append(key, value);
-        });
+        data.append(files[0].key, files[0].value);
     }
 
     uploadProfileImage(data, function(imageObj) {
-        console.log("FINISHED UPLOADING: " + imageObj);
         $(".user-profile-image img").attr("src", "/getImage/" + imageObj.imageName);
     });
 }

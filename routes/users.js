@@ -3,12 +3,24 @@ var router = express.Router();
 var db = require("../core/db");
 var utils = require("../core/utils");
 var path = require('path');
-var multer  =   require('multer');
+var multer = require('multer');
+var crypto = require("crypto");
 
 const IMAGES_PATH = "../uploadedImgs";
 
-var storage = multer({dest: path.join(__dirname, IMAGES_PATH)});
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, IMAGES_PATH));
+  },
+  filename: function (req, file, cb) {
+    console.log(JSON.stringify(file));
+    var randString = crypto.randomBytes(10).toString('hex');
+    var fileExt = file.originalname.split(".").pop();
+    cb(null, randString + "_" + Date.now() + "." + fileExt);
+  }
+});
 
+var upload = multer({ storage: storage });
 //  Get a specific user profile, given his id.
 /* router.get("/profile/:id", function(req, res) {
   console.log("Retrieving user " + JSON.stringify(req.params.id));
@@ -168,7 +180,7 @@ router.get("/removeFriend", function(req, res, next) {
   }
 });
 
-router.post("/addProfileImg", storage.any(), function(req, res) {
+router.post("/addProfileImg", upload.any(), function(req, res) {
 
   var imgs = req.files.map(function(img) {
     return { imagePath : IMAGES_PATH + "/" + img.filename };
@@ -176,11 +188,44 @@ router.post("/addProfileImg", storage.any(), function(req, res) {
 
   db.getUserByLogin(req.session.user, function(user) {
     db.changeUserProfilePic(user, imgs, function(imgPath) {
-      console.log(imgPath);
       res.send({ imageName: imgPath.split('/').pop() });
     });
   });
 
+});
+
+router.post("/addAlbumImg", upload.any(), function(req, res) {
+  var imgs = req.files.map(function(img) {
+    return { imagePath : IMAGES_PATH + "/" + img.filename };
+  });
+
+  db.getUserByLogin(req.session.user, function(user) {
+    db.addUserAlbumImage(user, imgs, function(images) {
+      res.send(images);
+    });
+  });
+});
+
+//  Gets a given user's album images.
+router.get("/getUserAlbumImages", function(req, res) {
+
+  function sendAlbumImages(user) {
+    user.getAlbumImages().then(function(images) {
+      res.send(images);
+    });
+  }
+
+  var userId = req.query.id;
+  if (userId === "undefined") {
+    db.getUserByLogin(req.session.user, function(user) {
+      sendAlbumImages(user);
+    });
+  }
+  else {
+    db.getUserById(userId, function(user) {
+      sendAlbumImages(user);
+    });
+  }
 });
 
 module.exports = router;

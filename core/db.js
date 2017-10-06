@@ -32,10 +32,6 @@ const Image = sequelize.define('image', {
     imagePath: {
         type: Sequelize.STRING,
         defaultValue: ""
-    },
-    date: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
     }
 }, {
     //	Model table name will be the same as the model name
@@ -57,10 +53,6 @@ const Comment = sequelize.define('comment', {
     text: {
         type: Sequelize.STRING,
         defaultValue: ""
-    },
-    date: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
     }
 }, {
     //	Model table name will be the same as the model name
@@ -86,10 +78,6 @@ const Post = sequelize.define('post', {
     text: {
         type: Sequelize.STRING,
         defaultValue: ""
-    },
-    date: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW
     },
     privacy: {
         type: Sequelize.BOOLEAN,
@@ -385,10 +373,16 @@ module.exports.changeUserProfilePic = function(user, images, onResult) {
 //  Adds images to user's album (not profile image!).
 module.exports.addUserAlbumImage = function(user, images, onResult) {
     if (images.length !== 0) {
-        images.forEach(function(imageObj) {
-            module.exports.addImage(imageObj);
+        var imageObjArr = [];
+        images.forEach(function(image, index) {
+            module.exports.addImage(image, function(imageObj) {
+                imageObjArr.push(imageObj);
+                if (images.length-1 === index) {
+                    console.log(JSON.stringify(imageObjArr));
+                    user.addAlbumImages(imageObjArr).then(onResult(images));
+                }
+            });
         });
-        user.addAlbumImages(images).then(onResult(images));
     }
     else {
         onResult();
@@ -460,7 +454,7 @@ module.exports.getPostLikes = function(postId, onResult) {
         post.getPostLikes().then(function(likes) {
             var postLikes = [];
             likes.forEach(function (like) {
-                postLikes.push({ id: like.id, fullname: like.firstName + " " + like.lastName, postId: postId })
+                postLikes.push({ id: like.id, fullname: like.firstName + " " + like.lastName, postId: postId });
             });
             onResult(postLikes);
         });

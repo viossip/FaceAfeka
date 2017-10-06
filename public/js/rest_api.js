@@ -38,6 +38,14 @@ function uploadProfileImage(data, onSuccess, onFailure) {
 	postFiles("/users/addProfileImg", data, onSuccess, onFailure);
 }
 
+function uploadAlbumImage(data, onSuccess, onFailure) {
+	postFiles("/users/addAlbumImg", data, onSuccess, onFailure);
+}
+
+function getUserAlbumImages(userId, onSuccess, onFailure) {
+	get("/users/getUserAlbumImages?id=" + userId, onSuccess, onFailure);
+}
+
 /* ---------------- AUTH API ---------------- */
 
 function login(user, pass, onSuccess, onFailure) {
