@@ -146,7 +146,7 @@ function removePost(postId, onSuccess, onFailure) {
 
 //	Remove the comment by ID.
 function removePost(commentId, onSuccess, onFailure) {
-	get("/posts/removeComment/"+ commentId, onSuccess, onFailure);	
+	get("/posts/removePost/"+ commentId, onSuccess, onFailure);	
 }
 
 

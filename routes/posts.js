@@ -56,7 +56,7 @@ router.post("/addComment", function (req, res) {
 //	Get a specific post.
 router.get("/getPost/:id", function(req, res) {
 	db.getPostById(req.params.id, function(post) {
-       // res.send([post]);
+        res.send(post);
 	});
 });
 
@@ -119,8 +119,11 @@ router.get("/removeLike/:postId", function(req, res) {
 
 //  Removes post by ID.
 router.get("/removePost/:postId", function(req, res) {
-
-    db.removePost(req.params.postId);
+    console.log("POST TO REMOVE : --------------------"+ JSON.stringify(req.params.postId));
+    db.removePost(req.params.postId, function(removedPost){
+        console.log("POST REMOVED : --------------------"+ JSON.stringify(removedPost));
+        res.send(removedPost);
+    });
 });
 
 

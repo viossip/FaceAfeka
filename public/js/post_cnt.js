@@ -48,8 +48,6 @@ function addComment(postID) {
     var commentText = commentTextElement.val();
     event.preventDefault();
 
-    console.log("Comment text " + commentText);
-
     if (!commentText || commentText.length === 0) {
       commentTextElement.attr("placeholder", "Write something here...").focus();
       return;
@@ -62,21 +60,22 @@ function addComment(postID) {
 // Displays comments from given array of posts
 function showComments(commentsArr, onSuccess, onFailure){
     if(typeof commentsArr !== 'undefined'){
-        commentsArr.forEach(function(comment) {
-            $('#commentText_'+comment.postId).val("");
-            $( "#commentsPlaceHolder_"+  comment.postId).prepend(function() {
-                // var delBtn = (post.writtenBy != userId_glob)?"":
-                // "<div class = 'col-sm-2 pull-right'>" +
-                //     "<button id='btnDeletePost_"+post.id+"' type='button' class='btn btn-danger pull-right'>Delete</button>" +
-                // "</div>" ;
+        commentsArr.forEach(function(comment) {            
+            getPost(comment.postId, function(currentPost){
+                $('#commentText_'+comment.postId).val("");
+                $( "#commentsPlaceHolder_"+  comment.postId).prepend(function() {
 
+                var delBtn = (comment.userId == userId_glob || currentPost.writtenBy == userId_glob)?
+                    "<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" : "";                   
                 var showComment =
                                 "<div class = 'comment'>"+
                                     "<a class = 'comment-avatar pull-left' href = '#'><img src = 'img/user.png'></a>"+
                                     "<div class = 'comment-text'><p>"+ comment.text +"</p></div>"+
+                                    delBtn + //"<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" +
                                 "</div> <!-- ENDof Comment -->";
                 return showComment;
-            });
+                });              
+            }, function(){});
         }, this);
     }
 }
@@ -160,15 +159,15 @@ function showPosts(postsArr) {
     $('form textarea[id=postText]').val("");
     $('#privateCheckBox').prop('checked', false);
     $('#preview').empty();
-    console.log(JSON.stringify(postsArr));
+    //console.log(JSON.stringify(postsArr));
 
     if(typeof postsArr !== 'undefined'){
         postsArr.forEach(function(post) {
             $( "#postsPlaceHolder" ).prepend(function() {
-                var delBtn = (post.writtenBy != userId_glob)?"":
+                var delBtn = (post.writtenBy == userId_glob || post.writtenTo == userId_glob)?
                 "<div class = 'col-sm-2 pull-right'>" +
-                    "<button id='btnDeletePost_"+post.id+"' type='button' class='btn btn-danger pull-right'>Delete</button>" +
-                "</div>" ;
+                    "<button id='btnDeletePost_"+post.id+"' type='button' class='btn-sm btn-danger pull-right'>Delete</button>" +
+                "</div>" : "" ;
 
                 var showPosts =
                 "<div class='panel panel-default post' "+ "id= 'post_"+post.id +"'>"+
@@ -307,13 +306,22 @@ $(document).ready(function() {
 
     // Listener for add comment button
     $('body').on('click', '#postsPlaceHolder', function(event) { 
-        if(event.target.id.split('_')[0] == "btnAddComment")
-            addComment(event.target.id.split('_')[1]);
-        else if(event.target.id.split('_')[0] == "btnDeletePost"){
-            removePost(event.target.id.split('_')[1], function(){}, function(){});
+        switch (event.target.id.split('_')[0]) {
+            case "btnAddComment":
+                addComment(event.target.id.split('_')[1]);
+                break;                
+            case "btnDeletePost":
+                removePost(event.target.id.split('_')[1], function(post){
+                    console.log("POST REMOVED : --------------------"+ JSON.stringify(post));
+                }, function(){});
+            break; 
+            case "btnDeleteComment":
+                removePost(event.target.id.split('_')[1], function(comment){
+                    console.log("COMMENT REMOVED : --------------------"+ JSON.stringify(comment));
+                }, function(){});
+            break; 
+            default:
+                break;
         }
-            
-        else
-            console.log("++++++++++++++++++++++++++++++ ");///////////////////////////////////////..
     });
 });
