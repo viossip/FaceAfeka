@@ -11,15 +11,29 @@ $(document).ready(function() {
 
     $("#userSearch").on("input", function(event) {
         var searchText = $(this).val();
-        searchUserPrefix(searchText, function(userList) {
-            searchResults = userList;
+        if (searchText === "*") {
+            searchResults.push({ label: "dummy", url: "/" });
+            searchResults.push({ label: "*all users*", url: "/members" });
+            console.log(JSON.stringify(searchResults));
             $("#userSearch").autocomplete({
                 source: searchResults,
                 select: function(event, ui) {
-                    window.location = "/profile?id=" + ui.item.id;
+                    window.location = ui.item.url;
                 }
             });
-        });
+        }
+        else {
+            searchUserPrefix(searchText, function(userList) {
+                searchResults = userList;
+                console.log(JSON.stringify(searchResults));
+                $("#userSearch").autocomplete({
+                    source: searchResults,
+                    select: function(event, ui) {
+                        window.location = "/profile?id=" + ui.item.id;
+                    }
+                });
+            });
+        }
     });
 });
 

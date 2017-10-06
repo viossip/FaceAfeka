@@ -127,7 +127,6 @@ router.get("/getUserFriends", function(req, res) {
 router.get("/searchUserPrefix", function(req, res) {
   console.log("users: Searching for user with name " + req.query.prefix);
   db.searchUserPrefix(req.query.prefix, function(users) {
-    console.log(JSON.stringify(users));
     res.send(users);
   });
 });
