@@ -433,7 +433,13 @@ module.exports.getPostById = function(postId, onResult) {
 //  Retrieves a given post's likes.
 module.exports.getPostLikes = function(postId, onResult) {
     module.exports.getPostById(postId, function(post) {
-        post.getPostLikes().then(onResult);
+        post.getPostLikes().then(function(likes) {
+            var postLikes = [];
+            likes.forEach(function (like) {
+                postLikes.push({ id: like.id, fullname: like.firstName + " " + like.lastName, postId: postId })
+            });
+            onResult(postLikes);
+        });
     });
 };
 
@@ -442,7 +448,9 @@ module.exports.addPostLike = function(currUserId, currPostId, onResult) {
     console.log("++++++++++++++++++ PostId: "+ currPostId + "+++++++++ UserId: " + currUserId);
     module.exports.getUserById(currUserId, function(user) {
         module.exports.getPostById(currPostId, function(post) {
-            user.addPostLike(post).then(onResult);
+            user.addPostLike(post).then(function(like) {
+                onResult({ id: user.id, fullname: user.firstName + " " + user.lastName, postId: currPostId });
+            });
         });
     });
 };

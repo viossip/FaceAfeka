@@ -89,9 +89,11 @@ function getImages(imagesArr, onSuccess, onFailure){
 
 // Getting requested likes from server per post. The format of array {likes: likes, postId:postId }
 function getLikes(likesArr, onSuccess, onFailure){
-    if(typeof likesArr !== 'undefined'){
-        $("#likesPost_"+  likesArr.postId).text(likesArr.likes.length + " Likes");
-     }
+  //  if(typeof likesArr !== 'undefined'){
+     //   $("#likesPost_"+  likesArr.postId).text(likesArr.UserPostLikes.length + " Likes");
+   //  }
+   console.log("------------------------------------------------- " + JSON.stringify(likesArr));
+
      //TODO: add link that will open the list of users in case where the likes array is not empty.
      //
      //
@@ -215,25 +217,13 @@ $(document).ready(function() {
             alert("You can select only 3 images");
     });
 
-    //href = 'http://" + window.location.hostname + "/posts/addLike/postId="+post.id+"&userId="+userId_glob+"'
     $(document).delegate('*[id^="like_"]', 'click', function(event) {
+
         event.preventDefault();
-        console.log("------------------------- " + event.target.id);
-        //var postId = event.target.id.split('_')[1];
-       // var userId = userId_glob;
-        addLike({ postId : event.target.id.split('_')[1], userId : userId_glob}, function(){
-            console.log("????????????????????????????????");
-        }, function(){ });
-       // $(this).ekkoLightbox();
-
+        console.log("??????????????????????????// " + userId_glob);
+        addLike({ postId : event.target.id.split('_')[1], userId : userId_glob}, getLikes, function() {});
+        
     });
-
-/*     $('*[id^="postActions_"] :nth-child(2)').click(function(e) { 
-        e.preventDefault();
-        console.log("-------------------------------- " + e);
-    }); */
-
-    //var userId = $("#li_userId").text().split(':')[1].trim();
 
     if(userId_glob)
         getPostsToUser(userId_glob ,showPosts, function(){ });
@@ -247,7 +237,6 @@ $(document).ready(function() {
     $('body').on('click', '#postsPlaceHolder', function(event) { 
         if(event.target.id.split('_')[0] == "btnAddComment"){
             var postIdToComment = event.target.id.split('_')[1];
-            //console.log("comment ID: " + postIdToComment);
             addComment(postIdToComment);
         }
     });

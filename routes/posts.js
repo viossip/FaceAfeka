@@ -75,8 +75,10 @@ router.get("/getPostComments/:postId", function(req, res) {
 //	Get the likes of specific post.
 router.get("/getPostLikes/:postId", function(req, res) {
 	db.getPostLikes(req.params.postId, function(likesDB) {
+        console.log("ppppppppppppppppppppppppppppppppppppppppppp "+ JSON.stringify(likesDB));
         //  *Return the given postId - in case there is no likes of post, (before to know in which post update the likes)
-            res.send({likes : likesDB, postId : req.params.postId});
+            //res.send({likes : likesDB, postId : req.params.postId});
+            res.send(likesDB);
         });
 });
 
@@ -95,7 +97,6 @@ router.get("/getPostImages/:postId", function(req, res){
 //  Adds like of specific user to specific post
 router.post("/addLike", function(req, res) {
     db.addPostLike(req.body.userId, req.body.postId, function(LikeDB){
-        console.log("???????????????????????????????????? " + JSON.stringify(LikeDB));        
         res.send(LikeDB);
     })
 });
