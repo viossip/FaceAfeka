@@ -1,5 +1,6 @@
 var imgEvent;
-var userId_glob = window.location.href.split('=')[1];
+//var userId_glob = window.location.href.split('=')[1];
+var userId_glob;
 var domain_glob = window.location.hostname;
 
 function prepareUploadPost(event, onSuccess, onFailure) {
@@ -82,7 +83,10 @@ function getImages(imagesArr, onSuccess, onFailure){
     
     if(typeof imagesArr !== 'undefined'){
         imagesArr.forEach(function(img) {
-            $("#imagesPlaceHolder_"+  img.postId).prepend('<img height="50px" width="50px" id ="img" src="/getImage/' +img.name+ '" /> ');
+            $("#imagesPlaceHolder_"+  img.postId).prepend(
+            '<a href="http://' + domain_glob + ':' + location.port + '/getImage/' + img.name + '"' +
+            'data-type="image" data-toggle="lightbox" data-parent=".gallery-parent" data-hover="tooltip"' + 
+            'data-placement="top"> <img src="/getImage/' +img.name + '" height="50px" width="50px"></a>' );
         }, this);
     }
 }
@@ -90,19 +94,50 @@ function getImages(imagesArr, onSuccess, onFailure){
 // Getting requested likes from server per post. The format of array {likes: likes, postId:postId }
 function getLikes(likes){
     console.log("------------------------------------------------- " + JSON.stringify(likes));
+    var id;
+
     if(typeof likes !== 'undefined'){
+
         likes.forEach(function(like){
-            var el = parseInt($("#likesPost_"+  like.postId).text()); 
-            $("#likesPost_"+  like.postId).text(el+1);        
+      
+            if(like.id == userId_glob){
+                if($("#likeBtn_"+  like.postId).text() == "Unlike"){
+                    $("#likeBtn_"+  like.postId).text("Like");
+                    changeLikesCounter(like.postId, -1);
+                
+                }
+                else{
+                    $("#likeBtn_"+  like.postId).text("Unlike");
+                    changeLikesCounter(like.postId, 1);
+                      
+
+                }
+
+            }
+
             
-            //$("#likesPost_"+  like.postId).text($(  (parseInt($("#likesPost_"+  like.postId).text()) + 1) + " Likes"));            
+            if ($("#likesPost_"+  like.postId).text()==0)
+                $("#likersDropdown_"+  like.postId).removeAttr('data-toggle');
+            else
+                if(!($("#likersDropdown_"+  like.postId).attr('data-toggle')))
+                    $("#likersDropdown_"+  like.postId).attr('data-toggle', 'dropdown');
+
         });
+
+
+       // $("#imagesPlaceHolder_"+  img.postId).prepend('<img height="50px" width="50px" id ="img" src="/getImage/' +img.name+ '" /> ');
+        
+
     }
      //TODO: add link that will open the list of users in case where the likes array is not empty.
      //
      //
 }
 
+function changeLikesCounter(postId, num){
+    var el = parseInt($("#likesPost_"+  postId).text()); 
+    $("#likesPost_"+  postId).text(el + num); 
+}
 
 // Displays posts from given array of posts
 function showPosts(postsArr) {
@@ -131,9 +166,22 @@ function showPosts(postsArr) {
                                     "<div class = 'text-center'>DevUser1</div>" + 
                                 "</a>"+
                                 "<div class = 'likes text-center'>" +
-                                    "<div id='likesPost_"+post.id+"'>0</div> Likes" +
-                                    // "7 Likes" +
-                                "</div>" +    
+                                    "<div id='likesPost_"+post.id+"'>0</div>" + 
+                                                    /////////////////////////////////////////////////                           
+                                        "<div class='dropdown'>" +
+                                        //"<a data-toggle='dropdown' id='likersDropdown_"+post.id+"'><label>Likes</label></a>" +
+                                        "<a id='likersDropdown_"+post.id+"'><label>Likes</label></a>" +
+                                        
+
+                                        "<span class='caret'></span>" +                                     
+                                        "<ul class='dropdown-menu' id='likersList_"+post.id+"'>" +
+                                            "<li><a href='#'>User_2_test</a></li>" +
+                                            "<li><a href='#'>CSS</a></li>" +
+                                            "<li><a href='#'>JavaScript</a></li>" +
+                                        "</ul>" +
+                                    "</div>" +
+                                "</div>" +
+                                     
                             "</div> <!-- ENDof Col-sm-2 -->"+
                 
                             "<div class = 'col-sm-10'>"+
@@ -149,7 +197,8 @@ function showPosts(postsArr) {
                                     "<div class='row'>" +
                                         "<div id ='postActions' class='col-xs-3'>" +
                                             "<p class = 'post-actions'>" +
-                                            "<a>Comment</button > - <a id='like_"+ post.id +"'>Like</a> - <a>Follow</a> - <a>Share</a>" +
+                                            ////////////////////////////////////////////
+                                            "<button id='likeBtn_"+ post.id +"' class='btn btn-info btn-sm  '>Like</button>" +
                                             "</p>"+
                                         "</div>" +
                                         "<div id ='postCreatedDate' class='col-xs-2' style='font-family: Arial Black; font-size: 12px; color: blue'>Created: "+ post.createdAt + "</div>" +
@@ -221,22 +270,22 @@ $(document).ready(function() {
             alert("You can select only 3 images");
     });
 
-    $(document).delegate('*[id^="like_"]', 'click', function(event) {
-
+    $(document).delegate('*[id^="likeBtn_"]', 'click', function(event) {
         event.preventDefault();
-        console.log("+++++++++++ PostID: " + JSON.stringify(event.target.id.split('_')[1]));   
         var postId = event.target.id.split('_')[1];
-        addLike(postId, getLikes, function(){ });
-        
+        addLike(postId, getLikes, function(){ });      
     });
-
-    if(userId_glob)
-        getPostsToUser(userId_glob ,showPosts, function(){ });
-    else  
-        getUserById("", function(user){
+    
+    //  Get current user ID
+    getUserById("", function(user){
             userId_glob = user.id; //   save variable globally
-            getPostsToUser(user.id ,showPosts, function(){ });
-        },function(){});
+            if(!(window.location.href.split("id=")[1]))        
+            getPostsToUser(userId_glob ,showPosts, function(){ });
+        else
+            getPostsToUser(window.location.href.split("id=")[1] ,showPosts, function(){ });
+    },function(){});  
+
+
 
     // Listener for add comment button
     $('body').on('click', '#postsPlaceHolder', function(event) { 

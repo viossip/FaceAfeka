@@ -259,6 +259,10 @@ Photos
   box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0,0,0,0.5);
 }
 
+
+.btn-block {
+    height: 30px !important;
+    }
 /* #imagePreview {
     width: 180px;
     height: 180px;
