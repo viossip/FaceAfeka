@@ -438,7 +438,9 @@ module.exports.getPostLikes = function(postId, onResult) {
 
 //  "Create" a post like given the user and post ids.
 module.exports.addPostLike = function(currUserId, currPostId, onResult) {
+    console.log("++++++++++++++++++ PostId: "+ currPostId + "+++++++++ UserId: " + currUserId);
     UserPostLikes.create({ userId: currUserId, postId: currPostId }).then(function(userPostLikeDB) {
+        console.log("???????????????????????????????????? " + JSON.stringify(userPostLikeDB)); 
         onResult(userPostLikeDB);
     }, function(error) {
         onResult(null, error);
