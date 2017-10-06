@@ -29,5 +29,20 @@ function addAlbumImage(event) {
         });
     }
 
-    uploadAlbumImage(data, updateImages);
+    uploadAlbumImage(data, updateAlbumImages);
+}
+
+//  Album photo remove button event handler.
+function removeAlbumImageClicked(event) {
+    var imageId = event.target.id;
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    removeAlbumImage(imageId.split("_").pop(), function() {
+        $("#" + imageId).parent().remove();
+    }, function(err) {
+
+    });
 }

@@ -201,7 +201,26 @@ router.post("/addAlbumImg", upload.any(), function(req, res) {
 
   db.getUserByLogin(req.session.user, function(user) {
     db.addUserAlbumImage(user, imgs, function(images) {
+      console.log(JSON.stringify(images));
       res.send(images);
+    });
+  });
+});
+
+//  Removes an album image given its id.
+router.get("/removeAlbumImg", function(req, res) {
+  var imageId = req.query.imageId;
+
+  db.getUserByLogin(req.session.user, function(user) {
+    db.getImageById(imageId, function(imageDB) {
+      console.log("users: Removing " + JSON.stringify(imageDB));
+      //  Remove the image from the UserAlbumImage table.
+      user.removeAlbumImage(imageDB).then(function() {
+        //  Remove the actual image object and the image from the filesystem.
+        db.removeImage(imageDB, function() {
+          res.send({});
+        });
+      });
     });
   });
 });
@@ -216,11 +235,13 @@ router.get("/getUserAlbumImages", function(req, res) {
   }
 
   var userId = req.query.id;
+  //  If the userId is undefined, respond with the current session user image albums.
   if (userId === "undefined") {
     db.getUserByLogin(req.session.user, function(user) {
       sendAlbumImages(user);
     });
   }
+  //  Respond with the given userId.
   else {
     db.getUserById(userId, function(user) {
       sendAlbumImages(user);
