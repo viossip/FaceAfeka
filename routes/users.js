@@ -39,9 +39,9 @@ router.get("/getUserById", function(req, res, next) {
   if (!req.body.id) {
     if (req.session.user) {
       db.getUserByLogin(req.session.user, function(user) {
-        user.getImages().then(function(images) {
+        user.getProfileImages().then(function(images) {
           if (images.length === 0)
-            images.push({id: ""})
+            images.push({id: ""});
           res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: images[0].id});
         });
       });
@@ -49,9 +49,9 @@ router.get("/getUserById", function(req, res, next) {
   }
   else {
     db.getUserById(req.body.id, function(user) {
-      user.getImages().then(function(images) {
+      user.getProfileImages().then(function(images) {
         if (images.length === 0)
-          images.push({id: ""})
+          images.push({id: ""});
         res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: images[0].id});
       });
     });
@@ -63,7 +63,9 @@ router.get("/getUserByLogin", function(req, res, next) {
   console.log("Retrieving user " + JSON.stringify(req.body.id));
 
   db.getUserByLogin(req.body.login, function(user) {
-    user.getImages().then(function(images) {
+    user.getProfileImages().then(function(images) {
+      if (images.length === 0)
+        images.push({id: ""});
       res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: images[0].id});
     });
   });
@@ -173,7 +175,7 @@ router.post("/addProfileImg", storage.any(), function(req, res) {
   });
 
   db.getUserByLogin(req.session.user, function(user) {
-    db.changeProfilePic(user, imgs, function(imgPath) {
+    db.changeUserProfilePic(user, imgs, function(imgPath) {
       console.log(imgPath);
       res.send({ imageName: imgPath.split('/').pop() });
     });

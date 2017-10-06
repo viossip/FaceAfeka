@@ -101,18 +101,6 @@ const Post = sequelize.define('post', {
 	freezeTableName : true
 });
 
-////////////////////////////////////////////////////////////////////////////////////
-//  Adds the attribute postId to images.
-//Post.hasMany(Image, { as: 'PostImages' });
-////////////////////////////////////////////////////////////////////////////////////
-/* //  Creates a new model called PostImage that has foreign keys postId and imageId*/
-Post.belongsToMany(Image, { through: "PostImage"});
-Image.belongsToMany(Post, { through: "PostImage"}); 
-
-//  Adds the function getPostComments (and more functions) to Post which retrieves all comments
-//  with postId field that equals to the post's id.
-Post.hasMany(Comment, { as: 'PostComments', sourceKey: 'id', foreignKey: 'postId'});
-
 //  User model.
 const User = sequelize.define('user', {
     id: {
@@ -147,6 +135,16 @@ const User = sequelize.define('user', {
 
 });
 
+/* ---------------- DATABASE ASSOCIATIONS ---------------- */
+
+//  Creates a new model called PostImage that has foreign keys postId and imageId
+Post.belongsToMany(Image, { through: "PostImage"});
+Image.belongsToMany(Post, { through: "PostImage"}); 
+
+//  Adds the function getPostComments (and more functions) to Post which retrieves all comments
+//  with postId field that equals to the post's id.
+Post.hasMany(Comment, { as: 'PostComments', sourceKey: 'id', foreignKey: 'postId'});
+
 //  Creates a new table called UserFriends which stores the ids of the two users who are friends.
 User.belongsToMany(User, { as: 'Friends', through: 'UserFriends' } );
 
@@ -157,12 +155,15 @@ User.belongsToMany(Post, { as: 'PostLikes', through: 'UserPostLikes' });
 //  Creates a new table called UserCommentLikes which stores the ids of users and comments.
 User.belongsToMany(Comment, { as: 'CommentLikes', through: 'UserCommentLikes' });
 
-//  Adds the attribute ProfileImageId to users.
-//User.hasOne(Image, { as: 'ProfileImage'} );
+//  Creates a new model called UserProfileImage that has foreign keys userId and imageId
+//  Adds the functions getProfileImages, setProfileImages, addProfileImage..
+Image.belongsToMany(User, {as: "ProfileImages", through: 'UserProfileImage'});
+User.belongsToMany(Image, {as: "ProfileImages", through: 'UserProfileImage'});
 
-//  Creates a new model called UserImage that has foreign keys userId and imageId
-Image.belongsToMany(User, {through: 'UserImage'});
-User.belongsToMany(Image, {through: 'UserImage'});
+//  Creates a new model called UserAlbumImage that has foreign keys userId and imageId
+//  Adds the functions getAlbumImages, setAlbumImages, addAlbumImage...
+Image.belongsToMany(User, {as: "AlbumImages", through: 'UserAlbumImage'});
+User.belongsToMany(Image, {as: "AlbumImages", through: 'UserAlbumImage'});
 
 //  Adds the function getPostsWritten (and more functions) to User which retrieves all posts 
 //  with writtenBy field that equals to the user's id.
@@ -270,10 +271,7 @@ module.exports.addUser = function(user, password, onResult) {
         user.randomString = passObj.randomString;
         user.hash = passObj.hash;
         User.create(user).then(function(userDB) {
-            module.exports.addImage({}, function(image) {
-                userDB.addImage(image);
-                onResult(userDB);
-            });
+            onResult(userDB);
         }, function(error) {
             onResult(null, error);
         });
@@ -368,12 +366,13 @@ module.exports.removeFriend = function(currUserId, currFriendId, onResult) {
 	}).then(onResult);
 };
 
-module.exports.changeProfilePic = function(user, images, onResult) {
-    user.setImages([]).then(function() {
+//  Changes a given user's profile image.
+module.exports.changeUserProfilePic = function(user, images, onResult) {
+    user.setProfileImages([]).then(function() {
         if (images.length !== 0) {
             images.forEach(function(imageObj) {
                 module.exports.addImage(imageObj, function(image){
-                    user.addImage(image).then(onResult(image.imagePath));
+                    user.addProfileImage(image).then(onResult(image.imagePath));
                 });
             });
         }
@@ -381,6 +380,31 @@ module.exports.changeProfilePic = function(user, images, onResult) {
             onResult();
         }
     });
+};
+
+//  Adds images to user's album (not profile image!).
+module.exports.addUserAlbumImage = function(user, images, onResult) {
+    if (images.length !== 0) {
+        images.forEach(function(imageObj) {
+            module.exports.addImage(imageObj);
+        });
+        user.addAlbumImages(images).then(onResult(images));
+    }
+    else {
+        onResult();
+    }
+};
+
+//  Removes an image from user's album (not profile image!).
+module.exports.removeUserAlbumImage = function(user, images, onResult) {
+    if (images.length !== 0) {
+        images.forEach(function(imageObj) {
+            user.removeAlbumImage(imageObj).then(onResult(imageObj));
+        });
+    }
+    else {
+        onResult();
+    }
 };
 
 /* ---------------- POSTS ---------------- */

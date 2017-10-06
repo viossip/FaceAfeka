@@ -67,34 +67,33 @@ function renderProfile(currUserId, req, res, next) {
   //  Check if provided id is a positive number and its length is between 1 to 7 digits
   if (userId > 0 && utils.getLength(userId) > 0 && utils.getLength(userId) < 8) {
     db.getUserById(userId, function(user) {
-      //user.getImages().then(function(images) {
-      //  console.log(JSON.stringify(images[0].imagePath));
-      //});
       if (!user)
         res.sendStatus(401);
-      if (user.getImages().length === 0) {
-        userImage = "/getImage/user.png";
-        res.render("profile", {
-          userId: user.id,
-          userFullname: user.firstName + " " + user.lastName,
-          userEmail: user.login,
-          userImage: userImage
-        });
-      }
-        
-      else {
-        user.getImages().then(function(images) {
-          userImage = "/getImage/" + images[0].imagePath.split('/').pop();
+
+      user.getProfileImages().then(function(images) {
+
+        if (images.length === 0) {
+          userImage = "/getImage/user.png";
           res.render("profile", {
             userId: user.id,
             userFullname: user.firstName + " " + user.lastName,
             userEmail: user.login,
             userImage: userImage
           });
-        });
-      }
-      
-      //res.send({id: user.id, login: user.login, firstname: user.firstName, lastname: user.lastName, image: ProfileImageId});
+        }
+          
+        else {
+          user.getProfileImages().then(function(images) {
+            userImage = "/getImage/" + images[0].imagePath.split('/').pop();
+            res.render("profile", {
+              userId: user.id,
+              userFullname: user.firstName + " " + user.lastName,
+              userEmail: user.login,
+              userImage: userImage
+            });
+          });
+        }
+      });
     });
   }
   else
