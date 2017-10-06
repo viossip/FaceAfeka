@@ -445,7 +445,6 @@ module.exports.getPostLikes = function(postId, onResult) {
 
 //  "Create" a post like given the user and post ids.
 module.exports.addPostLike = function(currUserId, currPostId, onResult) {
-    console.log("++++++++++++++++++ PostId: "+ currPostId + "+++++++++ UserId: " + currUserId);
     module.exports.getUserById(currUserId, function(user) {
         module.exports.getPostById(currPostId, function(post) {
             user.addPostLike(post).then(function(like) {
@@ -457,12 +456,11 @@ module.exports.addPostLike = function(currUserId, currPostId, onResult) {
 
 //  Remove a post like given the user and post ids.
 module.exports.removePostLike = function(currUserId, currPostId, onResult) {
-    UserPostLikes.destory({
-        where: {
-            userId: currUserId,
-            postId: currPostId
-        }
-    }).then(onResult);
+    module.exports.getUserById(currUserId, function(user) {
+        module.getPostById(currPostId, function(post) {
+            user.removePostLike(post).then(onResult);
+        });
+    });
 };
 
 /* ---------------- COMMENTS ---------------- */
