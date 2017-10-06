@@ -110,7 +110,7 @@ function getLikes(likes){
                 else{
                     $("#likeBtn_"+  like.postId).text("Unlike");
                     $("#likersList_"+  like.postId).prepend('<li id = "liker_'+like.id+'_post_'+like.postId+'">'+
-                                                                '<a href="#">'+ like.fullname +'</a>'+
+                                                                '<a href="http://'+ domain_glob +':'+ location.port +'/profile">'+ like.fullname +'</a>'+
                                                             '</li> ');
                     changeLikesCounter(like.postId, 1);                    
                 }           
@@ -133,10 +133,19 @@ function getLikes(likes){
     }
 }
 
+// Adds parameter "num" to counter of likes on post whith given Id.
 function changeLikesCounter(postId, num){
     var el = parseInt($("#likesPost_"+  postId).text()); 
     $("#likesPost_"+  postId).text(el + num); 
 }
+
+// Adds parameter "num" to counter of likes on post whith given Id.
+function add(postId, num){
+    var el = parseInt($("#likesPost_"+  postId).text()); 
+    $("#likesPost_"+  postId).text(el + num); 
+}
+
+
 
 // Displays posts from given array of posts
 function showPosts(postsArr) {
