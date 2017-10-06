@@ -324,9 +324,13 @@ module.exports.searchUserPrefix = function(prefix, onResult) {
         var userList = [];
         users.forEach(function(user) { 
             var fullname = user.firstName + " " + user.lastName;
-            if (fullname.indexOf(prefix) === 0) {
+            if (prefix !== "*" && fullname.indexOf(prefix) === 0) {
                 console.log("found: " + fullname);
                 userList.push({ label: fullname, id: user.id });
+            }
+            else if (prefix === "*") {
+                console.log("pushing all: " + fullname);
+                userList.push({ label: fullname, id: user.id });   
             }
         });
         onResult(userList);
@@ -498,18 +502,29 @@ module.exports.removePostLike = function(currUserId, currPostId, onResult) {
 module.exports.removePost = function(postId, onResult) {
     module.exports.getPostById(postId, function(post) {
         post.getPostComments().then(function(comments) {
-            comments.forEach(function(comment, index) {
-                removeCommentById(comment.id, function() {});
-                if (comment.length-1 === index) {
-                    post.setPostComments([]).then(function() {
-                        Post.destroy({
-                            where: {
-                                id: post.id
-                            }
-                        }).then(onResult);
+            if (comments.length === 0) {
+                Post.destroy({
+                    where: {
+                        id: post.id
+                    }
+                }).then(onResult(post));
+            }
+            else {
+                comments.forEach(function(comment, index) {
+                    console.log(JSON.stringify(comment));
+                    module.exports.removeCommentById(comment.id, function() {
+                        if (comments.length-1 === index) {
+                            post.setPostComments([]).then(function() {
+                                Post.destroy({
+                                    where: {
+                                        id: post.id
+                                    }
+                                }).then(onResult(post));
+                            });
+                        }
                     });
-                }
-            });
+                });
+            }
         });
     });
 };
