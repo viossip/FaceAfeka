@@ -494,6 +494,26 @@ module.exports.removePostLike = function(currUserId, currPostId, onResult) {
     });
 };
 
+//  Remove a post given it's id.
+module.exports.removePost = function(postId, onResult) {
+    module.exports.getPostById(postId, function(post) {
+        post.getPostcomments().then(function(comments) {
+            comments.forEach(function(comment, index) {
+                removeCommentById(comment.id, function() {});
+                if (comment.length-1 === index) {
+                    post.setPostComments([]).then(function() {
+                        Post.destroy({
+                            where: {
+                                id: post.id
+                            }
+                        }).then(onResult);
+                    });
+                }
+            });
+        });
+    });
+};
+
 /* ---------------- COMMENTS ---------------- */
 
 //  Retrieves a given user's comments.
@@ -537,6 +557,15 @@ module.exports.removeCommentLike = function(currUserId, currCommentId, onResult)
         where: {
             userId: currUserId,
             commentId: currCommentId
+        }
+    }).then(onResult);
+};
+
+//  Remove a comment given it's id.
+module.exports.removeCommentById = function(commentId, onResult) {
+    Comment.destroy({
+        where: {
+            id: commentId
         }
     }).then(onResult);
 };
