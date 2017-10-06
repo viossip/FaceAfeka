@@ -126,6 +126,11 @@ function addLike(postId, onSuccess, onFailure) {
 	get("/posts/addLike/"+ postId, onSuccess, onFailure);	
 }
 
+//	Remove a like of specific user from specific post.
+function removeLike(postId, onSuccess, onFailure) {
+	get("/posts/removeLike/"+ postId, onSuccess, onFailure);	
+}
+
 
 /* ---------------- HTTP METHODS ---------------- */
 

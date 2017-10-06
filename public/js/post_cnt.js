@@ -92,34 +92,38 @@ function getImages(imagesArr, onSuccess, onFailure){
 }
 
 // Getting requested likes from server per post. The format of array {likes: likes, postId:postId }
-function getLikes(likes){
-    //console.log("------------------------------------------------- " + JSON.stringify(likes));
-    var id;
+function updateLikes(likes){
 
     if(typeof likes !== 'undefined'){
 
         likes.forEach(function(like){
-      
             // If the like is of the current user
             if(like.id == userId_glob){
                 if($("#likeBtn_"+  like.postId).text() == "Unlike"){
-                    $("#likeBtn_"+  like.postId).text("Like");
-                    changeLikesCounter(like.postId, -1);    
-                    $('#liker_' + like.id + '_post_' + like.postId).remove();
+
+                    removeLike(like.postId, function(){
+                        $("#likeBtn_"+  like.postId).text("Like");
+                        changeLikesCounter(like.postId, -1);    
+                        $('#liker_' + like.id + '_post_' + like.postId).remove();
+                    }, function(){});////////////////////////
                 }
                 else{
                     $("#likeBtn_"+  like.postId).text("Unlike");
-                    $("#likersList_"+  like.postId).prepend('<li id = "liker_'+like.id+'_post_'+like.postId+'">'+
-                                                                '<a href="http://'+ domain_glob +':'+ location.port +'/profile">'+ like.fullname +'</a>'+
-                                                            '</li> ');
+                    $("#likersList_"+  like.postId).prepend(
+                        '<li id = "liker_'+like.id+'_post_'+like.postId+'">'+
+                            '<a href="http://'+ domain_glob +':'+ location.port +'/profile">'+
+                            '<img src="img/user.png" height="35px" width="35px">  '+ like.fullname +'</a> </li> ');
                     changeLikesCounter(like.postId, 1);                    
                 }           
             }
+            // If this like is of another user.
             else{
                 changeLikesCounter(like.postId, 1);
-                $("#likersList_"+  like.postId).prepend('<li id = "user_'+like.id+'_post_'+like.postId+'">'+
-                '<a href="http://'+ domain_glob +':'+ location.port +'/profile?id='+ like.id +'">'+ like.fullname +'</a>'+
-                '</li> ');
+                $("#likersList_"+  like.postId).prepend(
+                    '<li id = "user_'+like.id+'_post_'+like.postId+'">'+
+                        '<a href="http://'+ domain_glob +':'+ location.port +'/profile?id='+ like.id +'">'+
+                        '<img src="img/user.png" height="35px" width="35px">  ' + like.fullname +'</a>'+
+                    '</li> ');
             }
                 
             // Disable drop-down function when there is no likes on post.
@@ -145,8 +149,6 @@ function add(postId, num){
     $("#likesPost_"+  postId).text(el + num); 
 }
 
-
-
 // Displays posts from given array of posts
 function showPosts(postsArr) {
 
@@ -155,19 +157,24 @@ function showPosts(postsArr) {
     $('form textarea[id=postText]').val("");
     $('#privateCheckBox').prop('checked', false);
     $('#preview').empty();
-    //console.log(JSON.stringify(postsArr));
+    console.log(JSON.stringify(postsArr));
 
     if(typeof postsArr !== 'undefined'){
         postsArr.forEach(function(post) {
             $( "#postsPlaceHolder" ).prepend(function() {
+                var delBtn = (post.writtenBy != userId_glob)?"":
+                "<div class = 'col-sm-2 pull-right'>" +
+                    "<button id='btnDeletePost_"+post.id+"' type='button' class='btn btn-danger pull-right'>Delete</button>" +
+                "</div>" ;
+
                 var showPosts =
                 "<div class='panel panel-default post' "+ "id= 'post_"+post.id +"'>"+
                     "<div class='panel-body'>" + 
                         "<div class = row>" +
-                            "<div class = row>" +
-                            // IMAGES
-                                "<div id='imagesPlaceHolder_"+post.id+"' class = 'col-sm-8'>"+
-                                "</div>" +
+                            "<div class = row>" +                              
+                                // POST IMAGES
+                                "<div id='imagesPlaceHolder_"+post.id+"' class = 'col-sm-8'></div>" +
+                                delBtn +
                             "</div>" +
                             "<div class = 'col-sm-2'>" + 
                                 "<a class = 'post-avatar thumbnail' href='profile.html'> <img src='img/user.png'>" +
@@ -179,8 +186,6 @@ function showPosts(postsArr) {
                                         "<div class='dropdown'>" +
                                         //"<a data-toggle='dropdown' id='likersDropdown_"+post.id+"'><label>Likes</label></a>" +
                                         "<a id='likersDropdown_"+post.id+"'><label>Likes</label></a>" +
-                                        
-
                                         "<span class='caret'></span>" +                                     
                                         "<ul class='dropdown-menu' id='likersList_"+post.id+"'>" +
                                         //  Likers links place.
@@ -239,9 +244,15 @@ function showPosts(postsArr) {
 
             getPostComments(post.id, showComments, function(){ });
             getPostImages(post.id, getImages, function(){});
-            getPostLikes(post.id, getLikes, function(){});
+            getPostLikes(post.id, updateLikes, function(){});
+            ///getPostAvatar(post.id, showPostAvatar, function(){});
         }, this);
     }
+}
+
+// Displays avatar of user that created the post.
+function showPostAvatar(postId, onSuccess, onFailure){
+    
 }
 
 function previewImages() {
@@ -279,7 +290,7 @@ $(document).ready(function() {
     $(document).delegate('*[id^="likeBtn_"]', 'click', function(event) {
         event.preventDefault();
         var postId = event.target.id.split('_')[1];
-        addLike(postId, getLikes, function(){ });      
+        addLike(postId, updateLikes, function(){ });      
     });
     
     //  Get current user ID
@@ -291,13 +302,13 @@ $(document).ready(function() {
             getPostsToUser(window.location.href.split("id=")[1] ,showPosts, function(){ });
     },function(){});  
 
-
-
     // Listener for add comment button
     $('body').on('click', '#postsPlaceHolder', function(event) { 
         if(event.target.id.split('_')[0] == "btnAddComment"){
             var postIdToComment = event.target.id.split('_')[1];
             addComment(postIdToComment);
         }
+        else if(event.target.id.split('_')[0] == "btnDeletePost")
+        console.log("--------------------------------- ");
     });
 });

@@ -5,10 +5,23 @@ var utils = require("../core/utils");
 var fs = require("fs");
 var path = require('path');
 var multer  =   require('multer');
+var crypto = require("crypto");
 
 const IMAGES_PATH = "../uploadedImgs";
 
-var storage = multer({dest: path.join(__dirname, IMAGES_PATH)});
+//var storage = multer({dest: path.join(__dirname, IMAGES_PATH)});
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, path.join(__dirname, IMAGES_PATH));
+    },
+    filename: function (req, file, cb) {
+      var randString = crypto.randomBytes(10).toString('hex');
+      var fileExt = file.originalname.split(".").pop();
+      cb(null, randString + "_" + Date.now() + "." + fileExt);
+    }
+  });
+  
+  var upload = multer({ storage: storage });
 
 router.all('*', function (req, res, next) {
 	console.log(path.basename(module.filename) +', ' + req.url);
@@ -16,7 +29,7 @@ router.all('*', function (req, res, next) {
 });
 
 //  Adds a given post to DB.
-router.post("/addPost",storage.any(), function (req, res, next) {	
+router.post("/addPost",upload.any(), function (req, res, next) {	
 
     var imgs = req.files.map(function(img) {
         return { imagePath : IMAGES_PATH + "/" + img.filename };
@@ -32,15 +45,7 @@ router.post("/addPost",storage.any(), function (req, res, next) {
 });
 
 
-/* router.post("/addComment", storage.any(), function (req, res, next) {	
-    //console.log("Posts route: comment uploaded successfully"); 
-    db.addComment( { postId : req.body.postId, userId : req.body.userId, text: req.body.text} , function(commentDB){ 
-        res.send([commentDB]);
-    });
-}); */
-
 router.post("/addComment", function (req, res) {	
-    //console.log("Posts route: comment uploaded successfully");
     db.getUserByLogin(req.session.user, function(user) {
         db.addComment({ postId: req.body.postId, userId: user.id, text: req.body.text} , function(commentDB){ 
             res.send([commentDB]);
@@ -98,6 +103,15 @@ router.get("/getPostImages/:postId", function(req, res){
 router.get("/addLike/:postId", function(req, res) {
     db.getUserByLogin(req.session.user, function(user){      
         db.addPostLike(user.id, req.params.postId, function(LikeDB){
+            res.send([LikeDB]);
+        });
+    });
+});
+
+//  Removes like of user from specific post
+router.get("/removeLike/:postId", function(req, res) {
+    db.getUserByLogin(req.session.user, function(user){   
+        db.removePostLike(user.id, req.params.postId, function(LikeDB){
             res.send([LikeDB]);
         });
     });
