@@ -50,6 +50,10 @@ function getUserAlbumImages(userId, onSuccess, onFailure) {
 	get("/users/getUserAlbumImages?id=" + userId, onSuccess, onFailure);
 }
 
+function getProfileImageById(userId, onSuccess, onFailure) {
+	get("/users/getProfileImgById?id=" + userId, onSuccess, onFailure);
+}
+
 /* ---------------- AUTH API ---------------- */
 
 function login(user, pass, onSuccess, onFailure) {

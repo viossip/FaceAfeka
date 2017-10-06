@@ -3,6 +3,9 @@ var userId = window.location.href.split('=')[1];
 
 $(document).ready(function() {
 
+    getProfileImageById(userId, function() {
+        console.log("loll");
+    });
     //updateUserFriends();
 
     if (userId) {
