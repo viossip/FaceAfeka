@@ -102,17 +102,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use("/login", function(req, res, next) {
   res.render('login', { title: 'faceAfeka' });
 });
+
 // Rest API routes
-//app.use('/scenarios',checkLogin, scenarios);
-//app.use('/rooms',checkLogin, rooms);
-//app.use('/units', checkLogin, units);
-//app.use('/groups', checkLogin, groups);
-//app.use('/logger', checkLogin, loggers);
-//app.use('/consumption', checkLogin, consumption);
-//app.use('/fileUpload', checkLogin, uploadFile);
-//app.use('/data_updates', checkLogin, dataUpdates);
-//app.use('/configuration', checkLogin, configuration);
-//app.use('/irLearning', checkLogin, irLearning);
 app.use('/', checkLogin, index);
 app.use('/auth', auth);
 app.use("/posts", checkLogin, posts);

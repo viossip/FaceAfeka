@@ -152,6 +152,7 @@ User.belongsToMany(User, { as: 'Friends', through: 'UserFriends' } );
 
 //  Creates a new table called UserPostLikes which stores the ids of users and posts.
 Post.belongsToMany(User, { as: 'PostLikes', through: 'UserPostLikes' });
+User.belongsToMany(Post, { as: 'PostLikes', through: 'UserPostLikes' });
 
 //  Creates a new table called UserCommentLikes which stores the ids of users and comments.
 User.belongsToMany(Comment, { as: 'CommentLikes', through: 'UserCommentLikes' });
@@ -439,11 +440,10 @@ module.exports.getPostLikes = function(postId, onResult) {
 //  "Create" a post like given the user and post ids.
 module.exports.addPostLike = function(currUserId, currPostId, onResult) {
     console.log("++++++++++++++++++ PostId: "+ currPostId + "+++++++++ UserId: " + currUserId);
-    UserPostLikes.create({ userId: currUserId, postId: currPostId }).then(function(userPostLikeDB) {
-        console.log("???????????????????????????????????? " + JSON.stringify(userPostLikeDB)); 
-        onResult(userPostLikeDB);
-    }, function(error) {
-        onResult(null, error);
+    module.exports.getUserById(currUserId, function(user) {
+        module.exports.getPostById(currPostId, function(post) {
+            user.addPostLike(post).then(onResult);
+        });
     });
 };
 

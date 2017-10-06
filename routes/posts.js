@@ -94,7 +94,6 @@ router.get("/getPostImages/:postId", function(req, res){
 
 //  Adds like of specific user to specific post
 router.post("/addLike", function(req, res) {
-    console.log("++++++++++++++++++ PostId: "+ req.body.postId + "+++++++++ UserId: " + req.body.userId);
     db.addPostLike(req.body.userId, req.body.postId, function(LikeDB){
         console.log("???????????????????????????????????? " + JSON.stringify(LikeDB));        
         res.send(LikeDB);
