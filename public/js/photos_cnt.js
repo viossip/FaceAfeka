@@ -50,5 +50,5 @@ function lightboxSetup() {
 
     $(function () {
         $('[data-hover="tooltip"]').tooltip();
-    })
+    });
 }
