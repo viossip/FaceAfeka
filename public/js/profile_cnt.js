@@ -12,10 +12,31 @@ $(document).ready(function() {
 
     $(".change-image-input").change(changeProfilePic);
 
+    //  View photos button event handler.
+    $(".view-photos-btn").click(function(event) {
+        changePageEventHandler(event, "/photos");
+    });
+
+    //  View friends button event handler.
+    $(".view-friends-btn").click(function(event) {
+        changePageEventHandler(event, "/friends");
+    });
+
     getUserAlbumImages(userId, updateAlbumImages, function (error) {
         
     });
 });
+
+//  View photos and View friends buttons event handler func.
+function changePageEventHandler(event, link) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (userId)
+        link = link + "?id=" + userId;
+        
+    window.location = link;
+}
 
 //  Retrieves friends from backend and inserts them to the friends box.
 function updateUserFriends() {

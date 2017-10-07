@@ -12,7 +12,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var auth = require('./routes/auth');
 var posts = require("./routes/posts");
-var members = require("./routes/members");
+var friends = require("./routes/friends");
 
 var oldLog = console.log;
 
@@ -108,6 +108,7 @@ app.use('/', checkLogin, index);
 app.use('/auth', auth);
 app.use("/posts", checkLogin, posts);
 app.use('/users', checkLogin, users);
+app.use("/friends", checkLogin, friends);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
