@@ -438,17 +438,18 @@ module.exports.getPostsToUser = function(userId, onResult) {
 module.exports.addPost = function(post, images, onResult) {    
 	Post.create(post).then(function(postDB) {
         if (images.length !== 0) {
-            images.forEach(function(imageObj, index) {              
+            images.forEach(function(imageObj, index) {        
                 module.exports.addImage(imageObj, function(image){
-                    postDB.addImage(image);
+                    postDB.addImage(image).then(function() {
+                        if (images.length-1 === index) 
+                            onResult(postDB);
+                    });
+                    
                 });
-                if (images.length-1 === index)
-                    onResult(postDB);
             });
         }   
-        else {
+        else 
             onResult(postDB);
-        }
 	}, function(error) {
 		onResult(null, error);
 	});
