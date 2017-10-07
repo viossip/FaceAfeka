@@ -109,7 +109,7 @@ router.get("/getUserFriends", function(req, res) {
 
   var userId = req.query.id;
   //  If userId is undefined (user is trying to get his own friends).
-  if (!userId) {
+  if (userId === "undefined") {
     if (req.session.user) {
       db.getUserByLogin(req.session.user, function(user) {
         processFriends(user);

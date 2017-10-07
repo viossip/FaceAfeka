@@ -3,7 +3,7 @@ var userId = window.location.href.split('=')[1];
 
 $(document).ready(function() {
 
-    //updateUserFriends();
+    updateUserFriends();
 
     if (userId) {
         $(".change-image-label").hide();
@@ -24,7 +24,9 @@ function updateUserFriends() {
         var friendListElement = $("#friends-list").html("");
 
         friends.forEach(function(friend) {
-            friendListElement.append("<li><a class='thumbnail' href='http://" + window.location.host + "profile?id=" + friend.id + "'><img src='../../img/user.png'></a>");
+            getProfileImageById(friend.id, function(imageName) {
+                friendListElement.append("<li><a class='thumbnail' href='http://" + window.location.host + "profile?id=" + friend.id + "'><img src='/getImage/" + imageName + "'></a>");                
+            });
         });
     }, function(err) {
         

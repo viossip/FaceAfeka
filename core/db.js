@@ -330,7 +330,7 @@ module.exports.searchUserPrefix = function(prefix, onResult) {
             }
             else if (prefix === "*") {
                 console.log("pushing all: " + fullname);
-                userList.push({ label: fullname, id: user.id });   
+                userList.push({ label: "*" + fullname + "*", id: user.id });   
             }
         });
         onResult(userList);
