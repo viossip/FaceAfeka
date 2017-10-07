@@ -585,7 +585,7 @@ module.exports.removeCommentById = function(commentId, onResult) {
         where: {
             id: commentId
         }
-    }).then(onResult);
+    }).then(onResult(commentId));
 };
 
 /* ---------------- IMAGES ---------------- */
