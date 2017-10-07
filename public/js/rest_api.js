@@ -54,6 +54,18 @@ function getProfileImageById(userId, onSuccess, onFailure) {
 	get("/users/getProfileImgById?id=" + userId, onSuccess, onFailure);
 }
 
+function checkFriends(userId, onSuccess, onFailure) {
+	get("/users/checkFriends?id=" + userId, onSuccess, onFailure);
+}
+
+function addFriend(userId, onSuccess, onFailure) {
+	get("/users/addFriend?id=" + userId, onSuccess, onFailure);
+}
+
+function removeFriend(userId, onSuccess, onFailure) {
+	get("/users/removeFriend?id=" + userId, onSuccess, onFailure);
+}
+
 /* ---------------- AUTH API ---------------- */
 
 function login(user, pass, onSuccess, onFailure) {

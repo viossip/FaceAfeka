@@ -337,31 +337,6 @@ module.exports.searchUserPrefix = function(prefix, onResult) {
     });
 };
 
-//  Retrieves a given user's friends.
-module.exports.getUserFriends = function(user, onResult) {
-    user.getFriends().then(onResult);
-};
-
-//  Add given friend to current user's friends list.
-module.exports.addFriend = function(currUser, currFriendId, onResult) {
-    UserFriends.create(
-        { userId: currUser.id, friendId: currFriendId }).then(function(userFriendDb) {
-            onResult(userFriendDb);
-        }, function(error) {
-            onResult(null, error);
-        });
-};
-
-//  Remove given friend from current user's friends list.
-module.exports.removeFriend = function(currUserId, currFriendId, onResult) {
-    UserFriends.destroy({
-		where: {
-            userId: currUserId,
-            friendId: currFriendId
-		}
-	}).then(onResult);
-};
-
 //  Changes a given user's profile image.
 module.exports.changeUserProfilePic = function(user, images, onResult) {
 

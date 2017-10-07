@@ -91,15 +91,31 @@ router.get("/getUsers", function(req, res, next) {
 	
 });
 
+//  Checks if a given user is a friend of the requesting user.
+router.get("/checkFriends", function(req, res) {
+  db.getUserByLogin(req.session.user, function(user) {
+    user.getFriends().then(function(friends) {
+      var friendId = req.query.id;
+      console.log("Checking if userId " + friendId + " is friends with " + user.firstName + " " + user.lastName);
+      var result = { friends: false };
+      for(var friend of friends) {
+        if (friend.id == friendId)
+          result.friends = true;
+      }
+      res.send(result);
+    });
+  });
+});
+
 //  Get given user's friends.
 router.get("/getUserFriends", function(req, res) {
 
   //  Get friends from DB, their images, and send them back.
   function processFriends(user) {
-    db.getUserFriends(user, function(friends) {
+    user.getFriends().then(function(friends) {
       var users = [];
       friends.forEach(function(friend) {
-        friend.getImages().then(function(images) {
+        friend.getProfileImages().then(function(images) {
           users.push({ id: friend.id, login: friend.login, firstname: friend.firstName, lastname: friend.lastName, image: images[0].id });
         });
       });
@@ -152,12 +168,21 @@ router.post('/updateUser', function (req, res,next) {
 router.get("/addFriend", function (req, res, next) {
   var friendId = req.query.id;
 
-  if (!friendId)
-    res.sendStatus(404);
+  if (!friendId || friendId < 0)
+    res.send({});
   else {
     db.getUserByLogin(req.session.user, function(currUser) {
-      db.getUserById(friendId, function(friend) {
-        currUser.addFriend(friend);
+      db.getUserById(friendId, function(friendObj) {
+        var friend = {};
+        if (friendObj) {
+          currUser.addFriend(friendObj).then(function() {
+            friend = { id: friendObj.id, firstName: friendObj.firstName, lastName: friendObj.lastName };
+            res.send(friend);
+          });
+        }
+        else {
+          res.send(friend);
+        }
       });
     });
   }
@@ -167,12 +192,21 @@ router.get("/addFriend", function (req, res, next) {
 router.get("/removeFriend", function(req, res, next) {
   var friendId = req.query.id;
 
-  if (!friendId && friendId > 0)
-    res.sendStatus(404);
+  if (!friendId || friendId < 0)
+    res.send({});
   else {
     db.getUserByLogin(req.session.user, function(currUser) {
-        db.removeFriend(currUser.id, friendId, function(deleted) {
-          deleted ? res.send({}) : res.sendStatus(400);
+        db.getUserById(friendId, function(friendObj) {
+          var friend = {};
+          if (friendObj) {
+            currUser.removeFriend(friendObj).then(function() {
+              friend = { id: friendObj.id, firstName: friendObj.firstName, lastName: friendObj.lastName };
+              res.send(friend);
+            });
+          }
+          else {
+            res.send(friend);
+          }
         });
     });
   }

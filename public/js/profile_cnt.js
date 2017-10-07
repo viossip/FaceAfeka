@@ -6,10 +6,32 @@ $(document).ready(function() {
     updateUserFriends();
 
     if (userId) {
-        $(".change-image-label").hide();
-        $(".change-image-input").prop("disabled", true);
+        checkFriends(userId, function(result) {
+
+            //  If they are friends
+            if (result.friends) {
+                $(".friend-btn").removeClass("btn-success").addClass("btn-danger");
+                $(".friend-btn").html("Remove Friend");
+            }
+
+            $(".friend-btn").show();
+            $(".friend-btn").prop("disabled", false);
+
+            //  Friend button event handler.
+            $(".friend-btn").click(function(event) {
+                friendBtnEventHandler(event, result.friends);
+            });
+        });
+    }
+    else {
+        //  Show change profile image button
+        $(".change-image-label").show();
+        $(".change-image-input").prop("disabled", false);
     }
 
+
+
+    //  Change profile image button event handler.
     $(".change-image-input").change(changeProfilePic);
 
     //  View photos button event handler.
@@ -21,6 +43,7 @@ $(document).ready(function() {
     $(".view-friends-btn").click(function(event) {
         changePageEventHandler(event, "/friends");
     });
+
 
     getUserAlbumImages(userId, updateAlbumImages, function (error) {
         
@@ -36,6 +59,19 @@ function changePageEventHandler(event, link) {
         link = link + "?id=" + userId;
         
     window.location = link;
+}
+
+//  Add friend button event handler.
+function friendBtnEventHandler(event, areFriends) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (areFriends)
+        removeFriend(userId, function() {}, function() {});
+    else 
+        addFriend(userId, function() {}, function() {});
+
+    location.reload();
 }
 
 //  Retrieves friends from backend and inserts them to the friends box.
