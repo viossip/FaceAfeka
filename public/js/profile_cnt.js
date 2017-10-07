@@ -3,7 +3,7 @@ var userId = window.location.href.split('=')[1];
 
 $(document).ready(function() {
 
-    updateUserFriends();
+    $(".navbar-nav li:nth-child(4)").addClass("active");
 
     if (userId) {
         checkFriends(userId, function(result) {
@@ -23,12 +23,14 @@ $(document).ready(function() {
             });
         });
     }
+    
     else {
         //  Show change profile image button
         $(".change-image-label").show();
         $(".change-image-input").prop("disabled", false);
     }
 
+    updateUserFriends(userId);
 
 
     //  Change profile image button event handler.
@@ -72,22 +74,6 @@ function friendBtnEventHandler(event, areFriends) {
         addFriend(userId, function() {}, function() {});
 
     location.reload();
-}
-
-//  Retrieves friends from backend and inserts them to the friends box.
-function updateUserFriends() {
-    getUserFriends(userId, function(friends) {
-        //  Empty the ui friends list
-        var friendListElement = $("#friends-list").html("");
-
-        friends.forEach(function(friend) {
-            getProfileImageById(friend.id, function(imageName) {
-                friendListElement.append("<li><a class='thumbnail' href='http://" + window.location.host + "profile?id=" + friend.id + "'><img src='/getImage/" + imageName + "'></a>");                
-            });
-        });
-    }, function(err) {
-        
-    });
 }
 
 function changeProfilePic(event) {

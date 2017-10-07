@@ -1,11 +1,16 @@
 var userId = window.location.href.split('=')[1];
 
 $(document).ready(function() {
+
+    $(".navbar-nav li:nth-child(3)").addClass("active");
+
     if (userId) {
         $(".add-image-label").hide();
         $(".add-image-input").prop("disabled", true);
     }
     
+    updateUserFriends(userId);
+
     $(".add-image-input").change(addAlbumImage);
 
     getUserAlbumImages(userId, updateAlbumImages, function (error) {

@@ -75,3 +75,17 @@ function lightboxSetup() {
         $('[data-hover="tooltip"]').tooltip();
     });
 }
+
+//  Retrieves friends from backend and inserts them to the friends box.
+function updateUserFriends(userId) {
+    getUserFriends(userId, function(friends) {
+        //  Empty the ui friends list
+        var friendListElement = $("#friends-list").html("");
+
+        friends.forEach(function(friend) {
+            friendListElement.append("<li><a class='thumbnail' href='http://" + window.location.host + "/profile?id=" + friend.id + "'><img src='/getImage/" + friend.image + "'></a>");
+        });
+    }, function(err) {
+        
+    });
+}

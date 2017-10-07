@@ -114,12 +114,25 @@ router.get("/getUserFriends", function(req, res) {
   function processFriends(user) {
     user.getFriends().then(function(friends) {
       var users = [];
-      friends.forEach(function(friend) {
-        friend.getProfileImages().then(function(images) {
-          users.push({ id: friend.id, login: friend.login, firstname: friend.firstName, lastname: friend.lastName, image: images[0].id });
+      if (friends.length !== 0) {
+        friends.forEach(function(friend, index) {
+          friend.getProfileImages().then(function(images) {
+            var imageName = "user.png";
+            //  If user has no images, it means he still uses the default profile image.
+            if (images.length !== 0)
+              imageName = images[0].imagePath.split("/").pop();
+            //  Push the user to the friends array.
+            users.push({ id: friend.id, login: friend.login, firstname: friend.firstName, lastname: friend.lastName, image: imageName });
+
+            //  If all friends are in the users array, send it back!
+            if (friends.length === users.length)
+              res.send(users);
+          });
         });
-      });
-      res.send(users);
+      }
+      else {
+        res.send(users);
+      }
     });
   }
 
