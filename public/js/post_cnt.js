@@ -272,8 +272,10 @@ function showPosts(postsArr) {
                     $('#avatar_'+post.id).attr('src','http://' + domain_glob + ':' + location.port + '/getImage/user.png');
                 
                 getUserById(post.writtenBy, function(user){
+                    console.log("----------------USER:" + JSON.stringify(user));
                     $('#avatar_'+post.id).siblings('div').text((user.firstname + " " + user.lastname).substr(0,10));
-                })                
+                })
+                
                 $( $('#avatar_'+post.id)).parent().closest('a').attr('href', 'http://' + domain_glob + ':' + location.port + '/profile?id=' + post.writtenBy);
             }, function(){});
 
@@ -287,13 +289,10 @@ function previewImages() {
   var $preview = $('#preview').empty();
   if ($("#images")[0].files) $.each($("#images")[0].files, readAndPreview);
 
-  function readAndPreview(i, file) {
-    
-    if (!/\.(jpe?g|png|gif)$/i.test(file.name)){
+  function readAndPreview(i, file) {   
+    if (!/\.(jpe?g|png|gif)$/i.test(file.name))
       return alert(file.name +" is not an image");
-    } // else...
     var reader = new FileReader();
-
     $(reader).on("load", function() {
       $preview.append($("<img/>", {src:this.result, height:80, width : 90}));
     });
