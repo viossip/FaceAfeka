@@ -58,9 +58,9 @@ function addComment(postID) {
 }
 
 // Displays comments from given array of posts
-function showComments(commentsArr, onSuccess, onFailure){
+function showComments(commentsArr){
     if(typeof commentsArr !== 'undefined'){
-        commentsArr.forEach(function(comment) {            
+        commentsArr.forEach(function(comment, index) {            
             getPost(comment.postId, function(currentPost){
                 $('#commentText_'+comment.postId).val("");
                 $( "#commentsPlaceHolder_"+  comment.postId).prepend(function() {
@@ -77,15 +77,16 @@ function showComments(commentsArr, onSuccess, onFailure){
                 return showComment;
                 });              
             }, function(){});
-        }, this);
+        });
     }
 }
 
 // Displays requested images from server by their names given in the array.
-function getImages(imagesArr, onSuccess, onFailure){
+function getImages(imagesArr){  
     
     if(typeof imagesArr !== 'undefined'){
         imagesArr.forEach(function(img) {
+            console.log("------------------------IMG: "+ JSON.stringify(img));
             $("#imagesPlaceHolder_"+  img.postId).prepend(
             '<a href="http://' + domain_glob + ':' + location.port + '/getImage/' + img.name + '"' +
             'data-type="image" data-toggle="lightbox" data-parent=".gallery-parent" data-hover="tooltip"' + 
@@ -254,15 +255,15 @@ function showPosts(postsArr) {
 
             getPostComments(post.id, showComments, function(){ });
             getPostImages(post.id, getImages, function(){});
-            getPostLikes(post.id, updateLikes, function(){});
-            getProfileImageById(post.writtenBy, function(img){
+            getPostLikes(post.id, updateLikes, function(){});  
+             getProfileImageById(post.writtenBy, function(img){
                 if(img.imgName !== undefined)
                     $('#avatar_'+post.id).attr('src','http://' + domain_glob + ':' + location.port + '/getImage/' + img.imgName);
                 else
                     $('#avatar_'+post.id).attr('src','http://' + domain_glob + ':' + location.port + '/getImage/user.png');
                 
                 $( $('#avatar_'+post.id)).parent().closest('a').attr('href', 'http://' + domain_glob + ':' + location.port + '/profile?id=' + post.writtenBy);
-            }, function(){});
+            }, function(){}); 
         }, this);
     }
 }

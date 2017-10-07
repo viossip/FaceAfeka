@@ -90,12 +90,19 @@ router.get("/getPostLikes/:postId", function(req, res) {
  //	Get images names array of specific post by given post Id.
 router.get("/getPostImages/:postId", function(req, res){
     
-    var imgsNames = [];
+    //var imgsNames = [];
     db.getPostImages(req.params.postId, function(imgsFromDB) {
-        imgsFromDB.forEach(function(imgFromDB) {
+        var imgsNames = [];
+        imgsFromDB.forEach(function(imgFromDB, index) {// 
             imgsNames.push({name : (imgFromDB.imagePath).split('/').pop(), postId : req.params.postId });
-        }, this);
-        res.send(imgsNames);
+            console.log("index: " + index + ", length = " + imgsFromDB.length);
+            if (imgsFromDB.length-1 === index) {
+                res.send(imgsNames);
+                console.log("SENTSENTSENTSENTSENTSENT");
+            } 
+        }); 
+        //console.log("-------------------------------------imgsNames: " + imgsNames);
+        //res.send(imgsNames);
     });
 });
 
