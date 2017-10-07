@@ -68,7 +68,8 @@ function showComments(commentsArr, onSuccess, onFailure){
                 var delBtn = (comment.userId == userId_glob || currentPost.writtenBy == userId_glob)?
                     "<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" : "";                   
                 var showComment =
-                                "<div class = 'comment'>"+
+                                //"<div class='comment'>"+
+                                "<div class = 'comment' id='comment_"+ comment.id +"'>"+
                                     "<a class = 'comment-avatar pull-left' href = '#'><img src = 'img/user.png'></a>"+
                                     "<div class = 'comment-text'><p>"+ comment.text +"</p></div>"+
                                     delBtn + //"<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" +
@@ -97,43 +98,49 @@ function getImages(imagesArr, onSuccess, onFailure){
 function updateLikes(likes){
 
     if(typeof likes !== 'undefined'){
-
         likes.forEach(function(like){
-            // If the like is of the current user
-            if(like.id == userId_glob){
-                if($("#likeBtn_"+  like.postId).text() == "Unlike"){
-
-                    removeLike(like.postId, function(){
-                        $("#likeBtn_"+  like.postId).text("Like");
-                        changeLikesCounter(like.postId, -1);    
-                        $('#liker_' + like.id + '_post_' + like.postId).remove();
-                    }, function(){});////////////////////////
-                }
-                else{
-                    $("#likeBtn_"+  like.postId).text("Unlike");
-                    $("#likersList_"+  like.postId).prepend(
-                        '<li id = "liker_'+like.id+'_post_'+like.postId+'">'+
-                            '<a href="http://'+ domain_glob +':'+ location.port +'/profile">'+
-                            '<img src="img/user.png" height="35px" width="35px">  '+ like.fullname +'</a> </li> ');
-                    changeLikesCounter(like.postId, 1);                    
-                }           
-            }
-            // If this like is of another user.
-            else{
-                changeLikesCounter(like.postId, 1);
-                $("#likersList_"+  like.postId).prepend(
-                    '<li id = "user_'+like.id+'_post_'+like.postId+'">'+
-                        '<a href="http://'+ domain_glob +':'+ location.port +'/profile?id='+ like.id +'">'+
-                        '<img src="img/user.png" height="35px" width="35px">  ' + like.fullname +'</a>'+
-                    '</li> ');
-            }
+            getProfileImageById(like.userId, function(img){
                 
-            // Disable drop-down function when there is no likes on post.
-            if ($("#likesPost_"+  like.postId).text()==0)
-                $("#likersDropdown_"+  like.postId).removeAttr('data-toggle');
-            else
-                if(!($("#likersDropdown_"+  like.postId).attr('data-toggle')))
-                    $("#likersDropdown_"+  like.postId).attr('data-toggle', 'dropdown');
+                var imgPath = (img.imgName !== undefined)? "http://" + domain_glob + ":" + location.port + "/getImage/" + img.imgName : 
+                                                            "http://" + domain_glob + ":" + location.port + "/getImage/user.png";
+
+                    // If the like is of the current user
+                if(like.id == userId_glob){
+                    if($("#likeBtn_"+  like.postId).text() == "Unlike"){
+
+                        removeLike(like.postId, function(){
+                            $("#likeBtn_"+  like.postId).text("Like");
+                            changeLikesCounter(like.postId, -1);    
+                            $('#liker_' + like.id + '_post_' + like.postId).remove();
+                        }, function(){});////////////////////////
+                    }
+                    else{
+                        $("#likeBtn_"+  like.postId).text("Unlike");
+                        $("#likersList_"+  like.postId).prepend(
+                            '<li id = "liker_'+like.id+'_post_'+like.postId+'">'+
+                                '<a href="http://'+ domain_glob +':'+ location.port +'/profile">'+
+                                '<img src="'+imgPath+'" height="35px" width="35px">  '+ like.fullname +'</a> </li> ');
+                        changeLikesCounter(like.postId, 1);                    
+                    }           
+                }
+                // If this like is of another user.
+                else{
+                    changeLikesCounter(like.postId, 1);
+                    $("#likersList_"+  like.postId).prepend(
+                        '<li id = "user_'+like.id+'_post_'+like.postId+'">'+
+                            '<a href="http://'+ domain_glob +':'+ location.port +'/profile?id='+ like.id +'">'+
+                            '<img src="'+imgPath+'" height="35px" width="35px">  ' + like.fullname +'</a>'+
+                        '</li> ');
+                }
+                    
+                // Disable drop-down function when there is no likes on post.
+                if ($("#likesPost_"+  like.postId).text()==0)
+                    $("#likersDropdown_"+  like.postId).removeAttr('data-toggle');
+                else
+                    if(!($("#likersDropdown_"+  like.postId).attr('data-toggle')))
+                        $("#likersDropdown_"+  like.postId).attr('data-toggle', 'dropdown');
+            }, function(){});
+            
 
         });  
     }
@@ -142,7 +149,8 @@ function updateLikes(likes){
 // Adds parameter "num" to counter of likes on post whith given Id.
 function changeLikesCounter(postId, num){
     var el = parseInt($("#likesPost_"+  postId).text()); 
-    $("#likesPost_"+  postId).text(el + num); 
+    if(el >= 0)
+        $("#likesPost_"+  postId).text(el + num); 
 }
 
 // Adds parameter "num" to counter of likes on post whith given Id.
@@ -179,7 +187,7 @@ function showPosts(postsArr) {
                                 delBtn +
                             "</div>" +
                             "<div class = 'col-sm-2'>" + 
-                                "<a class = 'post-avatar thumbnail' href='profile.html'> <img src='img/user.png'>" +
+                                "<a class = 'post-avatar thumbnail' href='profile.html'> <img id='avatar_"+post.id+"' src='img/user.png'>" +
                                     "<div class = 'text-center'>DevUser1</div>" + 
                                 "</a>"+
                                 "<div class = 'likes text-center'>" +
@@ -247,15 +255,18 @@ function showPosts(postsArr) {
             getPostComments(post.id, showComments, function(){ });
             getPostImages(post.id, getImages, function(){});
             getPostLikes(post.id, updateLikes, function(){});
-            ///getPostAvatar(post.id, showPostAvatar, function(){});
+            getProfileImageById(post.writtenBy, function(img){
+                if(img.imgName !== undefined)
+                    $('#avatar_'+post.id).attr('src','http://' + domain_glob + ':' + location.port + '/getImage/' + img.imgName);
+                else
+                    $('#avatar_'+post.id).attr('src','http://' + domain_glob + ':' + location.port + '/getImage/user.png');
+                
+                $( $('#avatar_'+post.id)).parent().closest('a').attr('href', 'http://' + domain_glob + ':' + location.port + '/profile?id=' + post.writtenBy);
+            }, function(){});
         }, this);
     }
 }
 
-// Displays avatar of user that created the post.
-function showPostAvatar(postId, onSuccess, onFailure){
-    
-}
 
 function previewImages() {
 
@@ -312,12 +323,12 @@ $(document).ready(function() {
                 break;                
             case "btnDeletePost":
                 removePost(event.target.id.split('_')[1], function(post){
-                    console.log("POST REMOVED : --------------------"+ JSON.stringify(post));
+                    $( "#post_"+ post.id ).remove();
                 }, function(){});
             break; 
             case "btnDeleteComment":
-                removePost(event.target.id.split('_')[1], function(comment){
-                    console.log("COMMENT REMOVED : --------------------"+ JSON.stringify(comment));
+                removeComment(event.target.id.split('_')[1], function(comment){
+                    $( "#comment_"+ comment.id ).remove();
                 }, function(){});
             break; 
             default:

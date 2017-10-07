@@ -114,10 +114,10 @@ function getPostImages(postId, onSuccess, onFailure) {
 	get("/posts/getPostImages/"+ postId, onSuccess, onFailure);
 }
 
-//	Get all imgs of specific post.
+ //	Get image from server by imageName.
 function getImage(imageName, onSuccess, onFailure) {
 	get("/getImage/"+ imageName, onSuccess, onFailure);
-}
+} 
 
 //	Uploads a post to the server.
 function uploadPost(data, onSuccess, onFailure) {
@@ -145,8 +145,8 @@ function removePost(postId, onSuccess, onFailure) {
 }
 
 //	Remove the comment by ID.
-function removePost(commentId, onSuccess, onFailure) {
-	get("/posts/removePost/"+ commentId, onSuccess, onFailure);	
+function removeComment(commentId, onSuccess, onFailure) {
+	get("/posts/removeComment/"+ commentId, onSuccess, onFailure);	
 }
 
 

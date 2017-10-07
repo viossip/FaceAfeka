@@ -196,12 +196,12 @@ router.post("/addProfileImg", upload.any(), function(req, res) {
 
 //  Get user profile image given his id.
 router.get("/getProfileImgById", function(req, res) {
-
   function sendProfileBack(id) {
     db.getUserById(id, function(user) {
+      
       user.getProfileImages().then(function(images) {
         if (images.length !== 0)
-          res.send(images[0].imagePath.split("/").pop());
+          res.send({imgName: images[0].imagePath.split("/").pop()});
         else
           res.send({});
       });
@@ -209,9 +209,9 @@ router.get("/getProfileImgById", function(req, res) {
   }
 
   var userId = req.query.id;
-
   if (userId === "undefined") {
     db.getUserByLogin(req.session.user, function(user) {
+    
       sendProfileBack(user.id);
     });
   }

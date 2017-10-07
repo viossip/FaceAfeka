@@ -119,10 +119,16 @@ router.get("/removeLike/:postId", function(req, res) {
 
 //  Removes post by ID.
 router.get("/removePost/:postId", function(req, res) {
-    console.log("POST TO REMOVE : --------------------"+ JSON.stringify(req.params.postId));
     db.removePost(req.params.postId, function(removedPost){
-        console.log("POST REMOVED : --------------------"+ JSON.stringify(removedPost));
         res.send(removedPost);
+    });
+});
+
+//  Removes comment by ID.
+router.get("/removeComment/:commentId", function(req, res) {
+    db.removeCommentById(req.params.commentId, function(removedComment){
+        console.log("-------------------------------------CommentDeleted: " + removedComment);
+        res.send({id : removedComment});
     });
 });
 
