@@ -438,10 +438,12 @@ module.exports.getPostsToUser = function(userId, onResult) {
 module.exports.addPost = function(post, images, onResult) {    
 	Post.create(post).then(function(postDB) {
         if (images.length !== 0) {
-            images.forEach(function(imageObj) {              
+            images.forEach(function(imageObj, index) {              
                 module.exports.addImage(imageObj, function(image){
-                    postDB.addImage(image).then(onResult(postDB));
+                    postDB.addImage(image);
                 });
+                if (images.length-1 === index)
+                    onResult(postDB);
             });
         }   
         else {
