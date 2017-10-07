@@ -1,54 +1,57 @@
-
 var userId = window.location.href.split('=')[1];
 
 $(document).ready(function() {
-
-    $(".navbar-nav li:nth-child(4)").addClass("active");
-
-    if (userId) {
-        checkFriends(userId, function(result) {
-
-            //  If they are friends
-            if (result.friends) {
-                $(".friend-btn").removeClass("btn-success").addClass("btn-danger");
-                $(".friend-btn").html("Remove Friend");
-            }
-
-            $(".friend-btn").show();
-            $(".friend-btn").prop("disabled", false);
-
-            //  Friend button event handler.
-            $(".friend-btn").click(function(event) {
-                friendBtnEventHandler(event, result.friends);
-            });
-        });
-    }
-    
-    else {
-        //  Show change profile image button
-        $(".change-image-label").show();
-        $(".change-image-input").prop("disabled", false);
-    }
-
-    updateUserFriends(userId);
-
-
-    //  Change profile image button event handler.
-    $(".change-image-input").change(changeProfilePic);
-
-    //  View photos button event handler.
-    $(".view-photos-btn").click(function(event) {
-        changePageEventHandler(event, "/photos");
-    });
-
-    //  View friends button event handler.
-    $(".view-friends-btn").click(function(event) {
-        changePageEventHandler(event, "/friends");
-    });
-
-
-    getUserAlbumImages(userId, updateAlbumImages, function (error) {
+    getUserById("", function(currUser) {
+        //  If user is looking at his profile with ?id= attribute, reload the page so it'll be without the id attribute.
+        if (currUser.id == userId)
+            window.location = "/profile";
+        $(".navbar-nav li:nth-child(4)").addClass("active");
         
+            if (userId) {
+                checkFriends(userId, function(result) {
+        
+                    //  If they are friends
+                    if (result.friends) {
+                        $(".friend-btn").removeClass("btn-success").addClass("btn-danger");
+                        $(".friend-btn").html("Remove Friend");
+                    }
+        
+                    $(".friend-btn").show();
+                    $(".friend-btn").prop("disabled", false);
+        
+                    //  Friend button event handler.
+                    $(".friend-btn").click(function(event) {
+                        friendBtnEventHandler(event, result.friends);
+                    });
+                });
+            }
+            
+            else {
+                //  Show change profile image button
+                $(".change-image-label").show();
+                $(".change-image-input").prop("disabled", false);
+            }
+        
+            updateUserFriends(userId);
+        
+        
+            //  Change profile image button event handler.
+            $(".change-image-input").change(changeProfilePic);
+        
+            //  View photos button event handler.
+            $(".view-photos-btn").click(function(event) {
+                changePageEventHandler(event, "/photos");
+            });
+        
+            //  View friends button event handler.
+            $(".view-friends-btn").click(function(event) {
+                changePageEventHandler(event, "/friends");
+            });
+        
+        
+            getUserAlbumImages(userId, updateAlbumImages, function (error) {
+                
+            });
     });
 });
 
