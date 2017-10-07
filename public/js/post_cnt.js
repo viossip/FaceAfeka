@@ -58,26 +58,37 @@ function addComment(postID) {
 }
 
 // Displays comments from given array of posts
-function showComments(commentsArr){
+function showComments(commentsArr, onSuccess, onFailure){
     if(typeof commentsArr !== 'undefined'){
-        commentsArr.forEach(function(comment, index) {            
+        commentsArr.forEach(function(comment) {   
+            //console.log("-----------------------COMMENT: " + JSON.stringify(comment)) ;        
             getPost(comment.postId, function(currentPost){
-                $('#commentText_'+comment.postId).val("");
-                $( "#commentsPlaceHolder_"+  comment.postId).prepend(function() {
+                getProfileImageById(comment.userId, function(img){
+                    var imgPath = (img.imgName !== undefined)? "http://" + domain_glob + ":" + location.port + "/getImage/" + img.imgName : 
+                    "http://" + domain_glob + ":" + location.port + "/getImage/user.png";
 
-                var delBtn = (comment.userId == userId_glob || currentPost.writtenBy == userId_glob)?
-                    "<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" : "";                   
-                var showComment =
-                                //"<div class='comment'>"+
-                                "<div class = 'comment' id='comment_"+ comment.id +"'>"+
-                                    "<a class = 'comment-avatar pull-left' href = '#'><img src = 'img/user.png'></a>"+
-                                    "<div class = 'comment-text'><p>"+ comment.text +"</p></div>"+
-                                    delBtn + //"<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" +
-                                "</div> <!-- ENDof Comment -->";
-                return showComment;
-                });              
+                    $('#commentText_'+comment.postId).val("");
+                    $( "#commentsPlaceHolder_"+  comment.postId).prepend(function() {
+
+                    var delBtn = (comment.userId == userId_glob || currentPost.writtenBy == userId_glob)?
+                        "<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" : "";                   
+                    var showComment =
+                    // '<li id = "liker_'+like.id+'_post_'+like.postId+'">'+
+                    // '<a href="http://'+ domain_glob +':'+ location.port +'/profile">'+
+                    // '<img src="'+imgPath+'" height="35px" width="35px">  '+ like.fullname +'</a> </li> ');
+                                    //"<div class='comment'>"+
+                                    "<div class = 'comment' id='comment_"+ comment.id +"'>"+
+                                        "<a class = 'comment-avatar pull-left' "+
+                                        "href = 'http://"+domain_glob +':'+ location.port +"/profile?id="+ comment.userId +"'>"+
+                                        "<img src = '" + imgPath + "'></a>"+
+                                        "<div class = 'comment-text'><p>"+ comment.text +"</p></div>"+
+                                        delBtn + //"<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" +
+                                    "</div> <!-- ENDof Comment -->";
+                    return showComment;
+                    });     
+                });         
             }, function(){});
-        });
+        }, this);
     }
 }
 
@@ -100,7 +111,7 @@ function updateLikes(likes){
 
     if(typeof likes !== 'undefined'){
         likes.forEach(function(like){
-            getProfileImageById(like.userId, function(img){
+            getProfileImageById(like.id, function(img){
                 
                 var imgPath = (img.imgName !== undefined)? "http://" + domain_glob + ":" + location.port + "/getImage/" + img.imgName : 
                                                             "http://" + domain_glob + ":" + location.port + "/getImage/user.png";
@@ -188,18 +199,16 @@ function showPosts(postsArr) {
                                 delBtn +
                             "</div>" +
                             "<div class = 'col-sm-2'>" + 
-                                "<a class = 'post-avatar thumbnail' href='profile.html'> <img id='avatar_"+post.id+"' src='img/user.png'>" +
+                                "<a class = 'post-avatar thumbnail' href='profile.html'>" +
+                                    "<img id='avatar_"+post.id+"' src='img/user.png'></img>" +
                                     "<div class = 'text-center'>DevUser1</div>" + 
                                 "</a>"+
                                 "<div class = 'likes text-center'>" +
                                     "<div id='likesPost_"+post.id+"'>0</div>" + 
-                                                    /////////////////////////////////////////////////                           
                                         "<div class='dropdown'>" +
-                                        //"<a data-toggle='dropdown' id='likersDropdown_"+post.id+"'><label>Likes</label></a>" +
                                         "<a id='likersDropdown_"+post.id+"'><label>Likes</label></a>" +
                                         "<span class='caret'></span>" +                                     
                                         "<ul class='dropdown-menu' id='likersList_"+post.id+"'>" +
-                                        //  Likers links place.
                                         "</ul>" +
                                     "</div>" +
                                 "</div>" +
@@ -255,15 +264,19 @@ function showPosts(postsArr) {
 
             getPostComments(post.id, showComments, function(){ });
             getPostImages(post.id, getImages, function(){});
-            getPostLikes(post.id, updateLikes, function(){});  
-             getProfileImageById(post.writtenBy, function(img){
+            getPostLikes(post.id, updateLikes, function(){});
+            getProfileImageById(post.writtenBy, function(img){
                 if(img.imgName !== undefined)
                     $('#avatar_'+post.id).attr('src','http://' + domain_glob + ':' + location.port + '/getImage/' + img.imgName);
                 else
                     $('#avatar_'+post.id).attr('src','http://' + domain_glob + ':' + location.port + '/getImage/user.png');
                 
+                getUserById(post.writtenBy, function(user){
+                    $('#avatar_'+post.id).siblings('div').text((user.firstname + " " + user.lastname).substr(0,10));
+                })                
                 $( $('#avatar_'+post.id)).parent().closest('a').attr('href', 'http://' + domain_glob + ':' + location.port + '/profile?id=' + post.writtenBy);
-            }, function(){}); 
+            }, function(){});
+
         }, this);
     }
 }

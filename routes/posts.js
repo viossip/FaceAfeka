@@ -37,9 +37,8 @@ router.post("/addPost",upload.any(), function (req, res, next) {
 
     db.getUserByLogin(req.session.user, function(user) {
         db.addPost({ text: req.body.postText, privacy: req.body.privacy, 
-                     writtenTo: req.body.userId, writtenBy: user.id }, imgs, function(postDB) {
-                                      
-            res.send([postDB]);
+                     writtenTo: req.body.userId, writtenBy: user.id }, imgs, function(postDB) {                               
+            return res.send([postDB]);
         });
     });
 });
@@ -90,19 +89,16 @@ router.get("/getPostLikes/:postId", function(req, res) {
  //	Get images names array of specific post by given post Id.
 router.get("/getPostImages/:postId", function(req, res){
     
-    //var imgsNames = [];
+    var imgsNames = [];
     db.getPostImages(req.params.postId, function(imgsFromDB) {
-        var imgsNames = [];
-        imgsFromDB.forEach(function(imgFromDB, index) {// 
+        imgsFromDB.forEach(function(imgFromDB) {
             imgsNames.push({name : (imgFromDB.imagePath).split('/').pop(), postId : req.params.postId });
-            console.log("index: " + index + ", length = " + imgsFromDB.length);
-            if (imgsFromDB.length-1 === index) {
-                res.send(imgsNames);
-                console.log("SENTSENTSENTSENTSENTSENT");
-            } 
-        }); 
-        //console.log("-------------------------------------imgsNames: " + imgsNames);
-        //res.send(imgsNames);
+        }, this);
+           //     console.log("-------------------------------------CommentDeleted: " + removedComment);
+        //if (req.session.state) {
+         //   console.log("-------------------------------------CommentDeleted: " + imgsNames);
+        return res.send(imgsNames);
+       // } 
     });
 });
 
