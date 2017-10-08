@@ -29,8 +29,8 @@ router.all('*', function (req, res, next) {
 });
 
 //  Adds a given post to DB.
-router.post("/addPost",upload.any(), function (req, res, next) {	
-
+router.post("/addPost", upload.any(), function (req, res, next) {	
+    
     var imgs = req.files.map(function(img) {
         return { imagePath : IMAGES_PATH + "/" + img.filename };
     });

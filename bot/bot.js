@@ -1,10 +1,30 @@
 var twit = require('twit');  
-var config = require('./config.js'); 
+var config = require('./bot_config.js');
+var fs = require('fs');
+var botRestApi = require('./bot_rest_api.js');
+const FormData = require('form-data');
+//const googleImages = require('google-images');
+
+const botUsername = "bot@bot.com", botPassword = "bot";
+
+var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
+
 var Twitter = new twit(config); 
 
-var botComment = "Congratulations!";
-var botCommentImg = require('fs').readFileSync('imgs/congrats.gif', { encoding: 'base64' });
-var botQuery = '#sportlive';
+var retweetInterval = {};
+
+var loginInterval = {};
+
+var nlu = new NaturalLanguageUnderstandingV1({
+    username: '6531e1fc-0a3f-42fe-8bd9-7a9cc98bee0c',
+    password: '672CUyOZQuC6',
+    version_date: '2017-10-08'
+});
+//var botComment = "Congratulations!";
+//var botCommentImg = require('fs').readFileSync('imgs/congrats.gif', { encoding: 'base64' });
+
+//  Enter hashtag: "#hashtag" or "from:username"
+var botQuery = '#fuck';
 //var botQuery = '#sportlive, #livesport, #sportevent, #sport';
 
 // Retweet a tweet according the query 'q' in params
@@ -19,17 +39,72 @@ var retweet = function() {
     //	Searches for tweets using the given params.
     Twitter.get('search/tweets', params, function(err, data) {
         if (!err) {
-			console.log("-------------------------------------------------------DATA: " + JSON.stringify(data) + "-------------------------------------------------");
         	if (data && data.statuses[0]){
-        		//	Get tweet's information.
-            	var retweetId = data.statuses[0].id_str;
-            	var retweetUsername = data.statuses[0].user.screen_name;
-
+        		//	The tweet's id
+                var tweetId = data.statuses[0].id_str;
+                //  The tweet's author username.
+                var tweetUsername = data.statuses[0].user.screen_name;
+                
+                var tweetText = data.statuses[0].text;
+                console.log("tweet text: " + tweetText);
+                uploadPost(tweetText, false, 4, 4);
+                //  USING IBM SERVICES CAN COST MONEY ITS ON MY ACCOUNT! **************************************************************
+/*                  nlu.analyze({
+                    'html': tweetText, // Buffer or String
+                    'features': {
+                      'concepts': {},
+                      'keywords': {},
+                    }
+                  }, function(err, response) {
+                       if (err)
+                         console.log('error:', err);
+                       else
+                         console.log(JSON.stringify(response, null, 2));
+                });  */
             	//postTweet(retweetId, retweetUsername, botComment); 
-        		}         	
-        }       
-        else { //	If an error has occured.
+        	}         	
+        }
+        //	If an error has occured.    
+        else { 
           console.log('Something went wrong while SEARCHING...');
         }
     });
+};
+
+function botLogin() {
+    botRestApi.login(botUsername, botPassword, function(user){
+        console.log("Bot logged in.");
+	}, function(error) {
+        console.log("Bot couldn't log in! error: " + error);
+    });
 }
+
+function uploadPost(postText, privacy, userId, writtenTo) {
+    
+        //var data = new FormData();
+        //data.append("postText", postText);
+        //data.append("privacy", privacy);
+        //data.append("userId", userId);
+        var data = {
+            postText: postText,
+            privay: privacy,
+            userId: userId,
+            writtenTo: writtenTo
+        };
+    
+        botRestApi.uploadPost(data, function(object) {
+            console.log("post uploaded");
+        }, function(error) {
+            console.log("post not uploaded: " + error);
+        });
+}
+
+//  Start the retweeting interval.
+retweetInterval = setInterval(retweet, 10000);
+
+//  Login the first time.
+botLogin();
+
+//  Start the login interval (login every 10 minutes).
+loginInterval = setInterval(botLogin, 60000 * 10);
+
