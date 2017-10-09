@@ -177,7 +177,19 @@ function convertJSONtoOBJ(object) {
     }
     catch(e) {
 
-    }
+    }  
+    /*for (var field in jsonObj) {
+           if (field && jsonObj.hasOwnProperty(field)) {
+                try {
+                    console.log("before: " + field);
+                    jsonObj.field = JSON.parse(jsonObj.field);
+                    console.log("after: " + field);
+                }
+                catch (e) {
+                    console.log(e.stack);
+                }
+            }
+        }*/
 }
 
 //  Converts JSON object to Object (when retrieving elements from the DB).
@@ -381,6 +393,13 @@ module.exports.addUserAlbumImage = function(user, images, onResult) {
 
 /* ---------------- POSTS ---------------- */
 
+//  Retrieves posts written by the given user.
+module.exports.getPostsByUser = function(userId, onResult) {
+    module.exports.getUserById(userId, function(user) {
+        user.getPostsWritten().then(onResult);
+    });
+};
+
 //  Retrieves posts written to the given user's wall.
 module.exports.getPostsToUser = function(userId, onResult) {
     module.exports.getUserById(userId, function(user) {
@@ -489,9 +508,14 @@ module.exports.removePost = function(postId, onResult) {
 //  Change privacy property of post with given Id.
 module.exports.changePrivacy = function(postId, onResult) {
     module.exports.getPostById(postId, function(post){
-        Post.update(
-            { privacy : !post.privacy},
-            { where: { id: postId } }).then(onResult(post));
+        Post.update({ 
+            privacy : !post.privacy
+        },
+        { 
+            where: { 
+                id: postId 
+            } 
+        }).then(onResult(post));
     }); 
 };
 

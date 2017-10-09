@@ -188,7 +188,9 @@ router.get("/addFriend", function (req, res, next) {
         if (friendObj) {
           currUser.addFriend(friendObj).then(function() {
             friend = { id: friendObj.id, firstName: friendObj.firstName, lastName: friendObj.lastName };
-            res.send(friend);
+            friendObj.addFriend(currUser).then(function() {
+              res.send(friend);
+            });
           });
         }
         else {
