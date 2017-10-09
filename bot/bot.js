@@ -1,31 +1,24 @@
+const botUsername = "bot@bot.com", botPassword = "bot";
+//  Enter hashtag: "#hashtag" or "from:username"
+var botQuery = '#love';
+//var botQuery = '#sportlive, #livesport, #sportevent, #sport';
+
 var twit = require('twit');  
-var config = require('./bot_config.js');
-var fs = require('fs');
+var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
+var GoogleImages = require('google-images');
+
+//var config = require('./bot_config.js');
+var config = require('./configs.js');
+//var fs = require('fs');
 var botRestApi = require('./bot_rest_api.js');
 const FormData = require('form-data');
-//const googleImages = require('google-images');
 
-const botUsername = "bot@bot.com", botPassword = "bot";
-
-var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
-
-var Twitter = new twit(config); 
+var Twitter = new twit(config.twitterConfig); 
+var WatsonAnalyzer = new NaturalLanguageUnderstandingV1(config.watsonConfig); 
+var GoogleSearch = new GoogleImages(config.googleConfig.CSE_ID, config.googleConfig.API_KEY);
 
 var retweetInterval = {};
-
 var loginInterval = {};
-
-var nlu = new NaturalLanguageUnderstandingV1({
-    username: '6531e1fc-0a3f-42fe-8bd9-7a9cc98bee0c',
-    password: '672CUyOZQuC6',
-    version_date: '2017-10-08'
-});
-//var botComment = "Congratulations!";
-//var botCommentImg = require('fs').readFileSync('imgs/congrats.gif', { encoding: 'base64' });
-
-//  Enter hashtag: "#hashtag" or "from:username"
-var botQuery = '#fuck';
-//var botQuery = '#sportlive, #livesport, #sportevent, #sport';
 
 // Retweet a tweet according the query 'q' in params
 var retweet = function() {  
@@ -44,9 +37,42 @@ var retweet = function() {
                 var tweetId = data.statuses[0].id_str;
                 //  The tweet's author username.
                 var tweetUsername = data.statuses[0].user.screen_name;
-                
+                //  The tweet's text.
                 var tweetText = data.statuses[0].text;
                 console.log("tweet text: " + tweetText);
+
+                WatsonAnalyzer.analyze(
+                    {   'text': tweetText,
+                        'features': { 
+                            'keywords': { 'limit': 2 },
+                            'entities':{ }
+                        }
+                    },  
+                    function(err, res){
+                        if (err)
+                            console.log('error:', err);
+                        else{
+                        //take the first keyword and the first person and create a query for the callback
+                            if(res.keywords[0] && res.entities[0]){
+                                console.log("+++++++++++++++++!!!!!!!!!!+++++++++++++++++++++++++++++ " + JSON.stringify(res.keywords));
+                                console.log("+++++++++++++++++!!!!!!!!!!+++++++++++++++++++++++++++++ " + JSON.stringify(res.entities));
+                                var queryToSearch = keywords+" "+entities;
+                                console.log("+++++++++++++++++!!!!!!!!!!+++++++++++++++++++++++++++++"+  queryToSearch);
+
+                                //GoogleSearch.search('query :'+ queryToSearch)
+                                GoogleSearch.search(queryToSearch, {size: 'Medium'})
+                                .then( function (images) {
+                                    console.log("--------------------IMAGES:::::::::::::::::::::::::::::::: "+JSON.stringify(images));
+                                    //TODO: Transfer imgs to faceAfeka here...Download and Transfer or transfer links...???
+                                })
+                                .catch(function (err) {
+                                console.log("Search error: "+JSON.stringify(err))
+                                })
+                            }
+                        }
+                    });
+
+
                 uploadPost(tweetText, false, 4, 4);
                 //  USING IBM SERVICES CAN COST MONEY ITS ON MY ACCOUNT! **************************************************************
 /*                  nlu.analyze({
@@ -87,7 +113,7 @@ function uploadPost(postText, privacy, userId, writtenTo) {
         //data.append("userId", userId);
         var data = {
             postText: postText,
-            privay: privacy,
+            privacy: privacy,
             userId: userId,
             writtenTo: writtenTo
         };

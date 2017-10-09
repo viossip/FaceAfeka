@@ -105,7 +105,7 @@ function getImages(imagesArr){
             $("#imagesPlaceHolder_"+  img.postId).prepend(
             '<a href="http://' + domain_glob + ':' + location.port + '/getImage/' + img.name + '"' +
             'data-type="image" data-toggle="lightbox" data-parent=".gallery-parent" data-hover="tooltip"' + 
-            'data-placement="top"> <img src="/getImage/' +img.name + '" height="50px" width="50px"></a>' );
+            'data-placement="top"> <img src="/getImage/' +img.name + '" class="img-thumbnail" height="50px" width="50px"></a>' );
         }, this);
     }
 }
@@ -156,8 +156,6 @@ function updateLikes(likes){
                     if(!($("#likersDropdown_"+  like.postId).attr('data-toggle')))
                         $("#likersDropdown_"+  like.postId).attr('data-toggle', 'dropdown');
             }, function(){});
-            
-
         });  
     }
 }
@@ -199,7 +197,7 @@ function showPosts(postsArr) {
                         "<div class = row>" +
                             "<div class = row>" +                              
                                 // POST IMAGES
-                                "<div id='imagesPlaceHolder_"+post.id+"' class = 'col-sm-8'></div>" +
+                               // "<div id='imagesPlaceHolder_"+post.id+"' class = 'col-sm-8'></div>" +
                                 delBtn +
                             "</div>" +
                             "<div class = 'col-sm-2'>" + 
@@ -220,14 +218,22 @@ function showPosts(postsArr) {
                             "</div> <!-- ENDof Col-sm-2 -->"+
                 
                             "<div class = 'col-sm-10'>"+
-                                "<div class = 'bubble'>" +
-                                    "<div class = 'pointer'>"+
-                                        "<p>"+post.text+"</p>"+
-                                    "</div>" +
-
-                                    "<div class = 'pointer-border'> </div>"+
-                                "</div> <!-- ENDof bubbble -->" +
-
+                            ////////////////////////////////////////
+                            "<div class = row>" +
+                                "<div class = 'col-sm-8'>"+
+                                    "<div class = 'bubble'>" +
+                                        "<div class = 'pointer'>"+
+                                            "<p>"+post.text+"</p>"+
+                                        "</div>" +
+                                        "<div class = 'pointer-border'> </div>"+
+                                    "</div> <!-- ENDof bubbble -->" +
+                                "</div>" + 
+                                "<div class = 'col-sm-4'>"+
+                                    "<div id='imagesPlaceHolder_"+post.id+"' class = 'imagesHolder'></div>" +
+                                   // "GSHGDHSGDHG"+
+                                "</div>" + 
+                            "</div>" + 
+                            ///////////////////////////////////////////
                                 "<div class='container'>" +
                                     "<div class='row'>" +
                                         "<div id ='postActions' class='col-xs-3'>" +
@@ -292,7 +298,6 @@ function showPosts(postsArr) {
     }
 }
 
-
 function previewImages() {
 
   var $preview = $('#preview').empty();
@@ -341,7 +346,6 @@ $(document).ready(function() {
         else
             getPosts(showPosts, function(){});     
     },function(){}); 
-    
     
     // Set listener for cklicks on buttons into the post form.
     $('body').on('click', '#postsPlaceHolder', function(event) { 

@@ -5,7 +5,6 @@ const db = require("../core/db");
 var serverHostname = "localhost";
 var serverPort = "1337";
 
-
 var serverFullHostname = "http://" + serverHostname + ":" + serverPort;
 
 module.exports.login = function(username, password, onSuccess, onFailure) {
