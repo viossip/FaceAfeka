@@ -91,10 +91,10 @@ function register(userObj, passwordStr, onSuccess, onFailure){
 
 /* ---------------- POSTS API ---------------- */
 
-//	Get posts written by a given user.
+/* //	Get posts written by a given user.
 function getPostsByUser(userId, onSuccess, onFailure) {
 	get("/posts/getPostsByUser?id=" + userId, onSuccess, onFailure);
-} 
+}  */
 
 //	Get all posts.
 function getPosts(onSuccess, onFailure) {
@@ -159,6 +159,11 @@ function removePost(postId, onSuccess, onFailure) {
 //	Remove the comment by ID.
 function removeComment(commentId, onSuccess, onFailure) {
 	get("/posts/removeComment/"+ commentId, onSuccess, onFailure);	
+}
+
+//	Remove the comment by ID.
+function changePrivacy(postId, onSuccess, onFailure) {
+	get("/posts/changePrivacy/"+ postId, onSuccess, onFailure);	
 }
 
 

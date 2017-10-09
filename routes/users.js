@@ -45,9 +45,7 @@ var upload = multer({ storage: storage });
 
 //	Get a specific user given his id.
 router.get("/getUserById", function(req, res, next) {
-	console.log("Retrieving user " + JSON.stringify(req.body.id));
-
-  if (!req.body.id) {
+  if (!req.query.id) {
     if (req.session.user) {
       db.getUserByLogin(req.session.user, function(user) {
         user.getProfileImages().then(function(images) {
@@ -59,7 +57,7 @@ router.get("/getUserById", function(req, res, next) {
     }
   }
   else {
-    db.getUserById(req.body.id, function(user) {
+    db.getUserById(req.query.id, function(user) {
       user.getProfileImages().then(function(images) {
         if (images.length === 0)
           images.push({id: ""});

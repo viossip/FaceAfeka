@@ -9,7 +9,6 @@ var crypto = require("crypto");
 
 const IMAGES_PATH = "../uploadedImgs";
 
-//var storage = multer({dest: path.join(__dirname, IMAGES_PATH)});
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, path.join(__dirname, IMAGES_PATH));
@@ -37,13 +36,13 @@ router.post("/addPost", upload.any(), function (req, res, next) {
 
     db.getUserByLogin(req.session.user, function(user) {
         db.addPost({ text: req.body.postText, privacy: req.body.privacy, 
-                     writtenTo: req.body.userId, writtenBy: user.id }, imgs, function(postDB) {                               
+                     writtenTo: req.body.wittenTo, writtenBy: user.id }, imgs, function(postDB) {                               
             return res.send([postDB]);
         });
     });
 });
 
-
+//  Add comment to post by given postId.
 router.post("/addComment", function (req, res) {	
     db.getUserByLogin(req.session.user, function(user) {
         db.addComment({ postId: req.body.postId, userId: user.id, text: req.body.text} , function(commentDB){ 
@@ -59,13 +58,16 @@ router.get("/getPost/:id", function(req, res) {
 	});
 });
 
-//	Get the posts of specific user.
+//	Get the posts of specific user (from specific user's wall).
 router.get("/getPostsToUser/:userId", function(req, res) {
-/* 	db.getUserPosts(req.params.userId, function(posts) {
-		res.send(posts);
-    }); */
-    db.getPostsToUser(req.params.userId, function(posts) {
-        res.send(posts);
+    var allowedPosts = [];
+    db.getUserByLogin(req.session.user, function(user) {
+        db.getPostsToUser(req.params.userId, function(posts) {
+             posts.forEach(function(post){
+                post.writtenBy == user.id || post.writtenTo == user.id ? allowedPosts.push(post) : ((post.privacy == false) && allowedPosts.push(post));
+            });
+            res.send(allowedPosts); 
+        });
     });
 });
 
@@ -79,9 +81,6 @@ router.get("/getPostComments/:postId", function(req, res) {
 //	Get the likes of specific post.
 router.get("/getPostLikes/:postId", function(req, res) {
 	db.getPostLikes(req.params.postId, function(likesDB) {
-        //console.log("ppppppppppppppppppppppppppppppppppppppppppp "+ JSON.stringify(req.session.user));
-        //  *Return the given postId - in case there is no likes of post, (before to know in which post update the likes)
-            //res.send({likes : likesDB, postId : req.params.postId});
             res.send(likesDB);
         });
 });
@@ -94,11 +93,7 @@ router.get("/getPostImages/:postId", function(req, res){
         imgsFromDB.forEach(function(imgFromDB) {
             imgsNames.push({name : (imgFromDB.imagePath).split('/').pop(), postId : req.params.postId });
         }, this);
-           //     console.log("-------------------------------------CommentDeleted: " + removedComment);
-        //if (req.session.state) {
-         //   console.log("-------------------------------------CommentDeleted: " + imgsNames);
         return res.send(imgsNames);
-       // } 
     });
 });
 
@@ -130,18 +125,29 @@ router.get("/removePost/:postId", function(req, res) {
 //  Removes comment by ID.
 router.get("/removeComment/:commentId", function(req, res) {
     db.removeCommentById(req.params.commentId, function(removedComment){
-        console.log("-------------------------------------CommentDeleted: " + removedComment);
         res.send({id : removedComment});
     });
 });
 
+//  Removes comment by ID.
+router.get("/changePrivacy/:postId", function(req, res) {
+    db.changePrivacy(req.params.postId, function(post){
+        res.send(post);
+    });
+});
 
-/* //	Get all posts.
+
+//	Get all allowed to user posts.
 router.get("/getPosts", function(req, res) {
-	db.getAllPosts(function(posts){
-        console.log("Retrieving post " + JSON.stringify(posts));
-		res.send(posts);
-	});
-}); */
+    var allowedPosts = [];
+    db.getUserByLogin(req.session.user, function(user) {
+        db.getAllPosts(function(posts){
+            posts.forEach(function(post){              
+                post.privacy == false ? allowedPosts.push(post) : ((post.writtenBy == user.id) && allowedPosts.push(post));                          
+            })
+            res.send(allowedPosts);
+        });
+    });
+}); 
 
 module.exports = router;

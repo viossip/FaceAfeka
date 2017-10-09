@@ -17,8 +17,12 @@ function prepareUploadPost(event, onSuccess, onFailure) {
     
     //  Attach the post's text to transmitted data.
     data.append("postText", $('form textarea[id=postText]').val());
-	data.append("privacy", $('#privateCheckBox').is(":checked"));
-    data.append("userId", $("#li_userId").text().split(':')[1].trim());
+    data.append("privacy", $('#privateCheckBox').is(":checked"));
+    if(!(window.location.href.split("id=")[1]))  
+        data.append("wittenTo", userId_glob);
+    else
+        data.append("wittenTo", window.location.href.split("id=")[1]);
+    //data.append("userId", userId_glob);
     //console.log("DATA:" + JSON.stringify(data));
     uploadPost(data, onSuccess, onFailure);
 }
@@ -265,6 +269,7 @@ function showPosts(postsArr) {
             getPostComments(post.id, showComments, function(){ });
             getPostImages(post.id, getImages, function(){});
             getPostLikes(post.id, updateLikes, function(){});
+            
             getProfileImageById(post.writtenBy, function(img){
                 if(img.imgName !== undefined)
                     $('#avatar_'+post.id).attr('src','http://' + domain_glob + ':' + location.port + '/getImage/' + img.imgName);
@@ -272,13 +277,17 @@ function showPosts(postsArr) {
                     $('#avatar_'+post.id).attr('src','http://' + domain_glob + ':' + location.port + '/getImage/user.png');
                 
                 getUserById(post.writtenBy, function(user){
-                    console.log("----------------USER:" + JSON.stringify(user));
                     $('#avatar_'+post.id).siblings('div').text((user.firstname + " " + user.lastname).substr(0,10));
                 })
                 
                 $( $('#avatar_'+post.id)).parent().closest('a').attr('href', 'http://' + domain_glob + ':' + location.port + '/profile?id=' + post.writtenBy);
             }, function(){});
 
+            if(post.writtenBy == userId_glob){
+                $('#postPrivacy').prepend('<input type="checkbox" id="privacy_'+ post.id +'" class="checkbox">');
+                $('#privacy_'+ post.id).attr('checked', post.privacy);         
+            }
+            
         }, this);
     }
 }
@@ -319,31 +328,50 @@ $(document).ready(function() {
         addLike(postId, updateLikes, function(){ });      
     });
     
-    //  Get current user ID
+    
+    //  Get current user ID and upload posts from db.
     getUserById("", function(user){
-            userId_glob = user.id; //   save variable globally
+        userId_glob = user.id; //   save userId variable globally
+        if(location.pathname.substring(1) == "profile"){
             if(!(window.location.href.split("id=")[1]))        
-            getPostsToUser(userId_glob ,showPosts, function(){ });
+                getPostsToUser(userId_glob ,showPosts, function(){ });
+            else
+                getPostsToUser(window.location.href.split("id=")[1] ,showPosts, function(){ });
+        }
         else
-            getPostsToUser(window.location.href.split("id=")[1] ,showPosts, function(){ });
-    },function(){});  
-
-    // Listener for add comment button
+            getPosts(showPosts, function(){});     
+    },function(){}); 
+    
+    
+    // Set listener for cklicks on buttons into the post form.
     $('body').on('click', '#postsPlaceHolder', function(event) { 
         switch (event.target.id.split('_')[0]) {
+
+            // Add comment button was pressed.
             case "btnAddComment":
                 addComment(event.target.id.split('_')[1]);
-                break;                
+                break;    
+                
+            // Delete post button was pressed.
             case "btnDeletePost":
                 removePost(event.target.id.split('_')[1], function(post){
                     $( "#post_"+ post.id ).remove();
                 }, function(){});
             break; 
+
+            // Delete comment button was pressed.
             case "btnDeleteComment":
                 removeComment(event.target.id.split('_')[1], function(comment){
                     $( "#comment_"+ comment.id ).remove();
                 }, function(){});
             break; 
+
+            //  Privacy checkbox was pressed: sends to the server num of post to change privacy.
+            case "privacy":
+                changePrivacy(event.target.id.split('_')[1], function(post){
+                    $( "#privacy_"+ post.id ).attr('checked', post.privacy);                    
+                }, function(){});
+            break;
             default:
                 break;
         }
