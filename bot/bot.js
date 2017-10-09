@@ -56,7 +56,7 @@ var retweet = function() {
                             if(res.keywords[0] && res.entities[0]){
                                 console.log("+++++++++++++++++!!!!!!!!!!+++++++++++++++++++++++++++++ " + JSON.stringify(res.keywords));
                                 console.log("+++++++++++++++++!!!!!!!!!!+++++++++++++++++++++++++++++ " + JSON.stringify(res.entities));
-                                var queryToSearch = keywords+" "+entities;
+                                var queryToSearch = res.keywords+" "+res.entities;
                                 console.log("+++++++++++++++++!!!!!!!!!!+++++++++++++++++++++++++++++"+  queryToSearch);
 
                                 //GoogleSearch.search('query :'+ queryToSearch)

@@ -391,6 +391,21 @@ module.exports.addUserAlbumImage = function(user, images, onResult) {
     }
 };
 
+//  Checks if a given user(userLogin) is friends with a given user id (friendId).
+module.exports.checkFriends = function(userLogin, friendId, onResult) {
+    module.exports.getUserByLogin(userLogin, function(user) {
+        user.getFriends().then(function(friends) {
+          console.log("Checking if userId " + friendId + " is friends with " + user.firstName + " " + user.lastName);
+          var result = { friends: false };
+          for(var friend of friends) {
+            if (friend.id == friendId)
+              result.friends = true;
+          }
+          onResult(result);
+        });
+    });
+};
+
 /* ---------------- POSTS ---------------- */
 
 //  Retrieves posts written by the given user.

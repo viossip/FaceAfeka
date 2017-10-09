@@ -91,17 +91,8 @@ router.get("/getUsers", function(req, res, next) {
 
 //  Checks if a given user is a friend of the requesting user.
 router.get("/checkFriends", function(req, res) {
-  db.getUserByLogin(req.session.user, function(user) {
-    user.getFriends().then(function(friends) {
-      var friendId = req.query.id;
-      console.log("Checking if userId " + friendId + " is friends with " + user.firstName + " " + user.lastName);
-      var result = { friends: false };
-      for(var friend of friends) {
-        if (friend.id == friendId)
-          result.friends = true;
-      }
-      res.send(result);
-    });
+  db.checkFriends(req.session.user, req.query.id, function(result) {
+    res.send(result);
   });
 });
 
