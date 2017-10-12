@@ -60,9 +60,10 @@ function updateAlbumImages(images) {
         }
         else 
             ulGalleryElem.append("<li><a href='getImage/" + imageName + "' data-toggle='lightbox' data-parent='.gallery-parent' data-hover='tooltip' data-placement='top'><img src='getImage/" + imageName + "' class='img-thumbnail'></a></li>");
-        if (images.length-1 === index)
-            lightboxSetup();
+        //if (images.length-1 === index)
+            //lightboxSetup();
     });
+    lightboxSetup();
 }
 
 function lightboxSetup() {

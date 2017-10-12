@@ -212,7 +212,7 @@ function analyzeLang(err, response, onResult) {
 }
 
 //  Start the retweeting interval.
-retweetInterval = setInterval(retweet, 60000);
+retweetInterval = setInterval(retweet, 5000);
 
 //  Login the first time.
 botLogin();

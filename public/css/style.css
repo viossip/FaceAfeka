@@ -60,16 +60,13 @@
 
 .users-search {
     margin: 5px;
-
 }
-    .users-search input {
-        width: 100%;
-    }
+.users-search input {
+    width: 100%;
+}
 
 /*
-
 Home
-
 */
 header{
     background-image: linear-gradient(#04519b, #044687 60%, #033769);
@@ -84,6 +81,34 @@ header form{
 
 header .logo{
     float: left;
+}
+
+/* Backgrounds */
+body {
+    background: linear-gradient(#CAF1CE, white);
+}
+.panel {
+    background: linear-gradient(#A0E0FA, white);
+}
+.img-thumbnail {
+    background: linear-gradient(#C6E6F3, #D7F9DB);
+}
+.thumbnail {
+    background: linear-gradient(#C6E6F3, #D7F9DB);
+}
+.post-txt .comment-txt {
+    background: linear-gradient(#ECF4F8, #F1F6F1);
+} 
+.post-avatar {
+    background: linear-gradient(#C6E6F3, #D7F9DB);
+}
+.navbar {
+    background: linear-gradient(#C6E6F3, white);
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-size: large;
+}
+.footer {
+    background: linear-gradient(#C6E6F3, white);
 }
 
 .panel-heading{
@@ -112,19 +137,18 @@ header .logo{
     width: 100%;
     min-height: 65px;
     padding: 15px;
-    background: #fff;
+    background: linear-gradient(#EBF7FC, #EDFBEE);
     border-radius: 10px;
     border: 1px solid #ccc;
     word-wrap: break-word;
 }
 
 .imagesHolder{
-    width: 100%;
-    height: 100%;
     display: -webkit-flex; /* Safari */
     -webkit-flex-wrap: wrap; /* Safari 6.1+ */
     display: flex;
     flex-wrap: wrap;
+    padding: 10px 5px 5px 5px;
 }
 
 .bubble:after{
@@ -132,7 +156,7 @@ header .logo{
     position: absolute;
     border-style: solid;
     border-width: 15px 15px 15px 0;
-    border-color: transparent #fff;
+    border-color: transparent #F0FBEB;
     display: block;
     width: 0;
     z-index: 1;
@@ -261,27 +285,45 @@ Photos
     width: 100%;
 }
 
-
-/* .Checkbox */
-.checkbox {
-  width: 20px;
-  height: 20px;
-  position: relative; 
-  background: #fcfff4;
-  background: linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
-  border-radius: 50px;
-  box-shadow: inset 0px 1px 1px white, 0px 1px 3px rgba(0,0,0,0.5);
-}
-
-
 .btn-block {
     height: 30px !important;
     }
-/* #imagePreview {
-    width: 180px;
-    height: 180px;
-    background-position: center center;
-    background-size: cover;
-    -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, .3);
-    display: inline-block;
-} */
+
+.postCreatedDate {
+    color: #128C69;
+    font-size: 14px;
+    font-family: Arial;
+}
+
+/* Hiding the checkbox, but allowing it to be focused */
+.badgebox
+{
+    opacity: 0;
+}
+
+.badgebox + .badge
+{
+    /* Move the check mark away when unchecked */
+    text-indent: -999999px;
+    /* Makes the badge's width stay the same checked and unchecked */
+	width: 27px;
+}
+
+.badgebox:focus + .badge
+{
+    /* Set something to make the badge looks focused */
+    /* This really depends on the application, in my case it was: */
+    
+    /* Adding a light border */
+    box-shadow: inset 0px 0px 5px;
+    /* Taking the difference out of the padding */
+}
+
+.badgebox:checked + .badge
+{
+    /* Move the check mark back when checked */
+	text-indent: 0;
+}
+.btn-delete {
+    padding: 5px 25px 5px 5px;
+}

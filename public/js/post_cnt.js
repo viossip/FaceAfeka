@@ -10,7 +10,6 @@ function prepareUploadPost(event, onSuccess, onFailure) {
 	// Create a formdata object and add the files
 	var data = new FormData();
 	if(typeof files !== 'undefined') {
-        console.log(JSON.stringify(files));
     	$.each(files, function(key, value) {
             data.append(key, value);
         });
@@ -23,8 +22,6 @@ function prepareUploadPost(event, onSuccess, onFailure) {
         data.append("writtenTo", userId_glob);
     else
         data.append("writtenTo", window.location.href.split("id=")[1]);
-    //data.append("userId", userId_glob);
-    //console.log("DATA:" + JSON.stringify(data));
     uploadPost(data, onSuccess, onFailure);
 }
 
@@ -78,17 +75,13 @@ function showComments(commentsArr, onSuccess, onFailure){
                     var delBtn = (comment.userId == userId_glob || currentPost.writtenBy == userId_glob)?
                         "<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" : "";                   
                     var showComment =
-                    // '<li id = "liker_'+like.id+'_post_'+like.postId+'">'+
-                    // '<a href="http://'+ domain_glob +':'+ location.port +'/profile">'+
-                    // '<img src="'+imgPath+'" height="35px" width="35px">  '+ like.fullname +'</a> </li> ');
-                                    //"<div class='comment'>"+
-                                    "<div class = 'comment' id='comment_"+ comment.id +"'>"+
-                                        "<a class = 'comment-avatar pull-left' "+
-                                        "href = 'http://"+domain_glob +':'+ location.port +"/profile?id="+ comment.userId +"'>"+
-                                        "<img src = '" + imgPath + "'></a>"+
-                                        "<div class = 'comment-text'><p>"+ comment.text +"</p></div>"+
-                                        delBtn + //"<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" +
-                                    "</div> <!-- ENDof Comment -->";
+                        "<div class = 'comment' id='comment_"+ comment.id +"'>"+
+                            "<a class = 'comment-avatar pull-left' "+
+                            "href = 'http://"+domain_glob +':'+ location.port +"/profile?id="+ comment.userId +"'>"+
+                            "<img src = '" + imgPath + "'></a>"+
+                            "<div class = 'comment-text'><p>"+ comment.text +"</p></div>"+
+                            delBtn +
+                        "</div> <!-- ENDof Comment -->";
                     return showComment;
                     });     
                 });         
@@ -102,13 +95,12 @@ function getImages(imagesArr){
     
     if(typeof imagesArr !== 'undefined'){
         imagesArr.forEach(function(img) {
-            console.log("------------------------IMG: "+ JSON.stringify(img));
             $("#imagesPlaceHolder_"+  img.postId).prepend(
             '<a href="http://' + domain_glob + ':' + location.port + '/getImage/' + img.name + '"' +
             'data-type="image" data-toggle="lightbox" data-parent=".gallery-parent" data-hover="tooltip"' + 
             'data-placement="top"> <img src="/getImage/' +img.name + '" class="img-thumbnail" height="50px" width="50px"></a>' );
         }, this);
-    }
+    }  
 }
 
 // Getting requested likes from server per post. The format of array {likes: likes, postId:postId }
@@ -182,13 +174,12 @@ function showPosts(postsArr) {
     $('form textarea[id=postText]').val("");
     $('#privateCheckBox').prop('checked', false);
     $('#preview').empty();
-    //console.log(JSON.stringify(postsArr));
 
     if(typeof postsArr !== 'undefined'){
-        postsArr.forEach(function(post) {
+        postsArr.forEach(function(post) {           
             $( "#postsPlaceHolder" ).prepend(function() {
                 var delBtn = (post.writtenBy == userId_glob || post.writtenTo == userId_glob)?
-                "<div class = 'col-sm-2 pull-right'>" +
+                "<div class = 'col-sm-2 pull-right  btn-delete'>" +
                     "<button id='btnDeletePost_"+post.id+"' type='button' class='btn-sm btn-danger pull-right'>Delete</button>" +
                 "</div>" : "" ;
 
@@ -221,13 +212,17 @@ function showPosts(postsArr) {
                             "<div class = 'col-sm-10'>"+
                             ////////////////////////////////////////
                             "<div class = row>" +
-                                "<div class = 'col-sm-8'>"+
+                                "<div class = 'col-sm-8 post-text'>"+
+                                "<div class ='postCreatedDate'>"+ formatDate(new Date(post.createdAt)) + "</div>" +
+                                
                                     "<div class = 'bubble'>" +
                                         "<div class = 'pointer'>"+
                                             "<p>"+post.text+"</p>"+
                                         "</div>" +
                                         "<div class = 'pointer-border'> </div>"+
+                                        
                                     "</div> <!-- ENDof bubbble -->" +
+                                    
                                 "</div>" + 
                                 "<div class = 'col-sm-4'>"+
                                     "<div id='imagesPlaceHolder_"+post.id+"' class = 'imagesHolder'></div>" +
@@ -237,22 +232,30 @@ function showPosts(postsArr) {
                             ///////////////////////////////////////////
                                 "<div class='container'>" +
                                     "<div class='row'>" +
-                                        "<div id ='postActions' class='col-xs-3'>" +
+                                        "<div id ='postActions' class='col-xs-1'>" +
                                             "<p class = 'post-actions'>" +
                                             ////////////////////////////////////////////
                                             "<button id='likeBtn_"+ post.id +"' class='btn btn-info btn-sm  '>Like</button>" +
+
                                             "</p>"+
-                                        "</div>" +
-                                        "<div id ='postCreatedDate' class='col-xs-2' style='font-family: Arial Black; font-size: 12px; color: blue'>Created: "+ post.createdAt + "</div>" +
-                                        "<div id ='postPrivacy' class='col-xs-2' style='font-family: Arial Black; font-size: 13px; color: blue'>Private: "+ post.privacy + "</div>" +
                                             
+                                        "</div>" +
+                                        
+                                        //"<div id ='postCreatedDate' class='col-xs-2' style='font-family: Arial Black; font-size: 12px; color: blue'>Created: "+ post.createdAt + "</div>" +
+                                        "<div id ='postPrivacy' class='col-xs-2 post-actions' >" +
+                                        /* Private: "+ post.privacy +  */
+                                        "</div>" +
+                                        
+                                        
+                                        
+
                                     "</div>" +
                                 "</div>" +
 
                                 "<div class = 'comment-form'>" +
 
                                     "<form class='form-inline'>" +
-                                        "<div class='form-group'>" +
+                                        "<div class='form-group comment-txt'>" +
                                             "<input type='text' id = 'commentText_"+post.id+"' class='form-control' placeholder='Enter Comment'>"+
                                         "</div>"+
                                         "<button id='btnAddComment_"+post.id+"' type='button' class='btn btn-default'>Add</button>"+
@@ -291,10 +294,9 @@ function showPosts(postsArr) {
             }, function(){});
 
             if(post.writtenBy == userId_glob){
-                $('#postPrivacy').prepend('<input type="checkbox" id="privacy_'+ post.id +'" class="checkbox">');
+                $('#postPrivacy').prepend("<label for='privacy_"+ post.id +"' class='btn btn-info btn-sm'>Private<input type='checkbox' id='privacy_"+ post.id +"' class='badgebox'><span class='badge'>&check;</span></label>");             
                 $('#privacy_'+ post.id).attr('checked', post.privacy);         
-            }
-            
+            }          
         }, this);
     }
 }
@@ -309,11 +311,29 @@ function previewImages() {
       return alert(file.name +" is not an image");
     var reader = new FileReader();
     $(reader).on("load", function() {
-      $preview.append($("<img/>", {src:this.result, height:80, width : 90}));
+      $preview.append($("<img/>", {src:this.result, height:60, width : 70}));
     });
     reader.readAsDataURL(file);
   }
 }
+
+function formatDate(date) {
+    var monthNames = [
+      "January", "February", "March",
+      "April", "May", "June", "July",
+      "August", "September", "October",
+      "November", "December"
+    ];
+  
+    var day = date.getDate();
+    var monthIndex = date.getMonth();
+    var year = date.getFullYear();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+  
+    return day + ' ' + monthNames[monthIndex] + ' ' + year + '  (' + hours + ':' + minutes + ':' + seconds + ')';
+  }
 
 
 $(document).ready(function() {
@@ -322,10 +342,14 @@ $(document).ready(function() {
 
     //  Attach event handler to the file input button.
     $("#images").on('change', function(event){
-        previewImages();
-        imgEvent = event;
-        if($("#images")[0].files.length > 3) // Limit of 3 imgs per post.
-            alert("You can select only 3 images");
+        if($(this)[0].files.length > 6){// Limit of 6 imgs per post.
+            alert("You can select only 6 images");
+            $(this).val(''); 
+        } 
+        else{
+            previewImages();
+            imgEvent = event;
+        }   
     });
 
     $(document).delegate('*[id^="likeBtn_"]', 'click', function(event) {
@@ -345,7 +369,11 @@ $(document).ready(function() {
                 getPostsToUser(window.location.href.split("id=")[1] ,showPosts, function(){ });
         }
         else
-            getPosts(showPosts, function(){});     
+            {
+                getPosts(showPosts, function(){});  
+                lightboxSetup();
+            }
+              
     },function(){}); 
     
     // Set listener for cklicks on buttons into the post form.

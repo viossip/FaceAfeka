@@ -151,14 +151,18 @@ router.get("/changePrivacy/:postId", function(req, res) {
 //	Get all allowed to user posts.
 router.get("/getPosts", function(req, res) {
     var allowedPosts = [];
+    var postsChecked = 0;
     db.getUserByLogin(req.session.user, function(user) {
-        db.getAllPosts(function(posts){
-            posts.forEach(function(post){              
-                post.privacy == false ? allowedPosts.push(post) : ((post.writtenBy == user.id) && allowedPosts.push(post));                          
-            })
-            res.send(allowedPosts);
+        db.getAllPosts(function(posts){               
+            posts.forEach(function(post){    
+                db.checkFriends(req.session.user, post.writtenBy, function(result){
+                    (!post.privacy && result.friends) ? allowedPosts.push(post) : ((post.writtenBy == user.id) && allowedPosts.push(post));                         
+                    if(++postsChecked == posts.length)
+                        res.send(allowedPosts);
+                });                          
+            });
         });
     });
 }); 
-
+                
 module.exports = router;

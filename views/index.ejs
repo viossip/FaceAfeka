@@ -19,33 +19,32 @@
         <div class = "container">
             <div class = "row">
                 <div class = "col-md-8">
+                    <div class="panel-heading"> <h3 class="panel-title">Newsfeed</h3></div>
                     <div class="panel panel-default">
-                        <div class="panel-heading"> <h3 class="panel-title">Newsfeed</h3></div>
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <form>
-                                    <div class="form-group">
-                                        <textarea type="text" id="postText" class="form-control"  placeholder="Write on the wall"></textarea>
-                                    </div>
-                                    <div style="display: inblock; width:20%; float:left;">
-                                        <button type="submit" class="btn btn-default">Submit</button>
-                                    </div>
-                                    <div style="display: inblock; width:20%; float:left;">
-                                        <input type="checkbox" id="privateCheckBox" class="checkbox" name="privateCheckBox" value="checked">Private</input> 
-                                    </div>      
-                                    <div class = "pull-right">
-                                        <label class="btn btn-primary" style="width: 100%;">
-                                            Upload Images <input type="file" id="images" name="uploadImages" class="btn btn-primary" accept=".jpg, .jpeg, .png" multiple="multiple" hidden>
-                                        </label>
-                                        <div id="preview"></div>
-                                    </div>
-                                </form>
-                            </div>   
-                        </div> <!-- ENDof panel panel-default -->                   
-                        <div id="postsPlaceHolder"> </div>   <!-- Posts Placeholder -->            
-                    </div>
+                        <div class="panel-body">
+                            <form>
+                                <div class="form-group">
+                                    <textarea type="text" id="postText" class="form-control"  placeholder="Write on the wall"></textarea>
+                                </div>
+                                <div style="display: inblock; width:20%; float:left;">
+                                    <button type="submit" class="btn btn-success">Send</button>
+                                </div>
+                                <!-- <div style="display: inblock; width:20%; float:left;">
+                                    <input type="checkbox" id="privateCheckBox" class="checkbox" name="privateCheckBox" value="checked">Private</input> 
+                                </div>   -->  
+                                <label for="privateCheckBox" class="btn btn-info btn-sm">Private<input type="checkbox" id="privateCheckBox" class="badgebox"><span class="badge">&check;</span></label>
+                                
+                                <div class = "pull-right">
+                                    <label class="btn btn-primary" style="width: 100%;">
+                                        Upload Images <input type="file" id="images" name="uploadImages" class="btn btn-primary" accept=".jpg, .jpeg, .png" multiple="multiple" hidden>
+                                    </label>
+                                    <div id="preview"></div>
+                                </div>
+                            </form>
+                        </div>   
+                    </div> <!-- ENDof panel panel-default -->                   
+                    <div id="postsPlaceHolder"> </div>   <!-- Posts Placeholder -->            
                 </div> <!-- ENDof Col-md-8 -->
-
                 <div class = "col-md-4">
                     <div class="panel panel-default friends">
                         <div class="panel-heading">
