@@ -10,6 +10,7 @@ function prepareUploadPost(event, onSuccess, onFailure) {
 	// Create a formdata object and add the files
 	var data = new FormData();
 	if(typeof files !== 'undefined') {
+        console.log(JSON.stringify(files));
     	$.each(files, function(key, value) {
             data.append(key, value);
         });
@@ -19,9 +20,9 @@ function prepareUploadPost(event, onSuccess, onFailure) {
     data.append("postText", $('form textarea[id=postText]').val());
     data.append("privacy", $('#privateCheckBox').is(":checked"));
     if(!(window.location.href.split("id=")[1]))  
-        data.append("wittenTo", userId_glob);
+        data.append("writtenTo", userId_glob);
     else
-        data.append("wittenTo", window.location.href.split("id=")[1]);
+        data.append("writtenTo", window.location.href.split("id=")[1]);
     //data.append("userId", userId_glob);
     //console.log("DATA:" + JSON.stringify(data));
     uploadPost(data, onSuccess, onFailure);

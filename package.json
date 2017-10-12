@@ -9,6 +9,7 @@
     "axios": "^0.16.2",
     "body-parser": "~1.17.1",
     "client-sessions": "^0.8.0",
+    "concat-stream": "^1.6.0",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.4",
     "death": "^1.1.0",

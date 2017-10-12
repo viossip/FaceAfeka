@@ -30,16 +30,27 @@ router.all('*', function (req, res, next) {
 //  Adds a given post to DB.
 router.post("/addPost", upload.any(), function (req, res, next) {	
     
+    var savePost = function(postText, privacy, writtenTo, writtenBy) {
+        console.log("Adding post by user: " + writtenBy);
+        db.addPost({ text: postText, privacy: privacy, 
+                     writtenTo: writtenTo, writtenBy: writtenBy }, imgs, function(postDB) {                               
+            return res.send([postDB]);
+        });
+    }
+
     var imgs = req.files.map(function(img) {
         return { imagePath : IMAGES_PATH + "/" + img.filename };
     });
-
-    db.getUserByLogin(req.session.user, function(user) {
-        db.addPost({ text: req.body.postText, privacy: req.body.privacy, 
-                     writtenTo: req.body.wittenTo, writtenBy: user.id }, imgs, function(postDB) {                               
-            return res.send([postDB]);
+    if (req.body.userId) {
+        db.getUserById(req.body.userId, function(user) {
+            savePost(req.body.postText, req.body.privacy, req.body.writtenTo, user.id);
         });
-    });
+    }
+    else {
+        db.getUserByLogin(req.session.user, function(user) {
+            savePost(req.body.postText, req.body.privacy, req.body.writtenTo, user.id);
+        });
+    }
 });
 
 //  Add comment to post by given postId.
