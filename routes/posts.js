@@ -157,8 +157,13 @@ router.get("/getPosts", function(req, res) {
             posts.forEach(function(post){    
                 db.checkFriends(req.session.user, post.writtenBy, function(result){
                     (!post.privacy && result.friends) ? allowedPosts.push(post) : ((post.writtenBy == user.id) && allowedPosts.push(post));                         
-                    if(++postsChecked == posts.length)
+                    if(++postsChecked == posts.length){
+                        allowedPosts.sort(function(a,b) { // Sort posts by date before sending.
+                            return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime() 
+                        });
                         res.send(allowedPosts);
+                    }
+                        
                 });                          
             });
         });

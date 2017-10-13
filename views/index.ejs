@@ -12,7 +12,7 @@
 
     <% include ./partials/navbar %>
 
-    <% include ./partials/searchDropdown %>
+    <!-- <% include ./partials/searchDropdown %> -->
 
     <!-- Section -->
     <section>
@@ -29,11 +29,7 @@
                                 <div style="display: inblock; width:20%; float:left;">
                                     <button type="submit" class="btn btn-success">Send</button>
                                 </div>
-                                <!-- <div style="display: inblock; width:20%; float:left;">
-                                    <input type="checkbox" id="privateCheckBox" class="checkbox" name="privateCheckBox" value="checked">Private</input> 
-                                </div>   -->  
-                                <label for="privateCheckBox" class="btn btn-info btn-sm">Private<input type="checkbox" id="privateCheckBox" class="badgebox"><span class="badge">&check;</span></label>
-                                
+                                <label for="privateCheckBox" class="btn btn-info btn-sm">Private<input type="checkbox" id="privateCheckBox" class="badgebox"><span class="badge">&check;</span></label>                
                                 <div class = "pull-right">
                                     <label class="btn btn-primary" style="width: 100%;">
                                         Upload Images <input type="file" id="images" name="uploadImages" class="btn btn-primary" accept=".jpg, .jpeg, .png" multiple="multiple" hidden>
@@ -42,8 +38,11 @@
                                 </div>
                             </form>
                         </div>   
-                    </div> <!-- ENDof panel panel-default -->                   
-                    <div id="postsPlaceHolder"> </div>   <!-- Posts Placeholder -->            
+                    </div> <!-- ENDof panel panel-default -->  
+                    <!-- Posts -->
+                    <div id="postsPlaceHolder"></div>   <!-- Posts Placeholder -->
+                    <button type="button" class="btn btn-primary btn-block" id="openPosts">Open Next</button>  
+                    <div id="postsPlaceHolderHidden" style="display: none;"> </div>   <!-- Hidden Posts Placeholder -->                     
                 </div> <!-- ENDof Col-md-8 -->
                 <div class = "col-md-4">
                     <div class="panel panel-default friends">

@@ -1,7 +1,7 @@
 var imgEvent;
-//var userId_glob = window.location.href.split('=')[1];
 var userId_glob;
 var domain_glob = window.location.hostname;
+const POSTS_TO_SHOW = 8;
 
 function prepareUploadPost(event, onSuccess, onFailure) {
     if (event)
@@ -62,6 +62,7 @@ function addComment(postID) {
 // Displays comments from given array of posts
 function showComments(commentsArr, onSuccess, onFailure){
     if(typeof commentsArr !== 'undefined'){
+        console.log("--------------------------commentsArr: " + JSON.stringify(commentsArr));
         commentsArr.forEach(function(comment) {   
             //console.log("-----------------------COMMENT: " + JSON.stringify(comment)) ;        
             getPost(comment.postId, function(currentPost){
@@ -72,7 +73,7 @@ function showComments(commentsArr, onSuccess, onFailure){
                     $('#commentText_'+comment.postId).val("");
                     $( "#commentsPlaceHolder_"+  comment.postId).prepend(function() {
 
-                    var delBtn = (comment.userId == userId_glob || currentPost.writtenBy == userId_glob)?
+                     var delBtn = (comment.userId == userId_glob || currentPost.writtenBy == userId_glob)?
                         "<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" : "";                   
                     var showComment =
                         "<div class = 'comment' id='comment_"+ comment.id +"'>"+
@@ -82,13 +83,27 @@ function showComments(commentsArr, onSuccess, onFailure){
                             "<div class = 'comment-text'><p>"+ comment.text +"</p></div>"+
                             delBtn +
                         "</div> <!-- ENDof Comment -->";
-                    return showComment;
+                    return showComment; 
                     });     
                 });         
             }, function(){});
         }, this);
     }
 }
+
+/* function createCommentElement(comment, post, imgPath){
+    var delBtn = (comment.userId == userId_glob || post.writtenBy == userId_glob)?
+        "<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" : "";                   
+    var showComment =
+        "<div class = 'comment' id='comment_"+ comment.id +"'>"+
+            "<a class = 'comment-avatar pull-left' "+
+            "href = 'http://"+domain_glob +':'+ location.port +"/profile?id="+ comment.userId +"'>"+
+            "<img src = '" + imgPath + "'></a>"+
+            "<div class = 'comment-text'><p>"+ comment.text +"</p></div>"+
+            delBtn +
+        "</div> <!-- ENDof Comment -->";
+return showComment;
+} */
 
 // Displays requested images from server by their names given in the array.
 function getImages(imagesArr){  
@@ -176,106 +191,12 @@ function showPosts(postsArr) {
     $('#preview').empty();
 
     if(typeof postsArr !== 'undefined'){
-        postsArr.forEach(function(post) {           
-            $( "#postsPlaceHolder" ).prepend(function() {
-                var delBtn = (post.writtenBy == userId_glob || post.writtenTo == userId_glob)?
-                "<div class = 'col-sm-2 pull-right  btn-delete'>" +
-                    "<button id='btnDeletePost_"+post.id+"' type='button' class='btn-sm btn-danger pull-right'>Delete</button>" +
-                "</div>" : "" ;
-
-                var showPosts =
-                "<div class='panel panel-default post' "+ "id= 'post_"+post.id +"'>"+
-                    "<div class='panel-body'>" + 
-                        "<div class = row>" +
-                            "<div class = row>" +                              
-                                // POST IMAGES
-                               // "<div id='imagesPlaceHolder_"+post.id+"' class = 'col-sm-8'></div>" +
-                                delBtn +
-                            "</div>" +
-                            "<div class = 'col-sm-2'>" + 
-                                "<a class = 'post-avatar thumbnail' href='profile.html'>" +
-                                    "<img id='avatar_"+post.id+"' src='img/user.png'></img>" +
-                                    "<div class = 'text-center'>DevUser1</div>" + 
-                                "</a>"+
-                                "<div class = 'likes text-center'>" +
-                                    "<div id='likesPost_"+post.id+"'>0</div>" + 
-                                        "<div class='dropdown'>" +
-                                        "<a id='likersDropdown_"+post.id+"'><label>Likes</label></a>" +
-                                        "<span class='caret'></span>" +                                     
-                                        "<ul class='dropdown-menu' id='likersList_"+post.id+"'>" +
-                                        "</ul>" +
-                                    "</div>" +
-                                "</div>" +
-                                     
-                            "</div> <!-- ENDof Col-sm-2 -->"+
+        var len = postsArr.length;
+        postsArr.forEach(function(post) {   
+            $( "#postsPlaceHolderHidden > div" ).length >= len - POSTS_TO_SHOW ?
+                $( "#postsPlaceHolder" ).prepend(createPostElement(post)) :
+                $( "#postsPlaceHolderHidden" ).prepend(createPostElement(post));
                 
-                            "<div class = 'col-sm-10'>"+
-                            ////////////////////////////////////////
-                            "<div class = row>" +
-                                "<div class = 'col-sm-8 post-text'>"+
-                                "<div class ='postCreatedDate'>"+ formatDate(new Date(post.createdAt)) + "</div>" +
-                                
-                                    "<div class = 'bubble'>" +
-                                        "<div class = 'pointer'>"+
-                                            "<p>"+post.text+"</p>"+
-                                        "</div>" +
-                                        "<div class = 'pointer-border'> </div>"+
-                                        
-                                    "</div> <!-- ENDof bubbble -->" +
-                                    
-                                "</div>" + 
-                                "<div class = 'col-sm-4'>"+
-                                    "<div id='imagesPlaceHolder_"+post.id+"' class = 'imagesHolder'></div>" +
-                                   // "GSHGDHSGDHG"+
-                                "</div>" + 
-                            "</div>" + 
-                            ///////////////////////////////////////////
-                                "<div class='container'>" +
-                                    "<div class='row'>" +
-                                        "<div id ='postActions' class='col-xs-1'>" +
-                                            "<p class = 'post-actions'>" +
-                                            ////////////////////////////////////////////
-                                            "<button id='likeBtn_"+ post.id +"' class='btn btn-info btn-sm  '>Like</button>" +
-
-                                            "</p>"+
-                                            
-                                        "</div>" +
-                                        
-                                        //"<div id ='postCreatedDate' class='col-xs-2' style='font-family: Arial Black; font-size: 12px; color: blue'>Created: "+ post.createdAt + "</div>" +
-                                        "<div id ='postPrivacy' class='col-xs-2 post-actions' >" +
-                                        /* Private: "+ post.privacy +  */
-                                        "</div>" +
-                                        
-                                        
-                                        
-
-                                    "</div>" +
-                                "</div>" +
-
-                                "<div class = 'comment-form'>" +
-
-                                    "<form class='form-inline'>" +
-                                        "<div class='form-group comment-txt'>" +
-                                            "<input type='text' id = 'commentText_"+post.id+"' class='form-control' placeholder='Enter Comment'>"+
-                                        "</div>"+
-                                        "<button id='btnAddComment_"+post.id+"' type='button' class='btn btn-default'>Add</button>"+
-                                    "</form>"+
-
-                                "</div> <!-- ENDof CommentForm -->"+
-
-                                "<div class = 'clearfix'></div>"+
-                                //  COMMENTS
-                                "<div id='commentsPlaceHolder_"+post.id+"' class = 'comments'>"+
-                                    "<div class = 'clearfix'></div>"+
-                                "</div> <!-- ENDof Comments -->"+
-
-                            "</div> <!-- ENDof Col-sm-10 -->"+        
-                        "</div> <!-- ENDof row -->"+
-                    "</div> <!-- ENDof panel body -->";
-                "</div>";
-            return showPosts;
-            });
-
             getPostComments(post.id, showComments, function(){ });
             getPostImages(post.id, getImages, function(){});
             getPostLikes(post.id, updateLikes, function(){});
@@ -301,6 +222,83 @@ function showPosts(postsArr) {
     }
 }
 
+ function createPostElement(post){
+        var delBtn = (post.writtenBy == userId_glob || post.writtenTo == userId_glob)?
+        "<div class = 'col-sm-2 pull-right  btn-delete'>" +
+            "<button id='btnDeletePost_"+post.id+"' type='button' class='btn-sm btn-danger pull-right'>Delete</button>" +
+        "</div>" : "" ;
+
+        var showPosts =
+        "<div class='panel panel-default post' "+ "id= 'post_"+post.id +"'>"+
+            "<div class='panel-body'>" + 
+                "<div class = row>" +
+                    "<div class = row>" + delBtn + "</div>" +
+                    "<div class = 'col-sm-2'>" + 
+                        "<a class = 'post-avatar thumbnail' href='profile.html'>" +
+                            "<img id='avatar_"+post.id+"' src='img/user.png'></img>" +
+                            "<div class = 'text-center'>DevUser1</div>" + 
+                        "</a>"+
+                        "<div class = 'likes text-center'>" +
+                            "<div id='likesPost_"+post.id+"'>0</div>" + 
+                                "<div class='dropdown'>" +
+                                "<a id='likersDropdown_"+post.id+"'><label>Likes</label></a>" +
+                                "<span class='caret'></span>" +                                     
+                                "<ul class='dropdown-menu' id='likersList_"+post.id+"'>" +
+                                "</ul>" +
+                            "</div>" +
+                        "</div>" +                     
+                    "</div> <!-- ENDof Col-sm-2 -->"+  
+                    "<div class = 'col-sm-10'>"+
+                        "<div class = row>" +
+                            "<div class = 'col-sm-8 post-text'>"+
+                            "<div class ='postCreatedDate'>"+ formatDate(new Date(post.createdAt)) + "</div>" + 
+                                "<div class = 'bubble'>" +
+                                    "<div class = 'pointer'>"+
+                                        "<p>"+post.text+"</p>"+
+                                    "</div>" +
+                                    "<div class = 'pointer-border'> </div>"+          
+                                "</div> <!-- ENDof bubbble -->" +         
+                            "</div>" + 
+                            "<div class = 'col-sm-4'>"+
+                                "<!-- POST IMAGES -->" +
+                                "<div id='imagesPlaceHolder_"+post.id+"' class = 'imagesHolder'></div>" +
+                            "</div>" + 
+                        "</div>" + 
+                        "<div class='container'>" +
+                            "<div class='row'>" +
+                                "<div id ='postActions' class='col-xs-1'>" +
+                                    "<p class = 'post-actions'>" +
+                                        "<button id='likeBtn_"+ post.id +"' class='btn btn-info btn-sm  '>Like</button>" +
+                                    "</p>"+  
+                                "</div>" +
+                                "<div id ='postPrivacy' class='col-xs-2 post-actions' > </div>" +
+                            "</div>" +
+                        "</div>" +
+                        "<div class = 'comment-form'>" +
+                            "<form class='form-inline'>" +
+                                "<div class='form-group comment-txt'>" +
+                                    "<input type='text' id = 'commentText_"+post.id+"' class='form-control' placeholder='Enter Comment'>"+
+                                "</div>"+
+                                "<button id='btnAddComment_"+post.id+"' type='button' class='btn btn-default'>Add</button>"+
+                            "</form>"+
+                        "</div> <!-- ENDof CommentForm -->"+
+                        "<div class = 'clearfix'></div>"+
+
+
+                        "<!-- COMMENTS -->" +
+                        "<div id='commentsPlaceHolder_"+post.id+"' class = 'comments'></div> " +
+                        "<div id='commentsHiddenPlaceHolder_"+post.id+"' class = 'comments'></div> " +
+                        
+                                               
+                        "<!-- ENDof Comments -->"+
+
+                    "</div> <!-- ENDof Col-sm-10 -->"+        
+                "</div> <!-- ENDof row -->"+
+            "</div> <!-- ENDof panel body -->";
+        "</div>";
+    return showPosts;
+}
+
 function previewImages() {
 
   var $preview = $('#preview').empty();
@@ -319,11 +317,8 @@ function previewImages() {
 
 function formatDate(date) {
     var monthNames = [
-      "January", "February", "March",
-      "April", "May", "June", "July",
-      "August", "September", "October",
-      "November", "December"
-    ];
+      "January", "February", "March", "April", "May", "June", "July",
+      "August", "September", "October", "November", "December" ];
   
     var day = date.getDate();
     var monthIndex = date.getMonth();
@@ -331,6 +326,9 @@ function formatDate(date) {
     var hours = date.getHours();
     var minutes = date.getMinutes();
     var seconds = date.getSeconds();
+
+    (minutes<10) && (minutes = "0" + minutes);
+    (seconds<10) && (seconds = "0" + seconds);
   
     return day + ' ' + monthNames[monthIndex] + ' ' + year + '  (' + hours + ':' + minutes + ':' + seconds + ')';
   }
@@ -376,7 +374,7 @@ $(document).ready(function() {
               
     },function(){}); 
     
-    // Set listener for cklicks on buttons into the post form.
+    // Set listener for cklicks on buttons on the post form.
     $('body').on('click', '#postsPlaceHolder', function(event) { 
         switch (event.target.id.split('_')[0]) {
 
@@ -405,8 +403,22 @@ $(document).ready(function() {
                     $( "#privacy_"+ post.id ).attr('checked', post.privacy);                    
                 }, function(){});
             break;
-            default:
-                break;
+
+            default:          
+            break;
         }
     });
+
+    //  Show button "Next Posts" when the hidden posts placecolder not empty, and hide when empty.
+    $('#postsPlaceHolderHidden').bind("DOMSubtreeModified",function() {
+        $("#postsPlaceHolderHidden > div").length >=1 ? $('#openPosts').show() : $('#openPosts').hide();
+    });
+
+    //  Move posts from hidden placeholder to the main posts placeholder.
+    $('#openPosts').click(function() {
+        for (var index = 0; index < 4; index++) {
+            $('#postsPlaceHolder').append($('#postsPlaceHolderHidden > div').first());
+        }
+    });
+
 });

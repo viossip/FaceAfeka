@@ -12,7 +12,7 @@
 
     <% include ./partials/navbar %>
 
-    <% include ./partials/searchDropdown %>
+    <!-- <% include ./partials/searchDropdown %> -->
 
     <!-- Section -->
     <section>
@@ -23,9 +23,11 @@
                         <h1 class="page-header"><%= userFullname %></h1>
                         <div class="row">
                             <div class="col-sm-4 user-profile-image">
-                                <img src="<%= userImage %>" class="img-thumbnail">
+                                <a href="<%= userImage %>" data-type="image" data-toggle="lightbox" data-parent=".gallery-parent" data-hover="tooltip" data-placement="top">
+                                    <img src="<%= userImage %>" class="img-thumbnail" height="200px" width="250px">
+                                </a>                             
                             </div>
-
+                            <!-- <img src="<%= userImage %>" class="img-thumbnail"> -->
                             <div class="col-sm-8 user-details">
                                 <ul>
                                     <li id="li_userId"><strong>ID: </strong><%= userId %></li>
@@ -91,9 +93,9 @@
                                 </div> <!-- ENDof panel panel-default -->
 
                                 <!-- Posts -->
-                                <div id="postsPlaceHolder">
-                                </div> <!-- ENDof panel panel-default post -->
-
+                                <div id="postsPlaceHolder"></div>   <!-- Posts Placeholder -->
+                                <button type="button" class="btn btn-primary btn-block" id="openPosts">Open Next</button>  
+                                <div id="postsPlaceHolderHidden" style="display: none;"> </div>   <!-- Hidden Posts Placeholder -->  
                             </div> <!-- ENDof Col-MD-12 -->
                         </div> <!-- ENDof Row -->
                     </div> <!-- ENDof Profile -->
