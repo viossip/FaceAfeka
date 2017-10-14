@@ -2,6 +2,7 @@ var userId = window.location.href.split('=')[1];
 
 $(document).ready(function() {
     getUserById("", function(currUser) {
+        $("h4").html("Wellcome " + currUser.lastname + " !");
         //  If user is looking at his profile with ?id= attribute, reload the page so it'll be without the id attribute.
         if (currUser.id == userId)
             window.location = "/profile";
@@ -51,7 +52,7 @@ $(document).ready(function() {
         
             getUserAlbumImages(userId, updateAlbumImages, function (error) {
                 
-            });
+            });      
     });
 });
 

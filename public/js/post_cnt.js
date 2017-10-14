@@ -1,7 +1,9 @@
+const POSTS_TO_SHOW = 8;
+const DEFAULT_AVATAR = "user.png";
+
 var imgEvent;
 var userId_glob;
 var domain_glob = window.location.hostname;
-const POSTS_TO_SHOW = 8;
 
 function prepareUploadPost(event, onSuccess, onFailure) {
     if (event)
@@ -59,51 +61,52 @@ function addComment(postID) {
   }
 }
 
-// Displays comments from given array of posts
 function showComments(commentsArr, onSuccess, onFailure){
     if(typeof commentsArr !== 'undefined'){
-        console.log("--------------------------commentsArr: " + JSON.stringify(commentsArr));
+        var lenComments = commentsArr.length;
         commentsArr.forEach(function(comment) {   
-            //console.log("-----------------------COMMENT: " + JSON.stringify(comment)) ;        
-            getPost(comment.postId, function(currentPost){
-                getProfileImageById(comment.userId, function(img){
-                    var imgPath = (img.imgName !== undefined)? "http://" + domain_glob + ":" + location.port + "/getImage/" + img.imgName : 
-                    "http://" + domain_glob + ":" + location.port + "/getImage/user.png";
-
-                    $('#commentText_'+comment.postId).val("");
-                    $( "#commentsPlaceHolder_"+  comment.postId).prepend(function() {
-
-                     var delBtn = (comment.userId == userId_glob || currentPost.writtenBy == userId_glob)?
-                        "<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" : "";                   
-                    var showComment =
-                        "<div class = 'comment' id='comment_"+ comment.id +"'>"+
-                            "<a class = 'comment-avatar pull-left' "+
-                            "href = 'http://"+domain_glob +':'+ location.port +"/profile?id="+ comment.userId +"'>"+
-                            "<img src = '" + imgPath + "'></a>"+
-                            "<div class = 'comment-text'><p>"+ comment.text +"</p></div>"+
-                            delBtn +
-                        "</div> <!-- ENDof Comment -->";
-                    return showComment; 
-                    });     
-                });         
-            }, function(){});
-        }, this);
+            $('#commentText_'+comment.postId).val("");
+            //  Put 3 first comments in shown div and other to hidden.
+            if($( "#commentsHiddenPlaceHolder_" + comment.postId + " > div" ).length >= lenComments - 3)     
+                $( "#commentsPlaceHolder_"+  comment.postId ).prepend(createCommentElement(comment));
+            else{
+                $( "#commentsHiddenPlaceHolder_" + comment.postId ).prepend(createCommentElement(comment));
+                // If hidden div not empty, add button to show all comments and attach listener to it.
+                $("#openComments_" + comment.postId).show().html("View All").click(function() {
+                    $("#commentsPlaceHolder_"+  comment.postId).append($("#commentsHiddenPlaceHolder_" + comment.postId + " > div")); 
+                    $("#openComments_" + comment.postId).hide();
+                });
+            }            
+        });
+        setCommentAvatars(commentsArr); //  Synchtonic to save the order.
     }
-}
+}  
 
-/* function createCommentElement(comment, post, imgPath){
-    var delBtn = (comment.userId == userId_glob || post.writtenBy == userId_glob)?
-        "<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right'>Delete</button>" : "";                   
+function createCommentElement(comment){
     var showComment =
         "<div class = 'comment' id='comment_"+ comment.id +"'>"+
             "<a class = 'comment-avatar pull-left' "+
             "href = 'http://"+domain_glob +':'+ location.port +"/profile?id="+ comment.userId +"'>"+
-            "<img src = '" + imgPath + "'></a>"+
+            "<img id='commentAvatar_"+ comment.id +"' src = '" + /* imgPath +  */"'></a>"+
             "<div class = 'comment-text'><p>"+ comment.text +"</p></div>"+
-            delBtn +
-        "</div> <!-- ENDof Comment -->";
-return showComment;
-} */
+            "<button id='btnDeleteComment_"+comment.id+"' type='button' class='btn-xs btn-danger pull-right' style='display: none;'>Delete</button>" +                  
+        "</div>";
+    return showComment;
+}  
+
+function setCommentAvatars(commentsArr){
+    commentsArr.forEach(function(comment) { 
+        getPost(comment.postId, function(currentPost){
+            getProfileImageById(comment.userId, function(img){
+                var imgName = (img.imgName !== undefined) ? img.imgName : DEFAULT_AVATAR;
+                $("#commentAvatar_"+ comment.id).prop("src", "http://" + domain_glob + ":" + location.port + "/getImage/" + imgName);
+                if(comment.userId == userId_glob || post.writtenBy == userId_glob){
+                    $("#btnDeleteComment_" + comment.id).show();
+                }
+            });
+        });
+    });
+}
 
 // Displays requested images from server by their names given in the array.
 function getImages(imagesArr){  
@@ -123,12 +126,9 @@ function updateLikes(likes){
 
     if(typeof likes !== 'undefined'){
         likes.forEach(function(like){
-            getProfileImageById(like.id, function(img){
-                
-                var imgPath = (img.imgName !== undefined)? "http://" + domain_glob + ":" + location.port + "/getImage/" + img.imgName : 
-                                                            "http://" + domain_glob + ":" + location.port + "/getImage/user.png";
-
-                    // If the like is of the current user
+            getProfileImageById(like.id, function(img){             
+                var imgName = (img.imgName !== undefined) ? img.imgName : DEFAULT_AVATAR;
+                // If the like is of the current user
                 if(like.id == userId_glob){
                     if($("#likeBtn_"+  like.postId).text() == "Unlike"){
 
@@ -143,7 +143,7 @@ function updateLikes(likes){
                         $("#likersList_"+  like.postId).prepend(
                             '<li id = "liker_'+like.id+'_post_'+like.postId+'">'+
                                 '<a href="http://'+ domain_glob +':'+ location.port +'/profile">'+
-                                '<img src="'+imgPath+'" height="35px" width="35px">  '+ like.fullname +'</a> </li> ');
+                                '<img src="http://' + domain_glob + ':' + location.port + '/getImage/' + imgName + '" height="35px" width="35px">  '+ like.fullname +'</a> </li> ');
                         changeLikesCounter(like.postId, 1);                    
                     }           
                 }
@@ -153,7 +153,7 @@ function updateLikes(likes){
                     $("#likersList_"+  like.postId).prepend(
                         '<li id = "user_'+like.id+'_post_'+like.postId+'">'+
                             '<a href="http://'+ domain_glob +':'+ location.port +'/profile?id='+ like.id +'">'+
-                            '<img src="'+imgPath+'" height="35px" width="35px">  ' + like.fullname +'</a>'+
+                            '<img src="http://' + domain_glob + ':' + location.port + '/getImage/' + imgName + '" height="35px" width="35px">  ' + like.fullname +'</a>'+
                         '</li> ');
                 }
                     
@@ -199,14 +199,12 @@ function showPosts(postsArr) {
                 
             getPostComments(post.id, showComments, function(){ });
             getPostImages(post.id, getImages, function(){});
-            getPostLikes(post.id, updateLikes, function(){});
-            
+            getPostLikes(post.id, updateLikes, function(){});          
             getProfileImageById(post.writtenBy, function(img){
-                if(img.imgName !== undefined)
-                    $('#avatar_'+post.id).attr('src','http://' + domain_glob + ':' + location.port + '/getImage/' + img.imgName);
-                else
-                    $('#avatar_'+post.id).attr('src','http://' + domain_glob + ':' + location.port + '/getImage/user.png');
-                
+
+                var imgName = (img.imgName !== undefined) ? img.imgName : DEFAULT_AVATAR;
+                $('#avatar_'+post.id).attr('src','http://' + domain_glob + ':' + location.port + '/getImage/' + imgName);
+  
                 getUserById(post.writtenBy, function(user){
                     $('#avatar_'+post.id).siblings('div').text((user.firstname + " " + user.lastname).substr(0,10));
                 })
@@ -222,7 +220,8 @@ function showPosts(postsArr) {
     }
 }
 
- function createPostElement(post){
+//  Create new post HTML segment.
+function createPostElement(post){
         var delBtn = (post.writtenBy == userId_glob || post.writtenTo == userId_glob)?
         "<div class = 'col-sm-2 pull-right  btn-delete'>" +
             "<button id='btnDeletePost_"+post.id+"' type='button' class='btn-sm btn-danger pull-right'>Delete</button>" +
@@ -283,15 +282,11 @@ function showPosts(postsArr) {
                             "</form>"+
                         "</div> <!-- ENDof CommentForm -->"+
                         "<div class = 'clearfix'></div>"+
-
-
                         "<!-- COMMENTS -->" +
                         "<div id='commentsPlaceHolder_"+post.id+"' class = 'comments'></div> " +
-                        "<div id='commentsHiddenPlaceHolder_"+post.id+"' class = 'comments'></div> " +
-                        
-                                               
+                        "<button type='button' class='btn btn-primary btn-block' id='openComments_" + post.id + "' style='display: none;'>Open Next Comments</button>" +
+                        "<div id='commentsHiddenPlaceHolder_"+post.id+"' class = 'comments' style='display: none;'></div> " +                                           
                         "<!-- ENDof Comments -->"+
-
                     "</div> <!-- ENDof Col-sm-10 -->"+        
                 "</div> <!-- ENDof row -->"+
             "</div> <!-- ENDof panel body -->";

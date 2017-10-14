@@ -83,6 +83,29 @@ router.get("/getPostsToUser/:userId", function(req, res) {
 });
 
 //	Get the comments of specific post.
+/* router.get("/getPostComments/:postId", function(req, res) {
+    var coms = [];
+	db.getPostComments(req.params.postId, function(comments) {
+        comments.forEach(function(comment, index){
+            db.getPostById(comment.postId, function(post){
+                comment["postWrittenBy"] = post.writtenBy;
+                coms.push(comment);
+                console.log("+++++++++++++++++++++++++++++++++++++++++++++++==   " + JSON.stringify(comment.postWrittenBy));
+                console.log("+++++++++++++++++++++++++++++++++++++++++++++++==   " + JSON.stringify(comment.postWrittenBy));
+                
+                if(comments.length == index+1)
+                    {
+                        console.log("??????????????????????????????????????????????????????/   " + JSON.stringify(coms[0].postWrittenBy));
+                        
+                        console.log("-----------------------------------------------   " + JSON.stringify(coms));
+                        res.send(comments);
+                    }
+                    
+            })
+        })
+		
+    });
+}); */
 router.get("/getPostComments/:postId", function(req, res) {
 	db.getPostComments(req.params.postId, function(comments) {
 		res.send(comments);
