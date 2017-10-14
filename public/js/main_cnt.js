@@ -68,6 +68,7 @@ function updateAlbumImages(images) {
 
 function lightboxSetup() {
     $(document).delegate('*[data-toggle="lightbox"]', 'click', function(event) {
+        event.stopPropagation();
         event.preventDefault();
         $(this).ekkoLightbox();
     });
