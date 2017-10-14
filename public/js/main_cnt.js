@@ -13,7 +13,6 @@ $(document).ready(function() {
         var searchText = $(this).val();
         searchUserPrefix(searchText, function(userList) {
             searchResults = userList;
-            console.log(JSON.stringify(searchResults));
             if (searchText === "*") {
                 $("#userSearch").autocomplete({
                     search: "",

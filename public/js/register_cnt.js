@@ -49,16 +49,12 @@ function registerClicked(event){
         return;
     }
 
-    var user = { firstName: firstname, lastName: lastname, login: userLogin };
-    console.log(firstname);
-    console.log(JSON.stringify(user));
-
+	var user = { firstName: firstname, lastName: lastname, login: userLogin };
+	
 	register(user, password, function(cUser){
-		console.log("Register success!!!");
 		window.location = getUrlParameter("path") || "/";
 		
 	}, function(error){
-		console.log("Register error!!!");
 		var registerStatus = $('.register-result');
 		registerStatus.html("<h4 style='color: red; text-align: center; font-weight: bold;'>" + error.status + " " + error.statusText + "</h4>");
 		registerStatus.fadeOut(2000, function() {

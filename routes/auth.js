@@ -41,10 +41,6 @@ router.get('/checkLoginExists', function (req, res) {
 	
 	db.getUserByLogin(req.query.user, function(user){
 		user ? res.send({res: true}) : res.send({res: false});
-/* 		if(user)
-			res.send({res:true});
-		else
-			res.send({res:false}); */
 	});
 	
 });

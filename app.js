@@ -56,8 +56,6 @@ var router = express.Router();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -112,8 +110,6 @@ app.use("/friends", checkLogin, friends);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  //console.log("Not found " + req.path);
-	//res.sendStatus(404);
   var err = new Error('Not Found ' + req.path);
   err.status = 404;
   next(err);

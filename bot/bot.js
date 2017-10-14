@@ -1,15 +1,16 @@
 const botUsername = "bot@bot.com", botPassword = "bot";
+
 //  Enter hashtag: "#hashtag" or "from:username"
-var botQuery = '#love';
-//var botQuery = '#sportlive, #livesport, #sportevent, #sport';
+const botQuery = '#love';
+const botTweetInterval = 30000;
+const botLoginInterval = 60000 * 10;
 
 var twit = require('twit');  
 var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 var GoogleImages = require('google-images');
 
-//var config = require('./bot_config.js');
 var config = require('./configs.js');
-//var fs = require('fs');
+
 var botRestApi = require('./bot_rest_api.js');
 const FormData = require('form-data');
 const concat = require("concat-stream");
@@ -80,53 +81,6 @@ var retweet = function() {
                         });
                      });
                 });
-                
-                //uploadPost(tweetText, false, 4, 4);
-
-
-                /* nlu.analyze(
-                    {   'text': tweetText,
-                        'features': { 
-                            'keywords': { 'limit': 2 },
-                            'entities':{ }
-                        }
-                    },  
-                    function(err, res){
-                        if (err)
-                            console.log('error:', err);
-                        else{
-                        //take the first keyword and the first person and create a query for the callback
-                            if(res.keywords[0] && res.entities[0]){
-                                console.log("+++++++++++++++++!!!!!!!!!!+++++++++++++++++++++++++++++ " + JSON.stringify(res.keywords));
-                                console.log("+++++++++++++++++!!!!!!!!!!+++++++++++++++++++++++++++++ " + JSON.stringify(res.entities));
-                                var queryToSearch = res.keywords+" "+res.entities;
-                                console.log("+++++++++++++++++!!!!!!!!!!+++++++++++++++++++++++++++++"+  queryToSearch);
-
-                                //GoogleSearch.search('query :'+ queryToSearch)
-                                GoogleSearch.search(queryToSearch, {size: 'Medium'})
-                                .then( function (images) {
-                                    console.log("--------------------IMAGES:::::::::::::::::::::::::::::::: "+JSON.stringify(images));
-                                    //TODO: Transfer imgs to faceAfeka here...Download and Transfer or transfer links...???
-                                })
-                                .catch(function (err) {
-                                console.log("Search error: "+JSON.stringify(err))
-                                })
-                            }
-                        }
-                    }); */
-               
-/*                  nlu.analyze({
-                    'html': tweetText, // Buffer or String
-                    'features': {
-                      'concepts': {},
-                      'keywords': {},
-                    }
-                  }, function(err, response) {
-                       if (err)
-                         console.log('error:', err);
-                       else
-                         console.log(JSON.stringify(response, null, 2));
-                });  */
         	}         	
         }
         //	If an error has occured.    
@@ -212,11 +166,11 @@ function analyzeLang(err, response, onResult) {
 }
 
 //  Start the retweeting interval.
-retweetInterval = setInterval(retweet, 5000);
+retweetInterval = setInterval(retweet, botTweetInterval);
 
 //  Login the first time.
 botLogin();
 
 //  Start the login interval (login every 10 minutes).
-loginInterval = setInterval(botLogin, 60000 * 10);
+loginInterval = setInterval(botLogin, botLoginInterval);
 

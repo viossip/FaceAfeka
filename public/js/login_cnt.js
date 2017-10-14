@@ -1,11 +1,6 @@
 
-//var errorLbl = null;
-
 //  Runs when the user clicks the sign in button.
 function loginClicked(event){
-	//if(errorLbl){
-	//	errorLbl.hide();
-	//}
 	
 	var userTxt = $('form input[id=email]');
 	var pswTxt = $('form input[id=password]');
@@ -15,7 +10,6 @@ function loginClicked(event){
 	var psw = pswTxt.val();
 
     event.preventDefault();
-    //event.stopPropagation();
 
 	if(!user || user.length === 0){
 		userTxt.attr('placeholder', "Required Field").focus();
@@ -27,22 +21,15 @@ function loginClicked(event){
 	}
 	
 	login(user, psw, function(cUser){
-		console.log("Login success!!!");
 		window.location = getUrlParameter("path") || "/";
 		
 	}, function(error){
-		console.log("Login error!!!");
 		var signInStatus = $('.signin-result');
 		signInStatus.html("<h4 style='color: red; text-align: center; font-weight: bold;'>" + error.status + " " + error.statusText + "</h4>");
 		signInStatus.fadeOut(2000, function() {
 			signInStatus.html("");
 			signInStatus.fadeIn();
 		});
-		//if(errorLbl){
-		//	errorLbl.show();
-		//	return;
-		//}
-		//errorLbl = $("<div>Login failure</div>").insertAfter(".separator").css('color','red').css('text-align','center').css('font-weight', 'bold');
 	});
 
 }
@@ -57,7 +44,6 @@ $(document).ready(function() {
 		event.stopPropagation();
 		
         window.location = "http://" + window.location.host + "/register";
-        console.log(window.location);
     });
 });
 

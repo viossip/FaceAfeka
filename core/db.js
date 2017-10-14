@@ -177,19 +177,7 @@ function convertJSONtoOBJ(object) {
     }
     catch(e) {
 
-    }  
-    /*for (var field in jsonObj) {
-           if (field && jsonObj.hasOwnProperty(field)) {
-                try {
-                    console.log("before: " + field);
-                    jsonObj.field = JSON.parse(jsonObj.field);
-                    console.log("after: " + field);
-                }
-                catch (e) {
-                    console.log(e.stack);
-                }
-            }
-        }*/
+    } 
 }
 
 //  Converts JSON object to Object (when retrieving elements from the DB).
@@ -502,7 +490,6 @@ module.exports.removePost = function(postId, onResult) {
             }
             else {
                 comments.forEach(function(comment, index) {
-                    console.log(JSON.stringify(comment));
                     module.exports.removeCommentById(comment.id, function() {
                         if (comments.length-1 === index) {
                             post.setPostComments([]).then(function() {

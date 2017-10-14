@@ -70,8 +70,6 @@ function removeFriend(userId, onSuccess, onFailure) {
 
 function login(user, pass, onSuccess, onFailure) {
 	get("/auth/login?user=" + user + "&pass=" + pass, function(user){
-		//clientId = user.login;
-		//currUser = user;
 		onSuccess(user);
 
 	}, onFailure);
