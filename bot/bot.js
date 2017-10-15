@@ -2,7 +2,7 @@ const botUsername = "bot@bot.com", botPassword = "bot";
 
 //  Enter hashtag: "#hashtag" or "from:username"
 const botQuery = '#love';
-const botTweetInterval = 30000;
+const botTweetInterval = 5000;
 const botLoginInterval = 60000 * 10;
 
 var twit = require('twit');  
@@ -25,7 +25,7 @@ var GoogleSearch = new GoogleImages(config.googleConfig.CSE_ID, config.googleCon
 
 var retweetInterval = {};
 var loginInterval = {};
-
+var lastTwit = "";
 // Retweet a tweet according the query 'q' in params
 var retweet = function() {  
     
@@ -46,45 +46,49 @@ var retweet = function() {
                 //  The tweet's text.
                 var tweetText = data.statuses[0].text;
                 console.log("tweet text: " + tweetText);
-
-                nlu.analyze({
-                    text: tweetText,
-                    features: {
-                        keywords: {
-                            emotion: true,
-                            limit: 10
+                if(lastTwit.includes(tweetText)) return; // Prevent repeating posts.
+                else
+                {
+                    lastTwit = tweetText; // Save last tweet, to check repeating.
+                    nlu.analyze({
+                        text: tweetText,
+                        features: {
+                            keywords: {
+                                emotion: true,
+                                limit: 10
+                            }
                         }
-                    }
-                }, function(err, response) {
-                    analyzeLang(err, response, function(processedText) {
-                        if (processedText == null || processedText == undefined)
-                            processedText = "whatever";
-                        try {
-                            GoogleSearch.search(processedText).then(function(images) {
-                                console.log("Found " + images.length + " images.");
-                                var chosenImage = images[Math.floor(Math.random() * images.length)];
-                                console.log("Image chosen: " + JSON.stringify(chosenImage));
-                                //  Save the image found using google.
-                                botRestApi.downloadImg(chosenImage.url, chosenImage.type, function (result) {
-                                    var outputFile = path.join(__dirname, tempImgFolder) + "/" + chosenImage.url.split("/").pop();
-                                    //  Write the image to disk temporarly
-                                    fs.writeFileSync(outputFile, result.data);
-                                    uploadPost(tweetText, false, 4, 4, outputFile, function(result) {
-                                        //  Remove the image after uploading the post.
-                                        fs.unlink(outputFile, function() {
+                    }, function(err, response) {
+                        analyzeLang(err, response, function(processedText) {
+                            if (processedText == null || processedText == undefined)
+                                processedText = "whatever";
+                            try {
+                                GoogleSearch.search(processedText).then(function(images) {
+                                    console.log("Found " + images.length + " images.");
+                                    var chosenImage = images[Math.floor(Math.random() * images.length)];
+                                    console.log("Image chosen: " + JSON.stringify(chosenImage));
+                                    //  Save the image found using google.
+                                    botRestApi.downloadImg(chosenImage.url, chosenImage.type, function (result) {
+                                        var outputFile = path.join(__dirname, tempImgFolder) + "/" + chosenImage.url.split("/").pop();
+                                        //  Write the image to disk temporarly
+                                        fs.writeFileSync(outputFile, result.data);
+                                        uploadPost(tweetText, false, 4, 4, outputFile, function(result) {
+                                            //  Remove the image after uploading the post.
+                                            fs.unlink(outputFile, function() {
+                                            });
                                         });
+                                    },
+                                    function (error) {
+                                        console.log("There was an error while downloading the image: " + error);
                                     });
-                                },
-                                function (error) {
-                                    console.log("There was an error while downloading the image: " + error);
                                 });
-                            });
-                        } catch (error) {
-                            console.log("Google-Images TypeError." + error.name);
-                        }
-                        
-                     });
-                });
+                            } catch (error) {
+                                console.log("Google-Images TypeError." + error.name);
+                            }
+                            
+                        });
+                    });
+                }
         	}         	
         }
         //	If an error has occured.    
