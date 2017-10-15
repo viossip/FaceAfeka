@@ -59,26 +59,30 @@ var retweet = function() {
                     analyzeLang(err, response, function(processedText) {
                         if (processedText == null || processedText == undefined)
                             processedText = "whatever";
-                        GoogleSearch.search(processedText).then(function(images) {
-                            console.log("Found " + images.length + " images.");
-                            var chosenImage = images[Math.floor(Math.random() * images.length)];
-                            console.log("Image chosen: " + JSON.stringify(chosenImage));
-                            //  Save the image found using google.
-                            botRestApi.downloadImg(chosenImage.url, chosenImage.type, function (result) {
-                                var outputFile = path.join(__dirname, tempImgFolder) + "/" + chosenImage.url.split("/").pop();
-                                //  Write the image to disk temporarly
-                                fs.writeFileSync(outputFile, result.data);
-                                uploadPost(tweetText, false, 4, 4, outputFile, function(result) {
-                                    //  Remove the image after uploading the post.
-                                    fs.unlink(outputFile, function() {
-
+                        try {
+                            GoogleSearch.search(processedText).then(function(images) {
+                                console.log("Found " + images.length + " images.");
+                                var chosenImage = images[Math.floor(Math.random() * images.length)];
+                                console.log("Image chosen: " + JSON.stringify(chosenImage));
+                                //  Save the image found using google.
+                                botRestApi.downloadImg(chosenImage.url, chosenImage.type, function (result) {
+                                    var outputFile = path.join(__dirname, tempImgFolder) + "/" + chosenImage.url.split("/").pop();
+                                    //  Write the image to disk temporarly
+                                    fs.writeFileSync(outputFile, result.data);
+                                    uploadPost(tweetText, false, 4, 4, outputFile, function(result) {
+                                        //  Remove the image after uploading the post.
+                                        fs.unlink(outputFile, function() {
+                                        });
                                     });
+                                },
+                                function (error) {
+                                    console.log("There was an error while downloading the image: " + error);
                                 });
-                            },
-                            function (error) {
-                                console.log("There was an error while downloading the image: " + error);
                             });
-                        });
+                        } catch (error) {
+                            console.log("Google-Images TypeError." + error.name);
+                        }
+                        
                      });
                 });
         	}         	
